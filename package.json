@@ -1,0 +1,31 @@
+{
+  "preferences": [
+    {
+      "name": "register",
+      "title": "Register",
+      "description": "Register your copy of SnoozeTabs today!",
+      "type": "string",
+      "value": ""
+    }
+  ],
+  "permissions": {
+    "private-browsing": true
+  },
+  "name": "snoozetabs",
+  "license": "MPL 2.0",
+  "author": "Blake Winton <bwinton@latte.ca>",
+  "icon": "data/icon-48.png",
+  "icon64": "data/icon-64.png",
+  "bugs": {},
+  "amd": {},
+  "repository": {},
+  "version": "0.0.0",
+  "contributors": [],
+  "id": "jid1-snoozetabs",
+  "fullName": "SnoozeTabs",
+  "description": "An add-on to let you snooze your tabs for a while.",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-ssh": "~0.9.1"
+  }
+}
