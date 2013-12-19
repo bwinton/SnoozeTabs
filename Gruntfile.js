@@ -33,6 +33,10 @@ module.exports = function(grunt){
                       '/Volumes/People/public_html/snoozetabs/snoozetabs.update.rdf',
                       {"encoding": null});
       grunt.log.ok('Copied update.rdf…');
+      grunt.file.copy('index.html',
+                      '/Volumes/People/public_html/snoozetabs/index.html',
+                      {"encoding": null});
+      grunt.log.ok('Copied index.html…');
       done();
     });
   });
