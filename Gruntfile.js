@@ -18,11 +18,21 @@ module.exports = function(grunt){
       ]
     }, function spawned(error, result, code) {
       grunt.log.ok(result);
-      grunt.log.ok('Add-on built.');
-      var commands = [
-        ['copyFile', 'snoozetabs.xpi', '/Volumes/people.mozilla.com/public_html/snoozetabs/snoozetabs.xpi'],
-        ['copyFile', 'snoozetabs.update.rdf', '/Volumes/people.mozilla.com/public_html/snoozetabs/snoozetabs.update.rdf']
-      ];
+      grunt.log.ok('Add-on built, copying files…');
+      if (!grunt.file.exists('/Volumes/People/public_html/snoozetabs')) {
+        grunt.log.error('Missing Directory!');
+        done(false);
+        return;
+      }
+
+      grunt.file.copy('snoozetabs.xpi',
+                      '/Volumes/People/public_html/snoozetabs/snoozetabs.xpi',
+                      {"encoding": null});
+      grunt.log.ok('Copied XPI…');
+      grunt.file.copy('snoozetabs.update.rdf',
+                      '/Volumes/People/public_html/snoozetabs/snoozetabs.update.rdf',
+                      {"encoding": null});
+      grunt.log.ok('Copied update.rdf…');
       done();
     });
   });
