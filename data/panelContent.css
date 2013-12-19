@@ -1,0 +1,19 @@
+html,
+body {
+  width: 100%;
+  margin: 0;
+  text-align: center;
+}
+
+#top {
+  background: #F7F7F7;
+  height: 80px;
+}
+#middle {
+  background: #F2F2F2;
+  height: calc(100vh - 80px - 45px);
+}
+#bottom {
+  background: #E7E7E7;
+  height: 45px;
+}
