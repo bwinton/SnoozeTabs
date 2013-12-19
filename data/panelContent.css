@@ -50,9 +50,29 @@ body {
   flex: auto;
 
   /* Child flex sizing */
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-around;
 
   /* Typography and Colours */
+  font-size: 10px;
+  line-height: 12px;
   background: #F2F2F2;
+}
+
+.button {
+  /* Parent flex sizing */
+  flex: auto;
+
+  /* Child flex sizing */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+
+  /* Typography and Colours */
+  padding: 0px 10px;
 }
 
 
