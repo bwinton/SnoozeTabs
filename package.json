@@ -25,7 +25,6 @@
   "fullName": "SnoozeTabs",
   "description": "An add-on to let you snooze your tabs for a while.",
   "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-ssh": "~0.9.1"
+    "grunt": "~0.4.2"
   }
 }
