@@ -34,14 +34,21 @@ body {
   /* Child flex sizing */
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  padding-right: 20px;
 
   /* Typography and Colours */
   background: #F7F7F7;
+  background-position: center left 10px;
+  background-repeat: no-repeat;
+  background-size: 60px 60px;
+  background-image: url("PanelHeader.png");
 }
 
-.headerImage {
-  margin: 0px 10px;
+@media (min-resolution: 2dppx) {
+  #top {
+    background-image: url("PanelHeader@2x.png");
+  }
 }
 
 
