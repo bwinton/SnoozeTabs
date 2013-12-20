@@ -16,6 +16,9 @@ body {
   display: flex;
   flex-direction: column;
 
+  -moz-user-select: none;
+  cursor: default;
+
   /* Typography and Colours */
   font: bold 16px/19px Lucida, "Lucida Grande";
 }
@@ -55,27 +58,65 @@ body {
   justify-content: space-around;
 
   /* Typography and Colours */
-  font-size: 10px;
-  line-height: 12px;
+  font-size: 9px;
+  line-height: 11px;
   font-weight: normal;
   background: #F2F2F2;
 }
 
 .button {
   /* Parent flex sizing */
-  flex: auto;
+  flex: 0 0 auto;
+  width: 64px;
+  height: 64px;
 
   /* Child flex sizing */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-end;
 
   /* Typography and Colours */
   padding: 0px 5px;
-  /*border: 1px solid blue;*/
+  cursor: pointer;
+  transition: box-shadow .2s, background .2s;
+  background-position: top center;
+  background-repeat: no-repeat;
 }
 
+.button:hover {
+  /* Typography and Colours */
+  box-shadow: 0px 0px 1px 1px #A0A0A0;
+  background-color: #FAFAFA;
+}
+
+.button.laterToday {
+  background-image: url("LaterToday.png");
+}
+.button.tonight {
+  background-image: url("Tonight.png");
+}
+.button.tomorrow {
+  background-image: url("Tomorrow.png");
+}
+.button.thisWeekend {
+  background-image: url("ThisWeekend.png");
+}
+.button.nextWeek {
+  background-image: url("NextWeek.png");
+}
+.button.nextMonth {
+  background-image: url("NextMonth.png");
+}
+.button.rainyDay {
+  background-image: url("RainyDay.png");
+}
+.button.whenImFree {
+  background-image: url("WhenImFree.png");
+}
+.button.pickADate {
+  background-image: url("PickADate.png");
+}
 
 /* Bottom section */
 
