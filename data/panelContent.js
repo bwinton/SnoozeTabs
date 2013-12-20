@@ -10,6 +10,12 @@ globalstrict:true, nomen:false, newcap:false */
  
 "use strict";
 
+/* Send a message to the add-on. */
+var sendChromeEvent = function (kind, data) {
+  var event = new CustomEvent('chromeEvent', {'detail': {'kind': kind, 'data': data}});
+  window.dispatchEvent(event);
+};
+
 window.onload = function load() {
   console.log("Loaded…");
   var $ = document.querySelector.bind(document);
@@ -19,6 +25,6 @@ window.onload = function load() {
     if (!classList.contains("button")) {
       return;
     }
-    console.log(classList.item(1));
+    sendChromeEvent("buttonClicked", classList.item(1));
   }
 }
