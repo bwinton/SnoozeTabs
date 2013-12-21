@@ -17,7 +17,6 @@ var sendChromeEvent = function (kind, data) {
 };
 
 window.onload = function load() {
-  console.log("Loaded…");
   var $ = document.querySelector.bind(document);
   var $all = document.querySelectorAll.bind(document);
   $('#middle').onclick = function buttonClicked(e) {
