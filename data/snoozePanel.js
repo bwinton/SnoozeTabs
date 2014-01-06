@@ -24,8 +24,16 @@ window.onload = function load() {
     if (!classList.contains("button")) {
       return;
     }
+    if (classList.contains("pickADate")) {
+      $('#buttons').style.marginLeft = "-220px";
+    }
     sendChromeEvent("buttonClicked", classList.item(1));
   }
+
+  $('#calendar').onclick = function calendarClicked(e) {
+    $('#buttons').style.marginLeft = "0px";
+  }
+
   var bookmark = atob(window.location.search.replace('?b=', ''));
   if (bookmark) {
     console.log("BW4", bookmark);
