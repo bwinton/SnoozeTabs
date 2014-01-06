@@ -62,6 +62,9 @@ module.exports = function(grunt){
         'profile.testing'
       ]
     }, function spawned(error, result, code) {
+      if (code != 0) {
+        console.log(error);
+      }
       done();
     });
     if (run.stderr) {
