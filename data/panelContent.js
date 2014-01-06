@@ -26,4 +26,8 @@ window.onload = function load() {
     }
     sendChromeEvent("buttonClicked", classList.item(1));
   }
+  var bookmark = atob(window.location.search.replace('?b=', ''));
+  if (bookmark) {
+    console.log("BW4", bookmark);
+  }
 }
