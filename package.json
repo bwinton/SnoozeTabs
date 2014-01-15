@@ -1,11 +1,11 @@
 {
   "preferences": [
     {
-      "name": "register",
-      "title": "Register",
-      "description": "Register your copy of SnoozeTabs today!",
-      "type": "string",
-      "value": ""
+      "name": "hyperspeed",
+      "title": "Hyperspeed",
+      "description": "Make an hour pass by in a mere second!  (For testing, needs restart.)",
+      "type": "bool",
+      "value": false
     }
   ],
   "permissions": {
@@ -19,7 +19,7 @@
   "bugs": {},
   "amd": {},
   "repository": {},
-  "version": "0.0.8",
+  "version": "0.0.9",
   "contributors": [],
   "id": "jid1-snoozetabs",
   "fullName": "SnoozeTabs",
