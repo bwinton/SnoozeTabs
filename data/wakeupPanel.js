@@ -13,20 +13,33 @@ globalstrict:true, nomen:false, newcap:false */
 /* Send a message to the add-on. */
 var sendChromeEvent = function (kind, data) {
   var event = new CustomEvent('chromeEvent', {'detail': {'kind': kind, 'data': data}});
-  window.dispatchEvent(event);
+  document.dispatchEvent(event);
+};
+
+var handleBookmark = function (aBookmark) {
+  var $ = document.querySelector.bind(document);
+  var url = $('#middle .url');
+  var bookmark = JSON.parse(aBookmark);
+
+  url.textContent = bookmark.title;
+  url.setAttribute('href', bookmark.url);
+  url.onclick = function urlClicked(e) {
+    sendChromeEvent('bookmarkClicked', bookmark.url);
+    e.preventDefault();
+    return false;
+  }
 };
 
 window.onload = function load() {
-  var $ = document.querySelector.bind(document);
-  var $all = document.querySelectorAll.bind(document);
-  $('#middle').onclick = function buttonClicked(e) {
-    sendChromeEvent("bookmarkClicked", $('#middle > .url').textContent);
-  }
-
   var bookmark = atob(window.location.search.replace('?b=', ''));
   if (bookmark) {
-    bookmark = JSON.parse(bookmark);
-    $('#middle .url').textContent = bookmark.title;
-    $('#middle .url').setAttribute('href', bookmark.url);
+    handleBookmark(bookmark);
   }
 }
+
+window.addEventListener('message', function (event) {
+  var data = event.data;
+  if (data.type === 'newBookmark') {
+    handleBookmark(data.data);
+  }
+});

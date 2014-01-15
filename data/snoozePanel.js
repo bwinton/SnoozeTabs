@@ -13,7 +13,7 @@ globalstrict:true, nomen:false, newcap:false */
 /* Send a message to the add-on. */
 var sendChromeEvent = function (kind, data) {
   var event = new CustomEvent('chromeEvent', {'detail': {'kind': kind, 'data': data}});
-  window.dispatchEvent(event);
+  document.dispatchEvent(event);
 };
 
 window.onload = function load() {
