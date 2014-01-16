@@ -46,7 +46,7 @@ body {
 
 #top {
   /* Parent flex sizing */
-  min-height: 40px;
+  min-height: 45px;
   flex: none;
 
   /* Child flex sizing */
