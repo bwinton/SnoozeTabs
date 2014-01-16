@@ -46,7 +46,7 @@ body {
 
 #top {
   /* Parent flex sizing */
-  min-height: 80px;
+  min-height: 70px;
   flex: none;
 
   /* Child flex sizing */
@@ -102,7 +102,7 @@ body {
   justify-content: flex-end;
 
   /* Typography and Colours */
-  padding: 0px 5px;
+  padding: 0px 5px 7px;
   cursor: pointer;
   transition: box-shadow .2s, background .2s;
   background-position: top center;
