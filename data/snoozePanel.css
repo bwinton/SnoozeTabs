@@ -160,8 +160,14 @@ body {
   line-height: 12px;
   background: #E7E7E7;
   color: #505050;
+  border-top: 1px solid transparent;
 }
 
+#bottom:hover {
+  cursor: pointer;
+  background-color: #d0d0d0;
+  border-top: 1px solid #A8ABAE;
+}
 
 /* Second, calendar pane. */
 

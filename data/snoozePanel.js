@@ -32,5 +32,7 @@ window.onload = function load() {
 
   $('#calendar').onclick = function calendarClicked(e) {
     $('#buttons').style.marginLeft = "0px";
+  $('#bottom').onclick = function buttonClicked(e) {
+    sendChromeEvent('manageClicked');
   }
 }
