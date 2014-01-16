@@ -8,7 +8,7 @@ strict:true, undef:true, unused:true, curly:true, browser:true, white:true,
 moz:true, esnext:false, indent:2, maxerr:50, devel:true, node:true, boss:true,
 globalstrict:true, nomen:false, newcap:false */
  
-"use strict";
+'use strict';
 
 /* Send a message to the add-on. */
 var sendChromeEvent = function (kind, data) {
@@ -21,17 +21,19 @@ window.onload = function load() {
   var $all = document.querySelectorAll.bind(document);
   $('#middle').onclick = function buttonClicked(e) {
     var classList = e.originalTarget.classList;
-    if (!classList.contains("button")) {
+    if (!classList.contains('button')) {
       return;
     }
-    if (classList.contains("pickADate")) {
-      $('#buttons').style.marginLeft = "-220px";
+    if (classList.contains('pickADate')) {
+      $('#buttons').style.marginLeft = '-220px';
     }
-    sendChromeEvent("buttonClicked", classList.item(1));
+    sendChromeEvent('buttonClicked', classList.item(1));
   }
 
   $('#calendar').onclick = function calendarClicked(e) {
-    $('#buttons').style.marginLeft = "0px";
+    $('#buttons').style.marginLeft = '0px';
+  }
+
   $('#bottom').onclick = function buttonClicked(e) {
     sendChromeEvent('manageClicked');
   }
