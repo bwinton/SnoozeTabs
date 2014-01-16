@@ -33,9 +33,4 @@ window.onload = function load() {
   $('#calendar').onclick = function calendarClicked(e) {
     $('#buttons').style.marginLeft = "0px";
   }
-
-  var bookmark = atob(window.location.search.replace('?b=', ''));
-  if (bookmark) {
-    console.log("BW4", bookmark);
-  }
 }
