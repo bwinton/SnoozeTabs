@@ -46,7 +46,7 @@ body {
 
 #top {
   /* Parent flex sizing */
-  min-height: 70px;
+  min-height: 43px;
   flex: none;
 
   /* Child flex sizing */
@@ -57,9 +57,9 @@ body {
 
   /* Typography and Colours */
   background: #F7F7F7;
-  background-position: center left 10px;
+  background-position: bottom center;
   background-repeat: no-repeat;
-  background-size: 60px 60px;
+  background-size: contain;
   background-image: url("PanelHeader.png");
 }
 
