@@ -19,8 +19,11 @@
   "bugs": {},
   "amd": {},
   "repository": {},
-  "version": "0.1.0",
-  "contributors": ["Sevaan Franks <sfranks@mozilla.com>"],
+  "version": "0.1.1",
+  "contributors": [
+    "Sevaan Franks <sfranks@mozilla.com>",
+    "William Clark <wsclark3@alumni.umass.edu>"
+  ],
   "id": "jid1-snoozetabs",
   "fullName": "SnoozeTabs",
   "description": "An add-on to let you snooze your tabs for a while.",
