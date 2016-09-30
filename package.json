@@ -1,0 +1,32 @@
+{
+  "name": "snoozetabs",
+  "version": "1.0.0",
+  "description": "An add-on to let you snooze your tabs for a while.",
+  "main": "index.js",
+  "dependencies": {
+    "web-ext": "^1.4.0"
+  },
+  "devDependencies": {
+    "web-ext": "^1.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bwinton/SnoozeTabs.git"
+  },
+  "keywords": [
+    "snooze",
+    "tabs",
+    "webextension",
+    "firefox",
+    "add-on"
+  ],
+  "author": "Blake Winton <bwinton@latte.ca>",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/bwinton/SnoozeTabs/issues"
+  },
+  "homepage": "https://github.com/bwinton/SnoozeTabs#readme"
+}
