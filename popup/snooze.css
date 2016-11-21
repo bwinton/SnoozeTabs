@@ -1,0 +1,38 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Fira Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Droid Sans","Helvetica Neue",sans-serif;
+  font-size: 14px;
+  width: 250px;
+  cursor: default;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+li {
+  padding: 0 10px;
+}
+
+li.option:hover {
+  cursor: pointer;
+  background: #e3e3e3;
+}
+
+li.option:active {
+  background: #d4d4d4;
+}
+
+li.footer {
+  background: #c4c4c4;
+}
+
+li.footer:active {
+  background: #b1b1b1;
+}

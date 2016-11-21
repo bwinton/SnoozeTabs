@@ -3,14 +3,13 @@
   "version": "1.0.0",
   "description": "An add-on to let you snooze your tabs for a while.",
   "main": "index.js",
-  "dependencies": {
-    "web-ext": "^1.4.0"
-  },
   "devDependencies": {
     "web-ext": "^1.4.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "web-ext lint",
+    "build": "web-ext build -a .",
+    "test": "web-ext run"
   },
   "repository": {
     "type": "git",

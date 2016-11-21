@@ -1,0 +1,15 @@
+{
+
+  "description": "An add-on to let you snooze your tabs for a while.",
+  "manifest_version": 2,
+  "name": "snoozetabs",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_popup": "popup/snooze.html",
+    "default_icon": {
+      "16": "icons/page-16.png",
+      "32": "icons/page-32.png"
+    }
+  }
+}
