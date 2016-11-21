@@ -7,13 +7,17 @@
 'use strict';
 
 document.addEventListener('click', e => {
-  if (!e.target.classList.contains('option')) {
-    return;
+  if (e.target.classList.contains('option')) {
+    var choice = e.target.textContent;
+    browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+      for (var tab of tabs) {
+        browser.runtime.sendMessage({'choice': choice, 'url': tab.url});
+      }
+    });
+  } else if (e.target.classList.contains('footer')) {
+    browser.storage.local.get().then(items => {
+      console.log(items);
+      browser.storage.local.clear();
+    });
   }
-  var choice = e.target.textContent;
-  browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
-    for (var tab of tabs) {
-      browser.runtime.sendMessage({'time': choice, 'url': tab.url});
-    }
-  });
 });

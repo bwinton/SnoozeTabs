@@ -12,7 +12,9 @@ browser.runtime.onMessage.addListener(message => {
     'type': 'basic',
     'iconUrl': browser.extension.getURL('link.png'),
     'title': 'You clicked a link!',
-    'message': `${message.time} - ${message.url}`
+    'message': `${message.choice} - ${message.url}`
   });
-
+  let item = {};
+  item[Date.now()] = message.url;
+  browser.storage.local.set(item);
 });
