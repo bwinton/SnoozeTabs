@@ -4,12 +4,16 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-// @flow
+'use strict';
 
-document.addEventListener('click', function (e:MouseEvent) {
-  if (!e.target.classList.contains("page-choice")) {
+document.addEventListener('click', e => {
+  if (!e.target.classList.contains('option')) {
     return;
   }
-  var chosenPage: string = e.target.textContent;
-
-}, true);
+  var choice = e.target.textContent;
+  browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+    for (var tab of tabs) {
+      browser.runtime.sendMessage({'time': choice, 'url': tab.url});
+    }
+  });
+});
