@@ -16,16 +16,19 @@ document.addEventListener('click', e => {
       for (var tab of tabs) {
         browser.runtime.sendMessage({
           'time': time.valueOf(),
-          'title': tab.title || '',
+          'title': tab.title || 'Tab woke up…',
           'url': tab.url,
           'windowId': tab.windowId
         });
       }
+      window.close();
     });
   } else if (e.target.classList.contains('footer')) {
     browser.storage.local.get().then(items => {
       console.log(items); // eslint-disable-line no-console
-      browser.storage.local.clear();
+      browser.storage.local.clear().then(() => {
+        window.close();
+      });
     });
   }
 });
