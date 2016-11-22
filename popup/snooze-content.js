@@ -14,7 +14,11 @@ document.addEventListener('click', e => {
     let [time, ] = timeForId(moment(), choice);
     browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
       for (var tab of tabs) {
-        browser.runtime.sendMessage({'time': time.valueOf(), 'url': tab.url});
+        browser.runtime.sendMessage({
+          'time': time.valueOf(),
+          'title': tab.title || '',
+          'url': tab.url
+        });
       }
     });
   } else if (e.target.classList.contains('footer')) {

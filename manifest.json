@@ -5,7 +5,7 @@
   "name": "snoozetabs",
   "version": "1.0",
 
-  "permissions": ["notifications", "storage", "tabs"],
+  "permissions": ["alarms", "notifications", "storage", "tabs"],
   "background": {
     "scripts": ["background.js"]
   },
