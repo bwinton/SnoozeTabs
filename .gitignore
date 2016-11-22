@@ -3,3 +3,5 @@ snoozetabs.update.rdf
 .DS_Store
 profile.testing/
 .sublime-project*
+node_modules/
+*.sw?
