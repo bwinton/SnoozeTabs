@@ -36,3 +36,7 @@ li.footer {
 li.footer:active {
   background: #b1b1b1;
 }
+
+li > .date {
+  float: right;
+}

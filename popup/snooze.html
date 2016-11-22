@@ -9,14 +9,16 @@
 <body>
     <ul>
       <li class="header">Snooze this tab until…</li>
-      <li class="option">Later Today</li>
-      <li class="option">Tomorrow</li>
-      <li class="option">This Weekend</li>
-      <li class="option">Next Week</li>
-      <li class="option">Next Month</li>
-      <li class="option">Pick a Date/Time</li>
+      <li class="option" id="later">Later Today<div class='date'>test</div></li>
+      <li class="option" id="tomorrow">Tomorrow<div class='date'>test</div></li>
+      <li class="option" id="weekend">This Weekend<div class='date'>test</div></li>
+      <li class="option" id="week">Next Week<div class='date'>test</div></li>
+      <li class="option" id="month">Next Month<div class='date'>test</div></li>
+      <li class="option" id="pick">Pick a Date/Time</li>
       <li class="footer">Manage Snoozed Tabs</li>
     </ul>
+  <script src="../lib/moment.js"></script>
+  <script src="../lib/times.js"></script>
   <script src="snooze-content.js"></script>
 </body>
 

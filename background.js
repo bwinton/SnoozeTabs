@@ -7,14 +7,14 @@
 'use strict';
 
 browser.runtime.onMessage.addListener(message => {
-  console.log('background', message);
+  console.log('background', message); // eslint-disable-line no-console
   browser.notifications.create({
     'type': 'basic',
     'iconUrl': browser.extension.getURL('link.png'),
     'title': 'You clicked a link!',
-    'message': `${message.choice} - ${message.url}`
+    'message': `${message.time} - ${message.url}`
   });
   let item = {};
-  item[Date.now()] = message.url;
+  item[message.time] = message.url;
   browser.storage.local.set(item);
 });
