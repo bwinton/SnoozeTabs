@@ -24,10 +24,12 @@
     "Sevaan Franks <sfranks@mozilla.com>",
     "William Clark <wsclark3@alumni.umass.edu>"
   ],
-  "id": "jid1-snoozetabs",
+  "id": "jid1-snoozetabs@jetpack",
+  "main": "lib/main.js",
   "fullName": "SnoozeTabs",
   "description": "An add-on to let you snooze your tabs for a while.",
   "devDependencies": {
-    "grunt": "~0.4.2"
+    "grunt": "~0.4.2",
+    "jpm": "^1.2.2"
   }
 }
