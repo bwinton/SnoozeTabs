@@ -17,7 +17,8 @@ document.addEventListener('click', e => {
         browser.runtime.sendMessage({
           'time': time.valueOf(),
           'title': tab.title || '',
-          'url': tab.url
+          'url': tab.url,
+          'windowId': tab.windowId
         });
       }
     });

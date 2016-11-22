@@ -7,23 +7,33 @@
 'use strict';
 
 browser.runtime.onMessage.addListener(message => {
-  console.log('background', message); // eslint-disable-line no-console
   let item = {};
   item[`${message.time}`] = message;
   browser.storage.local.set(item);
   browser.alarms.create(`${message.time}`, {when: message.time});
 });
 
+browser.notifications.onClicked.addListener(notificationId => {
+  let [windowId, tabId] = notificationId.split(':');
+  browser.windows.update(+windowId, {focused: true});
+  browser.tabs.update(+tabId, {active: true});
+});
+
 browser.alarms.onAlarm.addListener(alarm => {
-  console.log(alarm); // eslint-disable-line no-console
   browser.storage.local.get(alarm.name).then(messages => {
     let message = messages[alarm.name]
-    browser.notifications.create({
-      'type': 'basic',
-      'iconUrl': browser.extension.getURL('link.png'),
-      'title': message.title,
-      'message': message.url,
-      'contextMessage': 'Ya maroon!'
+    browser.tabs.create({
+      active: false,
+      url: message.url,
+      windowId: message.windowId
+    }).then(tab => {
+      browser.notifications.create(`${message.windowId}:${tab.id}`, {
+        'type': 'basic',
+        'iconUrl': browser.extension.getURL('link.png'),
+        'title': message.title,
+        'message': message.url,
+        'contextMessage': 'Ya maroon!'
+      });
     });
   });
 });
