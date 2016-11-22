@@ -26,10 +26,13 @@
   ],
   "id": "jid1-snoozetabs@jetpack",
   "main": "lib/main.js",
+  "updateURL": "https://people.mozilla.com/~bwinton/snoozetabs/snoozetabs.update.rdf",
+  "updateLink": "https://people.mozilla.com/~bwinton/snoozetabs/snoozetabs.xpi",
   "fullName": "SnoozeTabs",
   "description": "An add-on to let you snooze your tabs for a while.",
   "devDependencies": {
-    "grunt": "~0.4.2",
+    "grunt": "^0.4.5",
+    "grunt-cli": "^1.2.0",
     "jpm": "^1.2.2"
   }
 }

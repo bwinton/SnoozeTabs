@@ -8,15 +8,16 @@ module.exports = function(grunt){
 
   grunt.registerTask('build', 'Build the add-on', function() {
     var done = this.async();
+    grunt.file.expand('*.update.rdf').forEach(function (fn) {
+      grunt.file.delete(fn);
+    });
     grunt.util.spawn({
-      cmd: 'cfx',
-      args: ['xpi',
-        '--update-link',
-        'https://people.mozilla.com/~bwinton/snoozetabs/snoozetabs.xpi',
-        '--update-url',
-        'https://people.mozilla.com/~bwinton/snoozetabs/snoozetabs.update.rdf'
-      ]
+      cmd: 'jpm',
+      args: ['xpi']
     }, function spawned(error, result, code) {
+      grunt.file.expand('jid1-snoozetabs@jetpack-*.update.rdf').forEach(function (fn) {
+        grunt.file.copy(fn, 'snoozetabs.update.rdf');
+      });
       grunt.log.ok(result);
       grunt.log.ok('Add-on built.');
       done();
@@ -54,13 +55,8 @@ module.exports = function(grunt){
   grunt.registerTask('run', 'Run a testing version of the add-on', function() {
     var done = this.async();
     var run = grunt.util.spawn({
-      cmd: 'cfx',
-      args: ['run',
-        '-b',
-        '/Applications/Local/FirefoxNightly.app',
-        '-p',
-        'profile.testing'
-      ]
+      cmd: 'jpm',
+      args: ['run', '-b', 'nightly', '-p', 'profile.testing']
     }, function spawned(error, result, code) {
       if (code != 0) {
         console.log(error);
@@ -77,11 +73,8 @@ module.exports = function(grunt){
   grunt.registerTask('test', 'Run the tests for the add-on', function() {
     var done = this.async();
     var run = grunt.util.spawn({
-      cmd: 'cfx',
-      args: ['test',
-        '-b',
-        '/Applications/Local/FirefoxNightly.app'
-      ]
+      cmd: 'jpm',
+      args: ['test', '-b', 'nightly']
     }, function spawned(error, result, code) {
       done();
     });

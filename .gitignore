@@ -1,5 +1,5 @@
 snoozetabs.xpi
-snoozetabs.update.rdf
+*.update.rdf
 .DS_Store
 profile.testing/
 .sublime-project*
