@@ -32,12 +32,15 @@ An add-on to let you snooze your tabs for a while.
   * Just [NPM][npm] scripts?
   * Nothing?
 * Add a “Developer Mode” with much shorter times, or an extra 3-second timer?
+* We’ll need something to convert [Pontoon][pontoon]-format l10n files into [WebExtension l10n][l10n] files…
 
 
 [flow]: https://flowtype.org/
 [gulp]: http://gulpjs.com/
 [grunt]: http://gruntjs.com/
+[l10n]: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Internationalization
 [npm]: https://docs.npmjs.com/misc/scripts
+[pontoon]: https://pontoon.mozilla.org/projects/
 [sass]: http://sass-lang.com/
 [spec]: https://mozilla.invisionapp.com/share/MV9F846SY#/screens
 [webext]: https://developer.mozilla.org/en-US/Add-ons/WebExtensions
