@@ -31,6 +31,7 @@ An add-on to let you snooze your tabs for a while.
   * [Grunt][grunt]?
   * Just [NPM][npm] scripts?
   * Nothing?
+* Add a “Developer Mode” with much shorter times, or an extra 3-second timer?
 
 
 [flow]: https://flowtype.org/
