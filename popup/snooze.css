@@ -46,6 +46,10 @@ li.footer:active {
   background: #b1b1b1;
 }
 
+.header {
+  color: #999999;
+}
+
 .header > .icon {
   width: 20px;
   height: 20px;
