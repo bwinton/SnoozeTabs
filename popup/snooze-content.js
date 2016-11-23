@@ -8,9 +8,17 @@
 
 'use strict';
 
+function getParentWithClass(element, klass) {
+  while (element && !element.classList.contains(klass)) {
+    element = element.parentElement;
+  }
+  return element;
+}
+
 document.addEventListener('click', e => {
-  if (e.target.classList.contains('option')) {
-    var choice = e.target.id || '';
+  let target = getParentWithClass(e.target, 'option');
+  if (target) {
+    var choice = target.id || '';
     let [time, ] = timeForId(moment(), choice);
     browser.tabs.query({currentWindow: true}).then(tabs => {
       let addBlank = true;
@@ -39,13 +47,17 @@ document.addEventListener('click', e => {
         window.close();
       }, 500);
     });
-  } else if (e.target.classList.contains('footer')) {
+    return;
+  }
+  target = getParentWithClass(e.target, 'footer');
+  if (target) {
     browser.storage.local.get().then(items => {
       console.log(items); // eslint-disable-line no-console
       browser.storage.local.clear().then(() => {
         window.close();
       });
     });
+    return;
   }
 });
 
