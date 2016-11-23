@@ -64,7 +64,11 @@ document.addEventListener('click', e => {
       browser.storage.local.clear().then(() => {
         // window.close();
         window.setTimeout(() => {
-          document.getElementById('manage').classList.remove('active');
+          document.getElementById('calendar').classList.add('active');
+          window.setTimeout(() => {
+            document.getElementById('calendar').classList.remove('active');
+            document.getElementById('manage').classList.remove('active');
+          }, 5000);
         }, 5000);
       });
     });
