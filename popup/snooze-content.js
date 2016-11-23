@@ -12,16 +12,32 @@ document.addEventListener('click', e => {
   if (e.target.classList.contains('option')) {
     var choice = e.target.id || '';
     let [time, ] = timeForId(moment(), choice);
-    browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+    browser.tabs.query({currentWindow: true}).then(tabs => {
+      let addBlank = true;
+      let closers = [];
       for (var tab of tabs) {
+        if (!tab.active) {
+          addBlank = false;
+          continue;
+        }
         browser.runtime.sendMessage({
           'time': time.valueOf(),
           'title': tab.title || 'Tab woke up…',
           'url': tab.url,
           'windowId': tab.windowId
         });
+        closers.push(tab.id);
       }
-      window.close();
+      if (addBlank) {
+        browser.tabs.create({
+          active: true,
+          url: 'about:home'
+        });
+      }
+      window.setTimeout(() => {
+        browser.tabs.remove(closers);
+        window.close();
+      }, 500);
     });
   } else if (e.target.classList.contains('footer')) {
     browser.storage.local.get().then(items => {
