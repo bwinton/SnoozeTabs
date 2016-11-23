@@ -7,17 +7,23 @@ body {
   font-size: 14px;
   width: 250px;
   cursor: default;
+  overflow: hidden;
 }
 
 ul {
   list-style: none;
   padding: 0;
+  margin: 0;
   -moz-user-select: none;
   user-select: none;
+  width: 100%;
 }
 
 li {
   padding: 0 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
 }
 
 li.option:hover {
@@ -31,12 +37,35 @@ li.option:active {
 
 li.footer {
   background: #c4c4c4;
+  font-size: 12px;
+  line-height: 13px;
+  justify-content: center;
 }
 
 li.footer:active {
   background: #b1b1b1;
 }
 
-li > .date {
-  float: right;
+.header > .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;  
+}
+
+.option > .icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 14px;
+}
+
+.option > .title {
+  flex: 1 0 0;
+}
+
+.option > .date {
+  flex: 0 0 65px;
+  text-align: right;
+  font-size: 12px;
+  line-height: 13px;
+  color: #999999;
 }
