@@ -1,3 +1,7 @@
+html {
+  --panel-width: 250px;
+}
+
 html,
 body {
   margin: 0;
@@ -5,7 +9,7 @@ body {
   box-sizing: border-box;
   font-family: "Fira Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Droid Sans","Helvetica Neue",sans-serif;
   font-size: 14px;
-  width: 250px;
+  width: var(--panel-width);
   cursor: default;
   overflow: hidden;
 }
@@ -72,4 +76,20 @@ li.footer:active {
   font-size: 12px;
   line-height: 13px;
   color: #999999;
+}
+
+#calendar,
+#manage {
+  transition: left 500ms ease-in-out;
+  position: absolute;
+  top: 0;
+  left: calc(var(--panel-width) + 3px);
+  width: 100%;
+  height: 100%;
+  background: #e3e3e3;
+}
+
+#calendar.active,
+#manage.active {
+  left: 0;
 }

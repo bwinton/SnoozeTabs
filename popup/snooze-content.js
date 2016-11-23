@@ -19,6 +19,13 @@ document.addEventListener('click', e => {
   let target = getParentWithClass(e.target, 'option');
   if (target) {
     var choice = target.id || '';
+    if (choice === 'pick') {
+      document.getElementById('calendar').classList.add('active');
+      window.setTimeout(() => {
+        document.getElementById('calendar').classList.remove('active');
+      }, 5000);
+      return;
+    }
     let [time, ] = timeForId(moment(), choice);
     browser.tabs.query({currentWindow: true}).then(tabs => {
       let addBlank = true;
@@ -51,10 +58,14 @@ document.addEventListener('click', e => {
   }
   target = getParentWithClass(e.target, 'footer');
   if (target) {
+    document.getElementById('manage').classList.add('active');
     browser.storage.local.get().then(items => {
       console.log(items); // eslint-disable-line no-console
       browser.storage.local.clear().then(() => {
-        window.close();
+        // window.close();
+        window.setTimeout(() => {
+          document.getElementById('manage').classList.remove('active');
+        }, 5000);
       });
     });
     return;
