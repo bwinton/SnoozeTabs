@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "web-ext lint",
     "build": "web-ext build -a .",
-    "test": "web-ext run -f nightly"
+    "test": "web-ext run"
   },
   "repository": {
     "type": "git",
