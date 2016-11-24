@@ -1,20 +1,16 @@
 {
   "name": "snoozetabs",
-  "version": "1.0.0",
   "description": "An add-on to let you snooze your tabs for a while.",
-  "main": "index.js",
+  "version": "1.0.0",
+  "author": "Blake Winton <bwinton@latte.ca>",
+  "bugs": {
+    "url": "https://github.com/bwinton/SnoozeTabs/issues"
+  },
   "devDependencies": {
+    "eslint": "^3.10.2",
     "web-ext": "^1.4.0"
   },
-  "scripts": {
-    "lint": "web-ext lint",
-    "build": "web-ext build -a .",
-    "test": "web-ext run"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bwinton/SnoozeTabs.git"
-  },
+  "homepage": "https://github.com/bwinton/SnoozeTabs#readme",
   "keywords": [
     "snooze",
     "tabs",
@@ -22,10 +18,15 @@
     "firefox",
     "add-on"
   ],
-  "author": "Blake Winton <bwinton@latte.ca>",
   "license": "MPL-2.0",
-  "bugs": {
-    "url": "https://github.com/bwinton/SnoozeTabs/issues"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
-  "homepage": "https://github.com/bwinton/SnoozeTabs#readme"
+  "scripts": {
+    "build": "web-ext build -a .",
+    "lint": "eslint . && web-ext lint",
+    "prebuild": "npm run lint",
+    "test": "web-ext run"
+  }
 }
