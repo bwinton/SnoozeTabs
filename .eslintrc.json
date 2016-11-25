@@ -1,17 +1,19 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "webextensions": true
-    },
-    "extends": "eslint:recommended",
-    "rules": {
-        "no-const-assign": "warn",
-        "no-this-before-super": "warn",
-        "no-undef": "warn",
-        "no-unreachable": "warn",
-        "no-unused-vars": "warn",
-        "constructor-super": "warn",
-        "valid-typeof": "warn"
-    }
+  "env": {
+    "browser": true,
+    "es6": true,
+    "webextensions": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "constructor-super": "warn",
+    "eqeqeq": "error",
+    "no-const-assign": "warn",
+    "no-this-before-super": "warn",
+    "no-undef": "warn",
+    "no-unreachable": "warn",
+    "no-unused-vars": "warn",
+    "quotes": ["error", "single"],
+    "valid-typeof": "warn"
+  }
 }
