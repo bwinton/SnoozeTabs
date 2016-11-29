@@ -7,9 +7,9 @@
   </head>
 
 <body>
-  <div id="main">
+  <div id="main" class="panel">
+    <div class="header"><img src="../icons/Bell Icon.svg" class="icon">Snooze this tab until…</div>
     <ul>
-      <li class="header"><img src="../icons/Bell Icon.svg" class="icon">Snooze this tab until…</li>
       <li class="option" id="debug"><img src="../icons/nightly.svg" class="icon"><div class="title">Real Soon Now!</div><div class='date'>test</div></li>
       <li class="option" id="later"><img src="../icons/Later Today.svg" class="icon"><div class="title">Later Today</div><div class='date'>test</div></li>
       <li class="option" id="tomorrow"><img src="../icons/Tomorrow.svg" class="icon"><div class="title">Tomorrow</div><div class='date'>test</div></li>
@@ -17,14 +17,17 @@
       <li class="option" id="week"><img src="../icons/Next Week.svg" class="icon"><div class="title">Next Week</div><div class='date'>test</div></li>
       <li class="option" id="month"><img src="../icons/Next Month.svg" class="icon"><div class="title">Next Month</div><div class='date'>test</div></li>
       <li class="option" id="pick"><img src="../icons/Pick Date.svg" class="icon"><div class="title">Pick a Date/Time</div></li>
-      <li class="footer">Manage Snoozed Tabs</li>
     </ul>
+    <div class="footer manage">Manage Snoozed Tabs</div>
   </div>
-  <div id="manage">
-    Manage!
+  <div id="manage" class="panel">
+    <div class="header">Manage Snoozed Tabs</div>
+    <ul class="entries"></ul>
+    <div class="footer back">« Back</div>
   </div>
-  <div id="calendar">
-    Calendar!
+  <div id="calendar" class="panel">
+    <div class="header">Pick a Date/Time</div>
+    <div class="footer"><div class="back">« Back</div><div class="snooze">Snooze!</div></div>
   </div>
   <script src="../lib/moment.js"></script>
   <script src="../lib/times.js"></script>

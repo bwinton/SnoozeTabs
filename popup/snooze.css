@@ -14,6 +14,21 @@ body {
   overflow: hidden;
 }
 
+.header {
+  color: #999999;
+}
+
+#manage .header,
+#calendar .header {
+  justify-content: center;  
+}
+
+.header > .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;  
+}
+
 ul {
   list-style: none;
   padding: 0;
@@ -23,6 +38,8 @@ ul {
   width: 100%;
 }
 
+.header,
+.footer,
 li {
   padding: 0 10px;
   height: 40px;
@@ -30,52 +47,70 @@ li {
   align-items: center;
 }
 
+li.entry:hover,
 li.option:hover {
   cursor: pointer;
   background: #e3e3e3;
 }
 
+li.entry:active,
 li.option:active {
   background: #d4d4d4;
 }
 
-li.footer {
+.footer {
   background: #c4c4c4;
   font-size: 12px;
   line-height: 13px;
   justify-content: center;
 }
 
-li.footer:active {
+.footer:active {
   background: #b1b1b1;
 }
 
-.header {
-  color: #999999;
-}
-
-.header > .icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;  
-}
-
+.entry > .icon,
 .option > .icon {
   width: 16px;
   height: 16px;
   margin-right: 14px;
 }
 
+.entry > .content,
 .option > .title {
   flex: 1 0 0;
 }
 
-.option > .date {
-  flex: 0 0 65px;
+.date {
   text-align: right;
   font-size: 12px;
   line-height: 13px;
   color: #999999;
+}
+
+.entry > .date {
+  flex: 0 0 45px;
+}
+
+.option > .date {
+  flex: 0 0 65px;
+}
+
+.entry > .content {
+  overflow: hidden;
+}
+
+.entry .title {
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.entry .url {
+  font-size: 12px;
+  line-height: 13px;
+  color: #999999;  
 }
 
 #calendar,
