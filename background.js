@@ -37,3 +37,22 @@ browser.alarms.onAlarm.addListener(alarm => {
     });
   });
 });
+
+if (browser.contextMenus.ContextType.TAB) {
+  var parent = chrome.contextMenus.create({
+    contexts: [browser.contextMenus.ContextType.TAB],
+    title: 'Snooze Tab until…'
+  });
+  var child1 = chrome.contextMenus.create({
+    "parentId": parent,
+    "title": "Child 1",
+  });
+  var child2 = chrome.contextMenus.create({
+    "parentId": parent,
+    "title": "Child 2",
+  });
+
+  browser.contextMenus.onClicked.addListener(function(info, tab) {
+    console.log(info.menuItemId, info);
+  });
+}
