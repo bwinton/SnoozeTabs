@@ -6,12 +6,14 @@
 
 'use strict';
 
-browser.runtime.onMessage.addListener(message => {
+function handleMessage(message) {
   let item = {};
   item[`${message.time}`] = message;
   browser.storage.local.set(item);
   browser.alarms.create(`${message.time}`, {when: message.time});
-});
+};
+
+browser.runtime.onMessage.addListener(handleMessage);
 
 browser.notifications.onClicked.addListener(notificationId => {
   let [windowId, tabId] = notificationId.split(':');
@@ -39,22 +41,48 @@ browser.alarms.onAlarm.addListener(alarm => {
 });
 
 if (browser.contextMenus.ContextType.TAB) {
-  var parent = chrome.contextMenus.create({
+  let parent = chrome.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
     title: 'Snooze Tab until…'
   });
-  var child1 = chrome.contextMenus.create({
-    'parentId': parent,
-    contexts: [browser.contextMenus.ContextType.TAB],
-    'title': 'Child 1',
-  });
-  var child2 = chrome.contextMenus.create({
-    'parentId': parent,
-    'contexts': [browser.contextMenus.ContextType.TAB],
-    'title': 'Child 2',
-  });
+  for (let item in times) {
+    let time = times[item];
+    chrome.contextMenus.create({
+      parentId: parent,
+      id: time.id,
+      contexts: [browser.contextMenus.ContextType.TAB],
+      title: time.title,
+    });
+  }
 
   browser.contextMenus.onClicked.addListener(function(info, tab) {
-    console.log(info.menuItemId, info, tab);
+    let [time, ] = timeForId(moment(), info.menuItemId);
+    browser.tabs.query({currentWindow: true}).then(tabs => {
+      let addBlank = true;
+      let closers = [];
+      for (var tab of tabs) {
+        if (!tab.active) {
+          addBlank = false;
+          continue;
+        }
+        handleMessage({
+          'time': time.valueOf(),
+          'title': tab.title || 'Tab woke up…',
+          'url': tab.url,
+          'windowId': tab.windowId
+        });
+        closers.push(tab.id);
+      }
+      if (addBlank) {
+        browser.tabs.create({
+          active: true,
+          url: 'about:home'
+        });
+      }
+      window.setTimeout(() => {
+        browser.tabs.remove(closers);
+        window.close();
+      }, 500);
+    });
   });
 }

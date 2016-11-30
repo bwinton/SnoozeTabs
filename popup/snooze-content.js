@@ -68,7 +68,6 @@ function handleManage(e, target) {
   let panel = document.getElementById('manage'); 
   panel.classList.add('active');
   browser.storage.local.get().then(items => {
-    console.log(items); // eslint-disable-line no-console
     let entries = panel.querySelector('.entries');
     while (entries.childNodes.length) {
       entries.childNodes[0].remove();
@@ -103,9 +102,22 @@ document.addEventListener('click', e => {
   }
 });
 
-let dates = document.querySelectorAll('li.option > .date');
-for (let date of dates) {
-  let choice = date.parentNode.id; 
-  let [, text] = timeForId(moment(), choice);
-  date.textContent = text;
+function makeTime(item) {
+  let entry = document.createElement('li');
+  entry.classList.add('option');
+  entry.id = item.id;
+
+  let [, date] = timeForId(moment(), item.id);
+  entry.innerHTML = `<img src="../icons/${item.icon || 'nightly.svg'}" class="icon">
+    <div class="title">${item.title || '&nbsp;'}</div>
+    <div class="date">${date}<div>`;
+  return entry;
+}
+
+let timeList = document.querySelector('.times');
+while (timeList.childNodes.length) {
+  timeList.childNodes[0].remove();
+}
+for (let time in times) {
+  timeList.appendChild(makeTime(times[time]));
 }
