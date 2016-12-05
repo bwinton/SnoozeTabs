@@ -3,11 +3,26 @@
   "description": "An add-on to let you snooze your tabs for a while.",
   "version": "1.0.0",
   "author": "Blake Winton <bwinton@latte.ca>",
+  "contributors": [
+    "Les Orchard <me@lmorchard.com> (http://lmorchard.com/)"
+  ],
   "bugs": {
     "url": "https://github.com/bwinton/SnoozeTabs/issues"
   },
   "devDependencies": {
+    "babel-plugin-external-helpers": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
     "eslint": "^3.10.2",
+    "npm-run-all": "^3.1.2",
+    "onchange": "^3.2.0",
+    "rollup": "^0.36.4",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-globals": "^1.1.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-replace": "^1.1.1",
     "web-ext": "^1.4.0"
   },
   "homepage": "https://github.com/bwinton/SnoozeTabs#readme",
@@ -24,9 +39,20 @@
     "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
   "scripts": {
-    "build": "web-ext build -a .",
+    "start": "npm run build && npm-run-all --parallel watch run",
+    "build": "npm run clean && npm run copy:assets && npm run bundle:js && npm run package",
+    "watch": "onchange src -- npm run build",
+    "run": "web-ext run -s dist --firefox=firefoxdeveloperedition",
+    "clean": "rm -rf dist && mkdir dist",
+    "copy:assets": "cp -rnv src/{manifest.json,lib,icons,popup} dist/",
+    "bundle:js": "rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content",
+    "package": "web-ext build -s dist -a .",
     "lint": "eslint . && web-ext lint",
-    "prebuild": "npm run lint",
-    "test": "web-ext run"
+    "test": "npm run build && web-ext run -s dist"
+  },
+  "dependencies": {
+    "moment": "^2.17.1",
+    "react": "^15.4.1",
+    "react-dom": "^15.4.1"
   }
 }

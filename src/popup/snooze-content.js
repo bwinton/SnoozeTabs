@@ -8,6 +8,11 @@
 
 'use strict';
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import moment from 'moment';
+import { times, timeForId } from '../lib/times';
+
 function getParentWithClasses(element, classes) {
   while (element && !classes.every(klass => element.classList.contains(klass))) {
     element = element.parentElement;

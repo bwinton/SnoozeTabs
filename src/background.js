@@ -6,6 +6,9 @@
 
 'use strict';
 
+import moment from 'moment';
+import { times, timeForId } from './lib/times';
+
 function handleMessage(message) {
   let item = {};
   item[`${message.time}`] = message;
