@@ -15,6 +15,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "eslint": "^3.10.2",
+    "node-sass": "^3.13.0",
     "npm-run-all": "^3.1.2",
     "onchange": "^3.2.0",
     "rollup": "^0.36.4",
@@ -40,18 +41,22 @@
   },
   "scripts": {
     "start": "npm run build && npm-run-all --parallel watch run",
-    "build": "npm run clean && npm run copy:assets && npm run bundle:js && npm run package",
+    "build": "npm run clean && npm-run-all --parallel copy:assets bundle:js bundle:css && npm run package",
     "watch": "onchange src -- npm run build",
     "run": "web-ext run -s dist --firefox=firefoxdeveloperedition",
     "clean": "rm -rf dist && mkdir dist",
-    "copy:assets": "cp -rnv src/{manifest.json,lib,icons,popup} dist/",
+    "copy:assets": "cp -rnv src/{manifest.json,icons} dist/ && mkdir -p dist/popup && cp -rnv src/popup/*.html dist/popup/",
     "bundle:js": "rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content",
+    "bundle:css": "mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
     "package": "web-ext build -s dist -a .",
     "lint": "eslint . && web-ext lint",
     "test": "npm run build && web-ext run -s dist"
   },
   "dependencies": {
+    "classnames": "^2.2.5",
     "moment": "^2.17.1",
+    "rc-calendar": "^7.5.1",
+    "rc-time-picker": "^2.2.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1"
   }

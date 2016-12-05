@@ -1,3 +1,6 @@
+@import 'node_modules/rc-calendar/assets/index';
+@import 'node_modules/rc-time-picker/assets/index';
+
 html {
   --panel-width: 250px;
 }
@@ -20,13 +23,13 @@ body {
 
 #manage .header,
 #calendar .header {
-  justify-content: center;  
+  justify-content: center;
 }
 
 .header > .icon {
   width: 20px;
   height: 20px;
-  margin-right: 10px;  
+  margin-right: 10px;
 }
 
 ul {
@@ -58,15 +61,44 @@ li.option:active {
   background: #d4d4d4;
 }
 
+
 .footer {
+  padding: 0;
   background: #c4c4c4;
   font-size: 12px;
   line-height: 13px;
   justify-content: center;
+  border-top: 1px solid #d4d4d4;
+  flex-direction: row;
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.footer > div {
+  flex-grow: 1;
+}
+
+.footer > div > span {
+  display: block;
+  margin: 14px 0 0 0;
+  text-align: center;
+}
+
+.footer > div.back, .footer > div.confirm {
+  cursor: pointer;
 }
 
 .footer:active {
   background: #b1b1b1;
+}
+
+.footer .back {
+  background: #f2f2f2;
+}
+
+.footer .confirm {
+  background: #1e98f5;
+  color: #ffffff;
 }
 
 .entry > .icon,
@@ -110,7 +142,7 @@ li.option:active {
 .entry .url {
   font-size: 12px;
   line-height: 13px;
-  color: #999999;  
+  color: #999999;
 }
 
 #calendar,
@@ -127,4 +159,35 @@ li.option:active {
 #calendar.active,
 #manage.active {
   left: 0;
+}
+
+.rc-calendar {
+  border: none;
+  box-shadow: none;
+}
+
+.rc-calendar-footer {
+  padding: 10px 0;
+}
+
+.rc-calendar-date {
+  width: 24px;
+  height: 24px;
+}
+
+.rc-calendar-body {
+  padding: 2px 2px 5px 2px;
+  height: inherit;
+}
+
+.rc-calendar-time-picker-panel .rc-time-picker-panel-select ul {
+  max-height: 190px;
+}
+
+.rc-calendar-footer-btn {
+  display: flex;
+  flex-direction: row;
+}
+.rc-calendar-footer-btn > a {
+  flex-grow: 1;
 }

@@ -4,29 +4,48 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-/* globals timeForId:false, moment:false */
-
 'use strict';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import moment from 'moment';
-import { times, timeForId } from '../lib/times';
 
-function getParentWithClasses(element, classes) {
-  while (element && !classes.every(klass => element.classList.contains(klass))) {
-    element = element.parentElement;
-  }
-  return element;
+import moment from 'moment';
+
+import SnoozePopup from '../lib/components/SnoozePopup';
+
+import { timeForId } from '../lib/times';
+
+let state = {
+  activePanel: 'main',
+  entries: [
+    { title: 'foo', url: 'http://qz.com', date: Date.now() }
+  ]
+};
+
+function setState(data) {
+  state = {...state, ...data};
+  render();
 }
 
-function handleOption(e, target) {
-  var choice = target.id || '';
-  if (choice === 'pick') {
-    document.getElementById('calendar').classList.add('active');
-    return;
-  }
-  let [time, ] = timeForId(moment(), choice);
+function render() {
+  ReactDOM.render(
+    <SnoozePopup {...state}
+                 switchPanel={switchPanel}
+                 scheduleSnoozedTab={scheduleSnoozedTab} />,
+    document.getElementById('app'));
+}
+
+function switchPanel(name) {
+  setState({ activePanel: name });
+}
+
+function fetchEntries() {
+  browser.storage.local.get().then(items => {
+    setState({ entries: Object.values(items || {}) });
+  });
+}
+
+function scheduleSnoozedTab(time) {
   browser.tabs.query({currentWindow: true}).then(tabs => {
     let addBlank = true;
     let closers = [];
@@ -57,72 +76,13 @@ function handleOption(e, target) {
   return;
 }
 
-function makeEntry(item) {
-  let entry = document.createElement('li');
-  entry.classList.add('entry');
-  entry.innerHTML = `<img src="${item.icon || '../icons/nightly.svg'}" class="icon"></div>
-    <div class="content">
-      <div class="title">${item.title || '&nbsp;'}</div>
-      <div class="url">${item.url || '&nbsp;'}</div>
-    </div>
-    <div class="date">${item.date || 'Later'}<div>`;
-  return entry;
-}
-
-function handleManage(e, target) {
-  let panel = document.getElementById('manage'); 
-  panel.classList.add('active');
-  browser.storage.local.get().then(items => {
-    let entries = panel.querySelector('.entries');
-    while (entries.childNodes.length) {
-      entries.childNodes[0].remove();
-    }
-    for (let item in items) {
-      entries.appendChild(makeEntry(items[item]));
-    }
-    // browser.storage.local.clear().then(() => {
-      // window.close();
-    // });
+function init() {
+  browser.storage.onChanged.addListener((changes, area) => {
+    // TODO: granularly apply the changes, rather than triggering a refresh?
+    if (area === 'local') { fetchEntries(); }
   });
-  return;
+  fetchEntries();
+  render();
 }
 
-function handleBack(e, target) {
-  let panel = getParentWithClasses(target, ['panel']);
-  panel.classList.remove('active');
-}
-
-document.addEventListener('click', e => {
-  let target = getParentWithClasses(e.target, ['option']);
-  if (target) {
-    return handleOption(e, target);
-  }
-  target = getParentWithClasses(e.target, ['footer', 'manage']);
-  if (target) {
-    return handleManage(e, target);
-  }
-  target = getParentWithClasses(e.target, ['footer', 'back']);
-  if (target) {
-    return handleBack(e, target);
-  }
-});
-
-function makeTime(item) {
-  let entry = document.createElement('li');
-  entry.classList.add('option');
-  entry.id = item.id;
-
-  let [, date] = timeForId(moment(), item.id);
-  entry.innerHTML = `<img src="../icons/${item.icon || 'nightly.svg'}" class="icon">
-    <div class="title">${item.title || '&nbsp;'}</div>
-    <div class="date">${date}<div>`;
-  return entry;
-}
-
-let timeList = document.querySelector('.times');
-while (timeList.childNodes.length) {
-  timeList.childNodes[0].remove();
-}
-for (let time in times) {
-  timeList.appendChild(makeTime(times[time]));
-}
+init();
