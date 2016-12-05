@@ -2,3 +2,4 @@
 profile.testing/
 node_modules
 *.zip
+*.sw?
