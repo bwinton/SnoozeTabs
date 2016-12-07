@@ -28,7 +28,9 @@ export default class MainPanel extends React.Component {
           <ul className="times">
             { times.map(item => this.renderTime(item)) }
           </ul>
-          <div className="footer manage" onClick={ ev => switchPanel('manage') }>Manage Snoozed Tabs</div>
+          <div className="footer">
+            <div className="manage" onClick={ ev => switchPanel('manage') }><span>Manage Snoozed Tabs</span></div>
+          </div>
         </div>
         <div id="calendar" className={classnames('panel', { active: datepickerActive })}>
           <div className="header">Pick a Date/Time</div>

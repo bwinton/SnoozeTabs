@@ -10,6 +10,8 @@
     "url": "https://github.com/bwinton/SnoozeTabs/issues"
   },
   "devDependencies": {
+    "@kadira/storybook": "^2.21.0",
+    "@kadira/storybook-addon-knobs": "^1.7.1",
     "babel-plugin-external-helpers": "^6.18.0",
     "babel-preset-es2015": "^6.18.0",
     "babel-preset-react": "^6.16.0",
@@ -24,6 +26,7 @@
     "rollup-plugin-node-globals": "^1.1.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-replace": "^1.1.1",
+    "storybook-host": "^1.0.8",
     "web-ext": "^1.4.0"
   },
   "homepage": "https://github.com/bwinton/SnoozeTabs#readme",
@@ -40,7 +43,7 @@
     "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
   "scripts": {
-    "start": "npm run build && npm-run-all --parallel watch run",
+    "start": "npm run build && npm-run-all --parallel watch run storybook",
     "build": "npm run clean && npm-run-all --parallel copy:assets bundle:js bundle:css && npm run package",
     "watch": "onchange src -- npm run build",
     "run": "web-ext run -s dist --firefox=firefoxdeveloperedition",
@@ -50,7 +53,9 @@
     "bundle:css": "mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
     "package": "web-ext build -s dist -a .",
     "lint": "eslint . && web-ext lint",
-    "test": "npm run build && web-ext run -s dist"
+    "test": "npm run build && web-ext run -s dist",
+    "storybook": "start-storybook -s ./dist -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "classnames": "^2.2.5",

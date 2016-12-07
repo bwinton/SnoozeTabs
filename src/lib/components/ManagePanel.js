@@ -1,5 +1,7 @@
 import React from 'react';
 
+import moment from 'moment';
+
 import classnames from 'classnames';
 
 export default class ManagePanel extends React.Component {
@@ -11,7 +13,9 @@ export default class ManagePanel extends React.Component {
         <ul className="entries">
           { entries.map((item, idx) => this.renderEntry(idx, item)) }
         </ul>
-        <div className="footer back" onClick={ ev => switchPanel('main') }>« Back</div>
+        <div className="footer">
+          <div className="back" onClick={ ev => switchPanel('main') }><span>« Back</span></div>
+        </div>
       </div>
     );
   }
@@ -24,7 +28,7 @@ export default class ManagePanel extends React.Component {
           <div className="title">{item.title || '&nbsp;'}</div>
           <div className="url">{item.url || '&nbsp;'}</div>
         </div>
-        <div className="date">{item.date || 'Later'}</div>
+        <div className="date">{moment(item.date).format('ddd, MMM D \ [@]ha') || 'Later'}</div>
       </li>
     );
   }
