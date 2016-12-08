@@ -38,7 +38,7 @@ export default class ManagePanel extends React.Component {
         <div id="manageCalendar" className={classnames('panel', { active: datepickerActive })}>
           <div className="header">Edit Date/Time</div>
           <Calendar showOk={false} showDateInput={false}
-                    defaultvalue={this.state.dateChoice}
+                    value={this.state.dateChoice}
                     timePicker={timePickerElement}
                     onSelect={ value => this.handleTimeSelect(value) } />
           <div className="footer">
@@ -76,11 +76,10 @@ export default class ManagePanel extends React.Component {
   }
 
   handleEntryEdit(ev, item) {
-    console.log('handleEntryEdit', item);
     this.setState({
       datepickerActive: true,
       editedItem: item,
-      dateChoice: item.date
+      dateChoice: moment(item.time)
     });
   }
 
