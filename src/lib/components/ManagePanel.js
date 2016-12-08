@@ -20,12 +20,16 @@ export default class ManagePanel extends React.Component {
     const { id, entries, active, switchPanel } = this.props;
     const { datepickerActive } = this.state;
     const timePickerElement = <TimePickerPanel />;
+
+    const sortedEntries = [...entries];
+    sortedEntries.sort((a, b) => a.time - b.time);
+
     return (
       <div>
         <div id={id} className={classnames('panel', { active })}>
           <div className="header">Manage Snoozed Tabs</div>
           <ul className="entries">
-            { entries.map((item, idx) => this.renderEntry(idx, item)) }
+            { sortedEntries.map((item, idx) => this.renderEntry(idx, item)) }
           </ul>
           <div className="footer">
             <div className="back" onClick={ ev => switchPanel('main') }><span>« Back</span></div>
@@ -57,8 +61,8 @@ export default class ManagePanel extends React.Component {
           <img src={item.icon || '../icons/nightly.svg'} />
         </div>
         <div className="content" onClick={ev => openSnoozedTab(item)}>
-          <div className="title">{item.title || '&nbsp;'}</div>
-          <div className="url">{item.url || '&nbsp;'}</div>
+          <div className="title" title={item.title}>{item.title || '&nbsp;'}</div>
+          <div className="url" title={item.url}>{item.url || '&nbsp;'}</div>
         </div>
         <div className="date" onClick={ev => this.handleEntryEdit(ev, item)}>
           <span>{date.format('ddd, MMM D') || 'Later'}</span>
@@ -92,12 +96,12 @@ export default class ManagePanel extends React.Component {
     const { dateChoice, editedItem } = this.state;
     const { updateSnoozedTab } = this.props;
 
-    console.log('confirmTimeSelect', dateChoice, editedItem);
-
     if (!dateChoice) { return; }
 
-    editedItem.date = dateChoice;
-    updateSnoozedTab(editedItem);
+    updateSnoozedTab(
+      editedItem,
+      { ...editedItem, time: dateChoice.valueOf() }
+    );
     this.setState({
       datepickerActive: false,
       editedItem: null,

@@ -27,16 +27,6 @@ function setState(data) {
   render();
 }
 
-function switchPanel(name) {
-  setState({ activePanel: name });
-}
-
-function fetchEntries() {
-  browser.storage.local.get().then(items => {
-    setState({ entries: Object.values(items || {}) });
-  });
-}
-
 function scheduleSnoozedTab(time) {
   browser.tabs.query({currentWindow: true}).then(tabs => {
     let addBlank = true;
@@ -47,10 +37,13 @@ function scheduleSnoozedTab(time) {
         continue;
       }
       browser.runtime.sendMessage({
-        'time': time.valueOf(),
-        'title': tab.title || 'Tab woke up…',
-        'url': tab.url,
-        'windowId': tab.windowId
+        op: 'schedule',
+        message: {
+          'time': time.valueOf(),
+          'title': tab.title || 'Tab woke up…',
+          'url': tab.url,
+          'windowId': tab.windowId
+        }
       });
       closers.push(tab.id);
     }
@@ -69,12 +62,24 @@ function scheduleSnoozedTab(time) {
 }
 
 function openSnoozedTab(item) {
+  browser.tabs.create({
+    active: true,
+    url: item.url
+  });
 }
 
 function cancelSnoozedTab(item) {
+  browser.runtime.sendMessage({
+    op: 'cancel',
+    message: item
+  });
 }
 
-function updateSnoozedTab(item) {
+function updateSnoozedTab(item, updatedItem) {
+  browser.runtime.sendMessage({
+    op: 'update',
+    message: { old: item, updated: updatedItem }
+  });
 }
 
 function render() {
@@ -86,6 +91,16 @@ function render() {
                  cancelSnoozedTab={cancelSnoozedTab}
                  updateSnoozedTab={updateSnoozedTab} />,
     document.getElementById('app'));
+}
+
+function switchPanel(name) {
+  setState({ activePanel: name });
+}
+
+function fetchEntries() {
+  browser.storage.local.get().then(items => {
+    setState({ entries: Object.values(items || {}) });
+  });
 }
 
 function init() {

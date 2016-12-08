@@ -106,6 +106,7 @@ li.entry {
   }
 
   .content {
+    flex: 1 0 0;
     flex-grow: 3;
     overflow: hidden;
     display: flex;
