@@ -23,6 +23,7 @@ body {
 
 .header {
   color: #999999;
+  border-bottom: 1px solid #e9e9e9;
 }
 
 #manage .header,
@@ -54,13 +55,106 @@ li {
   align-items: center;
 }
 
-li.entry:hover,
+ul.entries {
+  height: 284px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+li.entry {
+  transition: margin-left 150ms ease-in-out;
+  margin-left: 0px;
+  padding: 0;
+  width: calc(100% + 50px);
+  min-height: 50px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: stretch;
+
+  &:hover{
+    margin-left: -50px;
+    background-color: #f2f2f2;
+  }
+
+  .icon {
+    flex-grow: 0;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img { width: 40px; height: 40px }
+  }
+
+  .date {
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 4px 4px 4px 0;
+    line-height: 1.5em;
+    font-size: 10px;
+
+    &:hover { color: #38ABDB; }
+
+    span {
+      display: block;
+      text-align: right;
+    }
+  }
+
+  .content {
+    flex-grow: 3;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.5em;
+    white-space: nowrap;
+    padding: 0 4px;
+
+    .title {
+      color: #333;
+      &:hover { color: #000; }
+
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      font-size: 12px;
+      line-height: 14px;
+    }
+
+    .url {
+      font-size: 11px;
+      line-height: 13px;
+      color: #999999;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .delete {
+    flex-grow: 0;
+    width: 50px;
+    height: 50px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 16px;
+    background: #D82016;
+    text-align: center;
+    img { width: 16px; height: 16px; }
+  }
+}
+
 li.option:hover {
   cursor: pointer;
   background: #e3e3e3;
 }
 
-li.entry:active,
 li.option:active {
   background: #d4d4d4;
 }
@@ -83,17 +177,16 @@ li.option:active {
 
 .footer > div {
   flex-grow: 1;
-}
-
-.footer > div > span {
-  display: block;
-  margin: 14px 0 0 0;
-  text-align: center;
-}
-
-
-.footer > .manage, .footer > .back, .footer > .confirm {
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  & > span {
+    display: block;
+    margin: 0;
+    text-align: center;
+  }
 }
 
 .footer:active {
@@ -109,14 +202,12 @@ li.option:active {
   color: #ffffff;
 }
 
-.entry > .icon,
 .option > .icon {
   width: 16px;
   height: 16px;
   margin-right: 14px;
 }
 
-.entry > .content,
 .option > .title {
   flex: 1 0 0;
 }
@@ -128,34 +219,14 @@ li.option:active {
   color: #999999;
 }
 
-.entry > .date {
-  flex: 0 0 45px;
-}
-
 .option > .date {
   flex: 0 0 65px;
 }
 
-.entry > .content {
-  overflow: hidden;
-}
-
-.entry .title {
-  white-space: nowrap;
-  overflow: hidden;
-  font-size: 14px;
-  line-height: 18px;
-}
-
-.entry .url {
-  font-size: 12px;
-  line-height: 13px;
-  color: #999999;
-}
-
 #calendar,
+#manageCalendar,
 #manage {
-  transition: left 500ms ease-in-out;
+  transition: left 250ms ease-in-out;
   position: absolute;
   top: 0;
   left: calc(var(--panel-width) + 3px);
@@ -165,6 +236,7 @@ li.option:active {
 }
 
 #calendar.active,
+#manageCalendar.active,
 #manage.active {
   left: 0;
 }

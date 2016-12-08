@@ -27,14 +27,6 @@ function setState(data) {
   render();
 }
 
-function render() {
-  ReactDOM.render(
-    <SnoozePopup {...state}
-                 switchPanel={switchPanel}
-                 scheduleSnoozedTab={scheduleSnoozedTab} />,
-    document.getElementById('app'));
-}
-
 function switchPanel(name) {
   setState({ activePanel: name });
 }
@@ -74,6 +66,26 @@ function scheduleSnoozedTab(time) {
     }, 500);
   });
   return;
+}
+
+function openSnoozedTab(item) {
+}
+
+function cancelSnoozedTab(item) {
+}
+
+function updateSnoozedTab(item) {
+}
+
+function render() {
+  ReactDOM.render(
+    <SnoozePopup {...state}
+                 switchPanel={switchPanel}
+                 scheduleSnoozedTab={scheduleSnoozedTab}
+                 openSnoozedTab={openSnoozedTab}
+                 cancelSnoozedTab={cancelSnoozedTab}
+                 updateSnoozedTab={updateSnoozedTab} />,
+    document.getElementById('app'));
 }
 
 function init() {
