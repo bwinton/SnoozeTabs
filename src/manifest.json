@@ -7,7 +7,7 @@
 
   "permissions": ["alarms", "contextMenus", "notifications", "storage", "tabs"],
   "background": {
-    "scripts": ["lib/moment.js", "lib/times.js", "background.js"]
+    "scripts": ["background.js"]
   },
 
   "browser_action": {

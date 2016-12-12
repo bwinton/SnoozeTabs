@@ -1,7 +1,7 @@
-/* globals moment:false */
 /* exported timeForId */
+import moment from 'moment';
 
-const times = [
+export const times = [
   {id: "debug", icon: "nightly.svg", title: "Real Soon Now!"},
   {id: "later", icon: "Later Today.svg", title: "Later Today"},
   {id: "tomorrow", icon: "Tomorrow.svg", title: "Tomorrow"},
@@ -11,7 +11,7 @@ const times = [
   {id: "pick", icon: "Pick Date.svg", title: "Pick a Date/Time"}
 ];
 
-function timeForId(time, id) {
+export function timeForId(time, id) {
   var rv = moment(time);
   var text = rv.fromNow();
   switch (id) {

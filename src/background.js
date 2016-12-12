@@ -6,14 +6,38 @@
 
 'use strict';
 
-function handleMessage(message) {
+import moment from 'moment';
+import { times, timeForId } from './lib/times';
+
+browser.runtime.onMessage.addListener(({op, message}) => {
+  console.log('backgroundMessage', op, message);
+  switch(op) {
+    case 'schedule':
+      return handleSchedule(message);
+    case 'cancel':
+      return handleCancel(message);
+    case 'update':
+      return handleUpdate(message);
+  }
+});
+
+function handleSchedule(message) {
   let item = {};
   item[`${message.time}`] = message;
   browser.storage.local.set(item);
   browser.alarms.create(`${message.time}`, {when: message.time});
-};
+}
 
-browser.runtime.onMessage.addListener(handleMessage);
+function handleCancel(message) {
+  const id = `${message.time}`;
+  browser.storage.local.remove(id);
+  browser.alarms.clear(id);
+}
+
+function handleUpdate(message) {
+  handleCancel(message.old);
+  handleSchedule(message.updated);
+}
 
 browser.notifications.onClicked.addListener(notificationId => {
   let [windowId, tabId] = notificationId.split(':');
