@@ -8,6 +8,10 @@ An add-on to let you snooze your tabs for a while.
   * Starts a file watcher to rebuild on changes
   * Launches Firefox Dev Edition with the extension, reloaded on changes
 
+* If youʼre on Windows, youʼll need to use `npm run start-win`
+  * Builds the extension
+  * Starts a file watcher to rebuild on changes
+
 * To run once: `npm run build && npm run run`
 
 * To build for release: `npm run build`
