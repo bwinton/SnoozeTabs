@@ -52,9 +52,22 @@ export default class ManagePanel extends React.Component {
     );
   }
 
+  getDisplayUrl(url) {
+    if (!url) {
+      return '&nbsp;';
+    }
+    var parser = document.createElement('a');
+    parser.href = url;
+    if (parser.protocol.startsWith('http')) {
+      return parser.host;
+    }
+    return url;
+  }
+
   renderEntry(idx, item) {
     const { openSnoozedTab, cancelSnoozedTab, updateSnoozedTab } = this.props;
     const date = moment(item.time);
+    const url = this.getDisplayUrl(item.url);
     return (
       <li className="entry" key={idx}>
         <div className="icon">
@@ -62,7 +75,7 @@ export default class ManagePanel extends React.Component {
         </div>
         <div className="content" onClick={ev => openSnoozedTab(item)}>
           <div className="title" title={item.title}>{item.title || '&nbsp;'}</div>
-          <div className="url" title={item.url}>{item.url || '&nbsp;'}</div>
+          <div className="url" title={item.url}>{url}</div>
         </div>
         <div className="date" onClick={ev => this.handleEntryEdit(ev, item)}>
           <span>{date.format('ddd, MMM D') || 'Later'}</span>
