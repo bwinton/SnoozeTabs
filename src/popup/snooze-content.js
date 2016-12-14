@@ -7,9 +7,9 @@
 'use strict';
 
 import ReactDOM from 'react-dom';
-
-
 import SnoozePopup from '../lib/components/SnoozePopup';
+
+const DEBUG = (process.env.NODE_ENV === 'development');
 
 let state = {
   activePanel: 'main',
@@ -21,6 +21,10 @@ let state = {
 function setState(data) {
   state = {...state, ...data};
   render();
+}
+
+function log(...args) {
+  if (DEBUG) { console.log('SnoozeTabs (FE):', ...args); }  // eslint-disable-line no-console
 }
 
 function scheduleSnoozedTab(time) {
@@ -94,7 +98,9 @@ function switchPanel(name) {
 }
 
 function fetchEntries() {
+  log('fetching items');
   browser.storage.local.get().then(items => {
+    log('fetched items', items);
     setState({ entries: Object.values(items || {}) });
   });
 }
