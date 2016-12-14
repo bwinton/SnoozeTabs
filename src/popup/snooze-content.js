@@ -6,14 +6,10 @@
 
 'use strict';
 
-import React from 'react';
 import ReactDOM from 'react-dom';
 
-import moment from 'moment';
 
 import SnoozePopup from '../lib/components/SnoozePopup';
-
-import { timeForId } from '../lib/times';
 
 let state = {
   activePanel: 'main',

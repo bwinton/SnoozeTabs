@@ -29,7 +29,7 @@ export default class MainPanel extends React.Component {
             { times.map(item => this.renderTime(item)) }
           </ul>
           <div className="footer">
-            <div className="manage" onClick={ ev => switchPanel('manage') }><span>Manage Snoozed Tabs</span></div>
+            <div className="manage" onClick={ () => switchPanel('manage') }><span>Manage Snoozed Tabs</span></div>
           </div>
         </div>
         <div id="calendar" className={classnames('panel', { active: datepickerActive })}>
@@ -37,8 +37,8 @@ export default class MainPanel extends React.Component {
           <Calendar showOk={false} showDateInput={false}
                     timePicker={timePickerElement} onSelect={ value => this.handleTimeSelect(value) } />
           <div className="footer">
-            <div className="back" onClick={ ev => this.closeTimeSelect() }><span>« Back</span></div>
-              <div className="confirm snooze" onClick={ ev => this.confirmTimeSelect() }><span>Snooze!</span></div>
+            <div className="back" onClick={ () => this.closeTimeSelect() }><span>« Back</span></div>
+              <div className="confirm snooze" onClick={ () => this.confirmTimeSelect() }><span>Snooze!</span></div>
           </div>
         </div>
       </div>

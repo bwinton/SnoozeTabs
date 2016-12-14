@@ -2,13 +2,13 @@
 import moment from 'moment';
 
 export const times = [
-  {id: "debug", icon: "nightly.svg", title: "Real Soon Now!"},
-  {id: "later", icon: "Later Today.svg", title: "Later Today"},
-  {id: "tomorrow", icon: "Tomorrow.svg", title: "Tomorrow"},
-  {id: "weekend", icon: "Weekends.svg", title: "This Weekend"},
-  {id: "week", icon: "Next Week.svg", title: "Next Week"},
-  {id: "month", icon: "Next Month.svg", title: "Next Month"},  
-  {id: "pick", icon: "Pick Date.svg", title: "Pick a Date/Time"}
+  {id: 'debug', icon: 'nightly.svg', title: 'Real Soon Now!'},
+  {id: 'later', icon: 'Later Today.svg', title: 'Later Today'},
+  {id: 'tomorrow', icon: 'Tomorrow.svg', title: 'Tomorrow'},
+  {id: 'weekend', icon: 'Weekends.svg', title: 'This Weekend'},
+  {id: 'week', icon: 'Next Week.svg', title: 'Next Week'},
+  {id: 'month', icon: 'Next Month.svg', title: 'Next Month'},
+  {id: 'pick', icon: 'Pick Date.svg', title: 'Pick a Date/Time'}
 ];
 
 export function timeForId(time, id) {
@@ -42,6 +42,7 @@ export function timeForId(time, id) {
     case 'pick':
       rv = null;
       text = '';
+      break;
     default:
       break;
   }

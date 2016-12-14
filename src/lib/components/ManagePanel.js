@@ -32,7 +32,7 @@ export default class ManagePanel extends React.Component {
             { sortedEntries.map((item, idx) => this.renderEntry(idx, item)) }
           </ul>
           <div className="footer">
-            <div className="back" onClick={ ev => switchPanel('main') }><span>« Back</span></div>
+            <div className="back" onClick={ () => switchPanel('main') }><span>« Back</span></div>
           </div>
         </div>
         <div id="manageCalendar" className={classnames('panel', { active: datepickerActive })}>
@@ -43,9 +43,9 @@ export default class ManagePanel extends React.Component {
                     onSelect={ value => this.handleTimeSelect(value) } />
           <div className="footer">
             <div className="back"
-                 onClick={ ev => this.closeTimeSelect() }><span>« Back</span></div>
+                 onClick={ () => this.closeTimeSelect() }><span>« Back</span></div>
             <div className="confirm snooze"
-                 onClick={ ev => this.confirmTimeSelect() }><span>Snooze!</span></div>
+                 onClick={ () => this.confirmTimeSelect() }><span>Snooze!</span></div>
           </div>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default class ManagePanel extends React.Component {
   }
 
   renderEntry(idx, item) {
-    const { openSnoozedTab, cancelSnoozedTab, updateSnoozedTab } = this.props;
+    const { openSnoozedTab, cancelSnoozedTab } = this.props;
     const date = moment(item.time);
     const url = this.getDisplayUrl(item.url);
     return (
@@ -73,22 +73,22 @@ export default class ManagePanel extends React.Component {
         <div className="icon">
           <img src={item.icon || '../icons/nightly.svg'} />
         </div>
-        <div className="content" onClick={ev => openSnoozedTab(item)}>
+        <div className="content" onClick={() => openSnoozedTab(item)}>
           <div className="title" title={item.title}>{item.title || '&nbsp;'}</div>
           <div className="url" title={item.url}>{url}</div>
         </div>
-        <div className="date" onClick={ev => this.handleEntryEdit(ev, item)}>
+        <div className="date" onClick={() => this.handleEntryEdit(item)}>
           <span>{date.format('ddd, MMM D') || 'Later'}</span>
           <span>{date.format('[@] ha') || ''}</span>
         </div>
-        <div className="delete" onClick={ev => cancelSnoozedTab(item)}>
+        <div className="delete" onClick={() => cancelSnoozedTab(item)}>
           <img src="../icons/Trash.svg" width="16" height="16" />
         </div>
       </li>
     );
   }
 
-  handleEntryEdit(ev, item) {
+  handleEntryEdit(item) {
     this.setState({
       datepickerActive: true,
       editedItem: item,
