@@ -9,62 +9,81 @@
 import moment from 'moment';
 import { times, timeForId } from './lib/times';
 
-browser.runtime.onMessage.addListener(handleMessage);
+const DEBUG = (process.env.NODE_ENV === 'development');
+const WAKE_ALARM_NAME = 'snooze-wake-alarm';
+
+function log(...args) {
+  if (DEBUG) { console.log('SnoozeTabs (BE):', ...args); }  // eslint-disable-line no-console
+}
+
+function init() {
+  log('init()');
+  browser.alarms.onAlarm.addListener(handleWake);
+  browser.notifications.onClicked.addListener(handleNotificationClick);
+  browser.runtime.onMessage.addListener(handleMessage);
+  handleWake().then(updateWakeAlarm);
+}
 
 function handleMessage({op, message}) {
-  console.log('backgroundMessage', op, message);  // eslint-disable-line no-console
-  switch(op) {
-    case 'schedule':
-      return handleSchedule(message);
-    case 'cancel':
-      return handleCancel(message);
-    case 'update':
-      return handleUpdate(message);
-  }
+  log('backend received', op, message);
+  if (messageOps[op]) { messageOps[op](message); }
 }
 
-function handleSchedule(message) {
-  let item = {};
-  item[`${message.time}`] = message;
-  browser.storage.local.set(item);
-  browser.alarms.create(`${message.time}`, {when: message.time});
+const idForItem = item => `${item.time}`;
+
+const messageOps = {
+  schedule: message => {
+    const toSave = {};
+    toSave[idForItem(message)] = message;
+    return browser.storage.local.set(toSave).then(updateWakeAlarm);
+  },
+  cancel: message =>
+    browser.storage.local.remove(idForItem(message)).then(updateWakeAlarm),
+  update: message =>
+    messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated))
+};
+
+function updateWakeAlarm() {
+  return browser.alarms.clearAll()
+    .then(() => browser.storage.local.get())
+    .then(items => {
+      const times = Object.values(items).map(item => item.time);
+      if (!times.length) { return; }
+
+      times.sort();
+      const nextTime = times[0];
+
+      log('updated wake alarm to', nextTime);
+      return browser.alarms.create(WAKE_ALARM_NAME, { when: nextTime });
+    });
 }
 
-function handleCancel(message) {
-  const id = `${message.time}`;
-  browser.storage.local.remove(id);
-  browser.alarms.clear(id);
+function handleWake() {
+  const now = Date.now();
+  log('woke at', now);
+  return browser.storage.local.get().then(items => {
+    const due = Object.values(items).filter(item => item.time <= now);
+    log('tabs due to wake', due.length);
+    return Promise.all(due.map(item =>
+      browser.tabs.create({
+        active: false,
+        url: item.url,
+        windowId: item.windowId
+      }).then(tab => browser.notifications.create(`${item.windowId}:${tab.id}`, {
+        'type': 'basic',
+        'iconUrl': browser.extension.getURL('link.png'),
+        'title': item.title,
+        'message': item.url
+      })).then(() => browser.storage.local.remove(idForItem(item)))
+    ));
+  });
 }
 
-function handleUpdate(message) {
-  handleCancel(message.old);
-  handleSchedule(message.updated);
-}
-
-browser.notifications.onClicked.addListener(notificationId => {
+function handleNotificationClick(notificationId) {
   let [windowId, tabId] = notificationId.split(':');
   browser.windows.update(+windowId, {focused: true});
   browser.tabs.update(+tabId, {active: true});
-});
-
-browser.alarms.onAlarm.addListener(alarm => {
-  browser.storage.local.get(alarm.name).then(messages => {
-    let message = messages[alarm.name]
-    browser.tabs.create({
-      active: false,
-      url: message.url,
-      windowId: message.windowId
-    }).then(tab => {
-      browser.notifications.create(`${message.windowId}:${tab.id}`, {
-        'type': 'basic',
-        'iconUrl': browser.extension.getURL('link.png'),
-        'title': message.title,
-        'message': message.url,
-        'contextMessage': 'Ya maroon!'
-      });
-    });
-  });
-});
+}
 
 if (browser.contextMenus.ContextType.TAB) {
   let parent = chrome.contextMenus.create({
@@ -115,3 +134,5 @@ if (browser.contextMenus.ContextType.TAB) {
     });
   });
 }
+
+init();
