@@ -9,8 +9,10 @@
 import moment from 'moment';
 import { times, timeForId } from './lib/times';
 
-browser.runtime.onMessage.addListener(({op, message}) => {
-  console.log('backgroundMessage', op, message);
+browser.runtime.onMessage.addListener(handleMessage);
+
+function handleMessage({op, message}) {
+  console.log('backgroundMessage', op, message);  // eslint-disable-line no-console
   switch(op) {
     case 'schedule':
       return handleSchedule(message);
@@ -19,7 +21,7 @@ browser.runtime.onMessage.addListener(({op, message}) => {
     case 'update':
       return handleUpdate(message);
   }
-});
+}
 
 function handleSchedule(message) {
   let item = {};
@@ -79,7 +81,7 @@ if (browser.contextMenus.ContextType.TAB) {
     });
   }
 
-  browser.contextMenus.onClicked.addListener(function(info, tab) {
+  browser.contextMenus.onClicked.addListener(function(info/*, tab*/) {
     let [time, ] = timeForId(moment(), info.menuItemId);
     browser.tabs.query({currentWindow: true}).then(tabs => {
       let addBlank = true;
@@ -90,10 +92,13 @@ if (browser.contextMenus.ContextType.TAB) {
           continue;
         }
         handleMessage({
-          'time': time.valueOf(),
-          'title': tab.title || 'Tab woke up…',
-          'url': tab.url,
-          'windowId': tab.windowId
+          'op': 'schedule',
+          'message': {
+            'time': time.valueOf(),
+            'title': tab.title || 'Tab woke up…',
+            'url': tab.url,
+            'windowId': tab.windowId
+          }
         });
         closers.push(tab.id);
       }

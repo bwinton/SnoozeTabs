@@ -1,18 +1,16 @@
 @import 'node_modules/rc-calendar/assets/index';
 @import 'node_modules/rc-time-picker/assets/index';
 
-html {
-  --panel-width: 250px;
-}
+$panel-width: 250px;
 
 html,
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Fira Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Droid Sans","Helvetica Neue",sans-serif;
+  font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 14px;
-  width: var(--panel-width);
+  width: $panel-width;
   cursor: default;
   overflow: hidden;
 }
@@ -63,7 +61,7 @@ ul.entries {
 
 li.entry {
   transition: margin-left 150ms ease-in-out;
-  margin-left: 0px;
+  margin-left: 0;
   padding: 0;
   width: calc(100% + 50px);
   min-height: 50px;
@@ -72,7 +70,7 @@ li.entry {
   display: flex;
   align-items: stretch;
 
-  &:hover{
+  &:hover {
     margin-left: -50px;
     background-color: #f2f2f2;
   }
@@ -85,7 +83,11 @@ li.entry {
     display: flex;
     justify-content: center;
     align-items: center;
-    img { width: 40px; height: 40px }
+
+    img {
+      width: 40px;
+      height: 40px;
+    }
   }
 
   .date {
@@ -147,17 +149,23 @@ li.entry {
     line-height: 16px;
     background: #D82016;
     text-align: center;
-    img { width: 16px; height: 16px; }
+
+    img {
+      width: 16px;
+      height: 16px;
+    }
   }
 }
 
-li.option:hover {
-  cursor: pointer;
-  background: #e3e3e3;
-}
+li.option {
+  &:hover {
+    cursor: pointer;
+    background: #e3e3e3;
+  }
 
-li.option:active {
-  background: #d4d4d4;
+  &:active {
+    background: #d4d4d4;
+  }
 }
 
 
@@ -174,6 +182,10 @@ li.option:active {
   flex-direction: row;
   align-items: stretch;
   align-content: stretch;
+
+  &:active {
+    background: #b1b1b1;
+  }
 }
 
 .footer > div {
@@ -188,10 +200,6 @@ li.option:active {
     margin: 0;
     text-align: center;
   }
-}
-
-.footer:active {
-  background: #b1b1b1;
 }
 
 .footer .back {
@@ -230,7 +238,7 @@ li.option:active {
   transition: left 250ms ease-in-out;
   position: absolute;
   top: 0;
-  left: calc(var(--panel-width) + 3px);
+  left: calc($panel-width + 3px);
   width: 100%;
   height: 100%;
   background: #fff;
@@ -243,7 +251,7 @@ li.option:active {
 }
 
 .rc-calendar {
-  border: none;
+  border: 0;
   box-shadow: none;
 }
 
@@ -269,6 +277,7 @@ li.option:active {
   display: flex;
   flex-direction: row;
 }
+
 .rc-calendar-footer-btn > a {
   flex-grow: 1;
 }

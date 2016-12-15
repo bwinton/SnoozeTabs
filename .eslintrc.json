@@ -5,6 +5,7 @@
     "webextensions": true
   },
   "extends": "eslint:recommended",
+  "plugins": [ "react" ],
   "rules": {
     "constructor-super": "warn",
     "eqeqeq": "error",
@@ -14,6 +15,15 @@
     "no-unreachable": "warn",
     "no-unused-vars": "warn",
     "quotes": ["error", "single"],
-    "valid-typeof": "warn"
+    "valid-typeof": "warn",
+    "react/jsx-uses-react": "error",
+    "react/jsx-uses-vars": "error"
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+    }
   }
 }
