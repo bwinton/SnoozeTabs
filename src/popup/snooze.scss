@@ -25,6 +25,7 @@ body {
 }
 
 #manage .header,
+#manageCalendar .header,
 #calendar .header {
   justify-content: center;
 }
@@ -211,6 +212,11 @@ li.option {
   color: #ffffff;
 }
 
+.footer .disabled {
+  opacity: .2;
+  cursor: not-allowed;
+}
+
 .option > .icon {
   width: 16px;
   height: 16px;
@@ -280,4 +286,8 @@ li.option {
 
 .rc-calendar-footer-btn > a {
   flex-grow: 1;
+}
+
+.rc-time-picker-panel-select ul li {
+  justify-content: center;
 }
