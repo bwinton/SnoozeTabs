@@ -3,8 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import classnames from 'classnames';
 
-import Calendar from 'rc-calendar';
-import TimePickerPanel from 'rc-time-picker/lib/Panel';
+import DatePickerPanel from './DatePickerPanel';
 
 export default class ManagePanel extends React.Component {
   constructor(props) {
@@ -12,14 +11,13 @@ export default class ManagePanel extends React.Component {
     this.state = {
       datepickerActive: false,
       editedItem: null,
-      dateChoice: null
+      dateChoice: moment()
     };
   }
 
   render() {
     const { id, entries, active, switchPanel } = this.props;
     const { datepickerActive } = this.state;
-    const timePickerElement = <TimePickerPanel />;
 
     const sortedEntries = [...entries];
     sortedEntries.sort((a, b) => a.time - b.time);
@@ -35,19 +33,12 @@ export default class ManagePanel extends React.Component {
             <div className="back" onClick={ () => switchPanel('main') }><span>« Back</span></div>
           </div>
         </div>
-        <div id="manageCalendar" className={classnames('panel', { active: datepickerActive })}>
-          <div className="header">Edit Date/Time</div>
-          <Calendar showOk={false} showDateInput={false}
-                    value={this.state.dateChoice}
-                    timePicker={timePickerElement}
-                    onSelect={ value => this.handleTimeSelect(value) } />
-          <div className="footer">
-            <div className="back"
-                 onClick={ () => this.closeTimeSelect() }><span>« Back</span></div>
-            <div className="confirm snooze"
-                 onClick={ () => this.confirmTimeSelect() }><span>Snooze!</span></div>
-          </div>
-        </div>
+        <DatePickerPanel id="manageCalendar"
+                         active={datepickerActive}
+                         header="Edit Date/Time"
+                         defaultValue={this.state.dateChoice}
+                         onClose={ () => this.closeTimeSelect() }
+                         onSelect={ value => this.confirmTimeSelect(value) } />
       </div>
     );
   }
@@ -104,8 +95,8 @@ export default class ManagePanel extends React.Component {
     this.setState({ datepickerActive: false });
   }
 
-  confirmTimeSelect() {
-    const { dateChoice, editedItem } = this.state;
+  confirmTimeSelect(dateChoice) {
+    const { editedItem } = this.state;
     const { updateSnoozedTab } = this.props;
 
     if (!dateChoice) { return; }
@@ -116,8 +107,7 @@ export default class ManagePanel extends React.Component {
     );
     this.setState({
       datepickerActive: false,
-      editedItem: null,
-      dateChoice: null
+      editedItem: null
     });
   }
 
