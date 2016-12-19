@@ -238,7 +238,7 @@ li.option {
   transition: left 250ms ease-in-out;
   position: absolute;
   top: 0;
-  left: calc($panel-width + 3px);
+  left: $panel-width + 3px;
   width: 100%;
   height: 100%;
   background: #fff;

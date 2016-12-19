@@ -6,6 +6,7 @@
 
 'use strict';
 
+import React from 'react';
 import ReactDOM from 'react-dom';
 import SnoozePopup from '../lib/components/SnoozePopup';
 
