@@ -21,7 +21,7 @@ function init() {
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
-  handleWake().then(updateWakeAlarm);
+  handleWake();
 }
 
 function handleMessage({op, message}) {
@@ -53,7 +53,7 @@ function updateWakeAlarm() {
       times.sort();
       const nextTime = times[0];
 
-      log('updated wake alarm to', nextTime);
+      log('updated wake alarm to', nextTime, ' ', moment(nextTime).format());
       return browser.alarms.create(WAKE_ALARM_NAME, { when: nextTime });
     });
 }
@@ -76,7 +76,7 @@ function handleWake() {
         'message': item.url
       })).then(() => browser.storage.local.remove(idForItem(item)))
     ));
-  });
+  }).then(updateWakeAlarm);
 }
 
 function handleNotificationClick(notificationId) {
