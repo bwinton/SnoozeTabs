@@ -53,8 +53,11 @@ function updateWakeAlarm() {
       times.sort();
       const nextTime = times[0];
 
-      log('updated wake alarm to', nextTime, ' ', moment(nextTime).format());
-      return browser.alarms.create(WAKE_ALARM_NAME, { when: nextTime });
+      const soon = Date.now() + 5000;
+      const nextAlarm = Math.max(nextTime, soon);
+
+      log('updated wake alarm to', nextAlarm, ' ', moment(nextAlarm).format());
+      return browser.alarms.create(WAKE_ALARM_NAME, { when: nextAlarm });
     });
 }
 

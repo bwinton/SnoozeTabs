@@ -4,8 +4,7 @@ import classnames from 'classnames';
 import moment from 'moment';
 import { times, timeForId } from '../times';
 
-import Calendar from 'rc-calendar';
-import TimePickerPanel from 'rc-time-picker/lib/Panel';
+import DatePickerPanel from './DatePickerPanel';
 
 export default class MainPanel extends React.Component {
   constructor(props) {
@@ -19,7 +18,6 @@ export default class MainPanel extends React.Component {
   render() {
     const { id, active, switchPanel } = this.props;
     const { datepickerActive } = this.state;
-    const timePickerElement = <TimePickerPanel />;
 
     return (
       <div>
@@ -32,15 +30,12 @@ export default class MainPanel extends React.Component {
             <div className="manage" onClick={ () => switchPanel('manage') }><span>Manage Snoozed Tabs</span></div>
           </div>
         </div>
-        <div id="calendar" className={classnames('panel', { active: datepickerActive })}>
-          <div className="header">Pick a Date/Time</div>
-          <Calendar showOk={false} showDateInput={false}
-                    timePicker={timePickerElement} onSelect={ value => this.handleTimeSelect(value) } />
-          <div className="footer">
-            <div className="back" onClick={ () => this.closeTimeSelect() }><span>« Back</span></div>
-              <div className="confirm snooze" onClick={ () => this.confirmTimeSelect() }><span>Snooze!</span></div>
-          </div>
-        </div>
+        <DatePickerPanel id="calendar"
+                         active={datepickerActive}
+                         header="Pick a Date/Time"
+                         defaultValue={moment()}
+                         onClose={ () => this.closeTimeSelect() }
+                         onSelect={ value => this.confirmTimeSelect(value) } />
       </div>
     );
   }
@@ -66,18 +61,12 @@ export default class MainPanel extends React.Component {
     scheduleSnoozedTab(time);
   }
 
-  handleTimeSelect(value) {
-    this.setState({ dateChoice: value });
-  }
-
   closeTimeSelect() {
     this.setState({ datepickerActive: false });
   }
 
-  confirmTimeSelect() {
-    const { dateChoice } = this.state;
+  confirmTimeSelect(dateChoice) {
     const { scheduleSnoozedTab } = this.props;
-
     if (!dateChoice) { return; }
     scheduleSnoozedTab(dateChoice);
   }
