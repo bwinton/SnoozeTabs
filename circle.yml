@@ -1,0 +1,7 @@
+machine:
+  node:
+    version: 6.9.1
+
+compile:
+  override:
+    - ./bin/build-addon.sh
