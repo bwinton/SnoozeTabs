@@ -1,6 +1,7 @@
 {
   "name": "snoozetabs",
   "description": "An add-on to let you snooze your tabs for a while.",
+  "id": "snoozetabs@mozilla",
   "version": "1.0.0",
   "author": "Blake Winton <bwinton@latte.ca>",
   "contributors": [
@@ -47,7 +48,7 @@
   "scripts": {
     "start": "npm run build && npm-run-all --parallel watch run storybook",
     "start-win": "npm run build && npm run watch",
-    "build": "npm run clean && npm-run-all --parallel copy:assets bundle:js bundle:css && npm run package",
+    "build": "npm run clean && npm-run-all --parallel copy:assets bundle:js bundle:css",
     "run": "web-ext run -s dist --firefox=firefoxdeveloperedition",
     "clean": "rm -rf dist && mkdir dist",
     "watch": "npm-run-all --parallel watch:js watch:css watch:assets",
@@ -58,12 +59,12 @@
     "lint": "npm-run-all --parallel lint:js lint:sass",
     "lint:js": "eslint src",
     "lint:sass": "sass-lint --verbose --no-exit src/**/*.scss",
-    "test": "npm run build && web-ext run -s dist",
     "watch:js": "onchange -p -v 'src/**/*.js' -- npm run bundle:js",
     "watch:css": "onchange -p -v 'src/**/*.scss' -- npm run bundle:css",
     "watch:assets": "onchange -p -v 'src/{manifest.json,icons/*,popup/*.html}' -- npm run copy:assets",
     "storybook": "start-storybook -s ./dist -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "test": "npm run lint && echo \"tests TBD\""
   },
   "dependencies": {
     "classnames": "^2.2.5",
