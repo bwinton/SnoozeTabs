@@ -16,22 +16,35 @@ function log(...args) {
   if (DEBUG) { console.log('SnoozeTabs (BE):', ...args); }  // eslint-disable-line no-console
 }
 
+let iconData;
+
 function init() {
   log('init()');
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
+  if (!iconData) {
+    fetch(browser.extension.getURL('icons/Color Bell Icon.png')).then(response => {
+      return response.arrayBuffer();
+    }).then(function(response) {
+      iconData = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
+    }).catch(reason => {
+      log('init getUrl rejected', reason);
+    });
+  }
   browser.storage.local.get().then(items => {
     const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
-    let updated = {}
+    const updated = {}
     due.forEach(item => {
       item[1].time = Date.now();
       updated[item[0]] = item[1];
     });
     log('setting next open tabs to now', updated);
-    browser.storage.local.set(updated).then(() => {
+    return browser.storage.local.set(updated).then(() => {
       updateWakeAlarm();
     });
+  }).catch(reason => {
+    log('init storage get rejected', reason);
   });
 }
 
@@ -81,14 +94,50 @@ function handleWake() {
     return browser.windows.getAll({
       windowTypes: ['normal']
     }).then(windows => {
-      let windowIds = windows.map(window => window.id);
+      const windowIds = windows.map(window => window.id);
       return Promise.all(due.map(([, item]) => {
-        let createProps = {
+        const createProps = {
           active: false,
           url: item.url,
           windowId: windowIds.includes(item.windowId) ? item.windowId : undefined
         };
         return browser.tabs.create(createProps).then(tab => {
+          browser.tabs.executeScript(tab.id, {
+            'code': `
+              function flip(newUrl) {
+                let link = document.createElement('link');
+                link.rel = 'shortcut icon';
+                link.href = newUrl;
+                document.getElementsByTagName('head')[0].appendChild(link);
+                return link;
+              }
+
+              function reset(link) {
+                link.remove();
+                let prev = document.querySelectorAll('link[rel="shortcut icon"]');
+                if (prev.length) {
+                  document.getElementsByTagName('head')[0].appendChild(prev.item(prev.length - 1));
+                }
+              }
+
+              let link;
+              let flip_interval = window.setInterval(() => {
+                if (link) {
+                  reset(link);
+                  link = undefined;
+                } else {
+                  link = flip('${iconData}');
+                }
+              }, 500);
+              window.setTimeout(() => {
+                window.clearInterval(flip_interval);
+                if (link) {
+                  reset(link);
+                  link = undefined;
+                }
+              }, 10000)
+              `
+          });
           return browser.notifications.create(`${item.windowId}:${tab.id}`, {
             'type': 'basic',
             'iconUrl': browser.extension.getURL('link.png'),
@@ -104,18 +153,18 @@ function handleWake() {
 }
 
 function handleNotificationClick(notificationId) {
-  let [windowId, tabId] = notificationId.split(':');
+  const [windowId, tabId] = notificationId.split(':');
   browser.windows.update(+windowId, {focused: true});
   browser.tabs.update(+tabId, {active: true});
 }
 
 if (browser.contextMenus.ContextType.TAB) {
-  let parent = chrome.contextMenus.create({
+  const parent = chrome.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
     title: 'Snooze Tab until…'
   });
-  for (let item in times) {
-    let time = times[item];
+  for (const item in times) {
+    const time = times[item];
     chrome.contextMenus.create({
       parentId: parent,
       id: time.id,
@@ -125,11 +174,11 @@ if (browser.contextMenus.ContextType.TAB) {
   }
 
   browser.contextMenus.onClicked.addListener(function(info/*, tab*/) {
-    let [time, ] = timeForId(moment(), info.menuItemId);
+    const [time, ] = timeForId(moment(), info.menuItemId);
     browser.tabs.query({currentWindow: true}).then(tabs => {
       let addBlank = true;
-      let closers = [];
-      for (var tab of tabs) {
+      const closers = [];
+      for (const tab of tabs) {
         if (!tab.active) {
           addBlank = false;
           continue;
@@ -155,6 +204,8 @@ if (browser.contextMenus.ContextType.TAB) {
         browser.tabs.remove(closers);
         window.close();
       }, 500);
+    }).catch(reason => {
+      log('handleNotificationClick query rejected', reason);
     });
   });
 }

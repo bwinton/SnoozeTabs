@@ -41,7 +41,7 @@ export default class MainPanel extends React.Component {
   }
 
   renderTime(item) {
-    let [, date] = timeForId(moment(), item.id);
+    const [, date] = timeForId(moment(), item.id);
     return (
       <li className="option" key={item.id} id={item.id} onClick={ ev => this.handleOptionClick(ev, item) }>
         <img src={ `../icons/${item.icon || 'nightly.svg'}` } className="icon" />
@@ -57,7 +57,7 @@ export default class MainPanel extends React.Component {
       this.setState({ datepickerActive: true });
       return;
     }
-    let [time, ] = timeForId(moment(), item.id);
+    const [time, ] = timeForId(moment(), item.id);
     scheduleSnoozedTab(time);
   }
 

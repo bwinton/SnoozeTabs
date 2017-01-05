@@ -16,8 +16,8 @@ export const times = [
 ];
 
 export function timeForId(time, id) {
-  var rv = moment(time);
-  var text = rv.fromNow();
+  let rv = moment(time);
+  let text = rv.fromNow();
   switch (id) {
     case 'debug':
       rv = rv.add(5, 'seconds');
