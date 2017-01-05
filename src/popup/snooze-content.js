@@ -14,6 +14,7 @@ const DEBUG = (process.env.NODE_ENV === 'development');
 
 let state = {
   activePanel: 'main',
+  tabIsSnoozable: true,
   entries: [
     { title: 'foo', url: 'http://qz.com', date: Date.now() }
   ]
@@ -104,7 +105,24 @@ function fetchEntries() {
   log('fetching items');
   browser.storage.local.get().then(items => {
     log('fetched items', items);
-    setState({ entries: Object.values(items || {}) });
+    return browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+      let tabIsSnoozable = true;
+      let activePanel = 'main';
+
+      if (tabs.length) {
+        const url = tabs[0].url;
+        if (!url.startsWith('http:') && !url.startsWith('https:') && !url.startsWith('file:') &&
+            !url.startsWith('ftp:') && !url.startsWith('app:')) {
+          tabIsSnoozable = false;
+          activePanel = 'manage';
+        }
+      }
+      setState({
+        entries: Object.values(items || {}),
+        tabIsSnoozable: tabIsSnoozable,
+        activePanel: activePanel
+      });
+    });
   }).catch(reason => {
     log('fetchEntries storage get rejected', reason);
   });

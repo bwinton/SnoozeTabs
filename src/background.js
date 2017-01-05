@@ -18,11 +18,36 @@ function log(...args) {
 
 let iconData;
 
+function updateButtonForTab(tabId, changeInfo) {
+  if (!changeInfo.url) {
+    return;
+  }
+  const url = changeInfo.url;
+  if (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('file:') ||
+      url.startsWith('ftp:') || url.startsWith('app:')) {
+    browser.browserAction.setIcon({path: 'icons/Bell Icon.svg', tabId: tabId});
+  } else {
+    browser.browserAction.setIcon({path: 'icons/Disabled Bell Icon.svg', tabId: tabId});
+  }
+}
+
 function init() {
   log('init()');
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
+  browser.tabs.onUpdated.addListener(updateButtonForTab);
+  browser.tabs.onCreated.addListener(tab => {
+    updateButtonForTab(tab.id, {url: tab.url});
+  });
+  browser.tabs.query({}).then(tabs => {
+    for (const tab of tabs) {
+      updateButtonForTab(tab.id, {url: tab.url});
+    }
+  }).catch(reason => {
+    log('init tabs query rejected', reason);
+  });
+
   if (!iconData) {
     fetch(browser.extension.getURL('icons/Color Bell Icon.png')).then(response => {
       return response.arrayBuffer();
@@ -32,6 +57,7 @@ function init() {
       log('init getUrl rejected', reason);
     });
   }
+
   browser.storage.local.get().then(items => {
     const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
     const updated = {}
@@ -96,6 +122,7 @@ function handleWake() {
     }).then(windows => {
       const windowIds = windows.map(window => window.id);
       return Promise.all(due.map(([, item]) => {
+        log('creating', item);
         const createProps = {
           active: false,
           url: item.url,
@@ -161,7 +188,8 @@ function handleNotificationClick(notificationId) {
 if (browser.contextMenus.ContextType.TAB) {
   const parent = chrome.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
-    title: 'Snooze Tab until…'
+    title: 'Snooze Tab until…',
+    documentUrlPatterns: ['<all_urls>']
   });
   for (const item in times) {
     const time = times[item];

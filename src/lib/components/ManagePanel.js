@@ -17,7 +17,7 @@ export default class ManagePanel extends React.Component {
   }
 
   render() {
-    const { id, entries, active, switchPanel } = this.props;
+    const { id, entries, active, switchPanel, tabIsSnoozable } = this.props;
     const { datepickerActive } = this.state;
 
     const sortedEntries = [...entries];
@@ -30,7 +30,7 @@ export default class ManagePanel extends React.Component {
           <ul className="entries">
             { sortedEntries.map((item, idx) => this.renderEntry(idx, item)) }
           </ul>
-          <div className="footer">
+          <div className={classnames('footer', { 'hide': !tabIsSnoozable })}>
             <div className="back" onClick={ () => switchPanel('main') }><span>« Back</span></div>
           </div>
         </div>
