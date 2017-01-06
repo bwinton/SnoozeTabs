@@ -31,7 +31,7 @@ export default class DatePickerPanel extends React.Component {
                   value={currentValue}
                   timePicker={(
                     <TimePickerPanel value={currentValue}
-                      showHour={true} showMinute={true} showSecond={true} />
+                      showHour={true} showMinute={true} showSecond={false} />
                   )}
                   disabledDate={this.disabledDate.bind(this)}
                   disabledTime={this.disabledTime.bind(this)}
