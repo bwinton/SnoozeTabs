@@ -50,7 +50,7 @@ export default class ManagePanel extends React.Component {
     var parser = document.createElement('a');
     parser.href = url;
     if (parser.protocol.startsWith('http')) {
-      return parser.host;
+      return parser.host.replace(/^www\./, '');
     }
     return url;
   }
