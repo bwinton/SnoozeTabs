@@ -2,18 +2,16 @@
   "description": "An add-on to let you snooze your tabs for a while.",
   "manifest_version": 2,
   "name": "snoozetabs",
-  "author": "Blake Winton <bwinton@latte.ca>",
+  "author": "Mozilla (https://mozilla.org/)",
   "homepage_url": "https://github.com/bwinton/SnoozeTabs#readme",
   "icons": {
     "48": "icons/Bell Icon.svg"
   },
   "version": "1.0",
-
   "permissions": ["alarms", "contextMenus", "notifications", "storage", "tabs"],
   "background": {
     "scripts": ["background.js"]
   },
-
   "browser_action": {
     "browser_style": false,
     "default_popup": "popup/snooze.html",
