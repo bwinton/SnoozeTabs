@@ -100,7 +100,11 @@ li.entry {
     line-height: 1.5em;
     font-size: 10px;
 
-    &:hover { color: #38ABDB; }
+    &.editable {
+      &:hover {
+        color: #38ABDB;
+      }
+    }
 
     span {
       display: block;

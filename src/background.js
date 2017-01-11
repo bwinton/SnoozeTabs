@@ -7,7 +7,7 @@
 'use strict';
 
 import moment from 'moment';
-import { times, timeForId } from './lib/times';
+import { NEXT_OPEN, times, timeForId } from './lib/times';
 
 const DEBUG = (process.env.NODE_ENV === 'development');
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
@@ -21,7 +21,18 @@ function init() {
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
-  handleWake();
+  browser.storage.local.get().then(items => {
+    const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
+    let updated = {}
+    due.forEach(item => {
+      item[1].time = Date.now();
+      updated[item[0]] = item[1];
+    });
+    log('setting next open tabs to now', updated);
+    browser.storage.local.set(updated).then(() => {
+      updateWakeAlarm();
+    });
+  });
 }
 
 function handleMessage({op, message}) {
@@ -29,7 +40,7 @@ function handleMessage({op, message}) {
   if (messageOps[op]) { messageOps[op](message); }
 }
 
-const idForItem = item => `${item.time}`;
+const idForItem = item => `${item.time}-${item.url}`;
 
 const messageOps = {
   schedule: message => {
@@ -47,7 +58,7 @@ function updateWakeAlarm() {
   return browser.alarms.clearAll()
     .then(() => browser.storage.local.get())
     .then(items => {
-      const times = Object.values(items).map(item => item.time);
+      const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_OPEN);
       if (!times.length) { return; }
 
       times.sort();
@@ -65,20 +76,30 @@ function handleWake() {
   const now = Date.now();
   log('woke at', now);
   return browser.storage.local.get().then(items => {
-    const due = Object.values(items).filter(item => item.time <= now);
+    const due = Object.entries(items).filter(entry => entry[1].time <= now);
     log('tabs due to wake', due.length);
-    return Promise.all(due.map(item =>
-      browser.tabs.create({
-        active: false,
-        url: item.url,
-        windowId: item.windowId
-      }).then(tab => browser.notifications.create(`${item.windowId}:${tab.id}`, {
-        'type': 'basic',
-        'iconUrl': browser.extension.getURL('link.png'),
-        'title': item.title,
-        'message': item.url
-      })).then(() => browser.storage.local.remove(idForItem(item)))
-    ));
+    return browser.windows.getAll({
+      windowTypes: ['normal']
+    }).then(windows => {
+      let windowIds = windows.map(window => window.id);
+      return Promise.all(due.map(([, item]) => {
+        let createProps = {
+          active: false,
+          url: item.url,
+          windowId: windowIds.includes(item.windowId) ? item.windowId : undefined
+        };
+        return browser.tabs.create(createProps).then(tab => {
+          return browser.notifications.create(`${item.windowId}:${tab.id}`, {
+            'type': 'basic',
+            'iconUrl': browser.extension.getURL('link.png'),
+            'title': item.title,
+            'message': item.url
+          });
+        })
+      })).then(() => {
+        browser.storage.local.remove(due.map(entry => entry[0]));
+      });
+    });
   }).then(updateWakeAlarm);
 }
 

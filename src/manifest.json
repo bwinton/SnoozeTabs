@@ -1,4 +1,10 @@
 {
+  "applications": {
+    "gecko": {
+      "id": "snoozetabs@mozilla.com"
+    }
+  },
+
   "description": "An add-on to let you snooze your tabs for a while.",
   "manifest_version": 2,
   "name": "snoozetabs",
