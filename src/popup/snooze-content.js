@@ -31,8 +31,8 @@ function log(...args) {
 function scheduleSnoozedTab(time) {
   browser.tabs.query({currentWindow: true}).then(tabs => {
     let addBlank = true;
-    let closers = [];
-    for (var tab of tabs) {
+    const closers = [];
+    for (const tab of tabs) {
       if (!tab.active) {
         addBlank = false;
         continue;
@@ -58,6 +58,8 @@ function scheduleSnoozedTab(time) {
       browser.tabs.remove(closers);
       window.close();
     }, 500);
+  }).catch(reason => {
+    log('scheduleSnoozedTab query rejected', reason);
   });
   return;
 }
@@ -103,6 +105,8 @@ function fetchEntries() {
   browser.storage.local.get().then(items => {
     log('fetched items', items);
     setState({ entries: Object.values(items || {}) });
+  }).catch(reason => {
+    log('fetchEntries storage get rejected', reason);
   });
 }
 

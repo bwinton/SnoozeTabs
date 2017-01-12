@@ -14,7 +14,15 @@
     "48": "icons/Bell Icon.svg"
   },
   "version": "1.0",
-  "permissions": ["alarms", "contextMenus", "notifications", "storage", "tabs"],
+
+  "permissions": [
+    "alarms",
+    "contextMenus",
+    "notifications",
+    "storage",
+    "tabs",
+    "<all_urls>"],
+
   "background": {
     "scripts": ["background.js"]
   },
