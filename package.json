@@ -54,7 +54,7 @@
   },
   "scripts": {
     "start": "npm run build && npm-run-all --parallel test watch run storybook",
-    "start-win": "npm run build && npm run watch",
+    "start-win": "npm run build && npm-run-all --parallel test watch",
     "build": "npm run clean && npm-run-all --parallel copy:assets bundle:*",
     "run": "web-ext run -s dist --firefox=nightly",
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
@@ -73,7 +73,7 @@
     "storybook": "start-storybook -s ./dist -p 6006",
     "build-storybook": "build-storybook",
     "test": "npm run lint && npm run test:js",
-    "test:js": "mocha --compilers js:babel-register --require test/.setup.js --recursive"
+    "test:js": "mocha --compilers js:babel-register --recursive"
   },
   "dependencies": {
     "classnames": "^2.2.5",

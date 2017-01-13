@@ -8,6 +8,7 @@
 
 import moment from 'moment';
 import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
+import Metrics from './lib/metrics';
 
 const DEBUG = (process.env.NODE_ENV === 'development');
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
@@ -43,6 +44,7 @@ function updateButtonForTab(tabId, changeInfo) {
 
 function init() {
   log('init()');
+  Metrics.init(window.BroadcastChannel, browser.tabs);
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
@@ -91,14 +93,25 @@ const idForItem = item => `${item.time}-${item.url}`;
 
 const messageOps = {
   schedule: message => {
+    Metrics.scheduleSnoozedTab(message);
     const toSave = {};
     toSave[idForItem(message)] = message;
     return browser.storage.local.set(toSave).then(updateWakeAndBookmarks);
   },
-  cancel: message =>
-    browser.storage.local.remove(idForItem(message)).then(updateWakeAndBookmarks),
-  update: message =>
-    messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated))
+  cancel: message => {
+    Metrics.cancelSnoozedTab(message);
+    return browser.storage.local.remove(idForItem(message)).then(updateWakeAndBookmarks);
+  },
+  update: message => {
+    Metrics.updateSnoozedTab(message);
+    return messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated));
+  },
+  click: message => {
+    Metrics.clickSnoozedTab(message);
+  },
+  panelOpened: () => {
+    Metrics.panelOpened();
+  }
 };
 
 function syncBookmarks(items) {
@@ -175,6 +188,7 @@ function handleWake() {
           windowId: windowIds.includes(item.windowId) ? item.windowId : undefined
         };
         return browser.tabs.create(createProps).then(tab => {
+          Metrics.tabWoken(item, tab);
           browser.tabs.executeScript(tab.id, {
             'code': `
               function flip(newUrl) {
