@@ -2,7 +2,8 @@
 import moment from 'moment';
 
 const NEXT_OPEN = 'next';
-export {NEXT_OPEN};
+const PICK_TIME = 'pick';
+export {NEXT_OPEN, PICK_TIME};
 
 export const times = [
   {id: 'debug', icon: 'nightly.svg', title: 'Real Soon Now!'},
@@ -12,7 +13,7 @@ export const times = [
   {id: 'week', icon: 'next_week.svg', title: 'Next Week'},
   {id: 'month', icon: 'next_month.svg', title: 'Next Month'},
   {id: NEXT_OPEN, icon: 'next_open.svg', title: 'Next Open'},
-  {id: 'pick', icon: 'pick_date.svg', title: 'Pick a Date/Time'}
+  {id: PICK_TIME, icon: 'pick_date.svg', title: 'Pick a Date/Time'}
 ];
 
 export function timeForId(time, id) {
@@ -47,7 +48,7 @@ export function timeForId(time, id) {
       rv = NEXT_OPEN;
       text = '';
       break;
-    case 'pick':
+    case PICK_TIME:
       rv = null;
       text = '';
       break;

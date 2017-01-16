@@ -2,7 +2,7 @@ import React from 'react';
 
 import classnames from 'classnames';
 import moment from 'moment';
-import { times, timeForId } from '../times';
+import { PICK_TIME, times, timeForId } from '../times';
 
 import DatePickerPanel from './DatePickerPanel';
 
@@ -53,7 +53,7 @@ export default class MainPanel extends React.Component {
 
   handleOptionClick(ev, item) {
     const { scheduleSnoozedTab } = this.props;
-    if (item.id === 'pick') {
+    if (item.id === PICK_TIME) {
       this.setState({ datepickerActive: true });
       return;
     }

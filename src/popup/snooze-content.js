@@ -38,6 +38,9 @@ function scheduleSnoozedTab(time) {
         addBlank = false;
         continue;
       }
+      if (tab.incognito) {
+        continue;
+      }
       browser.runtime.sendMessage({
         op: 'schedule',
         message: {
@@ -111,7 +114,8 @@ function fetchEntries() {
 
       if (tabs.length) {
         const url = tabs[0].url;
-        if (!url.startsWith('http:') && !url.startsWith('https:') && !url.startsWith('file:') &&
+        if (tabs[0].incognito ||
+            !url.startsWith('http:') && !url.startsWith('https:') && !url.startsWith('file:') &&
             !url.startsWith('ftp:') && !url.startsWith('app:')) {
           tabIsSnoozable = false;
           activePanel = 'manage';
