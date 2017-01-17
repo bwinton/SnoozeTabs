@@ -55,9 +55,13 @@ li {
 }
 
 ul.entries {
-  height: 284px;
+  height: calc(100% - 80px);
   overflow-x: hidden;
   overflow-y: auto;
+
+  &.big {
+    height: calc(100% - 40px);
+  }
 }
 
 li.entry {
@@ -264,6 +268,10 @@ li.option {
   width: 100%;
   height: 100%;
   background: #fff;
+}
+
+#manage.static {
+  transition: none;
 }
 
 #calendar.active,
