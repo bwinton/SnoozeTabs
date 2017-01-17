@@ -109,7 +109,7 @@ export default class ManagePanel extends React.Component {
           <span>{this.getTime(item.time)}</span>
         </div>
         <div className="delete" onClick={() => cancelSnoozedTab(item)}>
-          <img src="../icons/Trash.svg" width="16" height="16" />
+          <img src="../icons/trash.svg" width="16" height="16" />
         </div>
       </li>
     );

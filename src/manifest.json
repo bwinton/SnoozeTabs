@@ -11,7 +11,7 @@
   "author": "Mozilla (https://mozilla.org/)",
   "homepage_url": "https://github.com/bwinton/SnoozeTabs#readme",
   "icons": {
-    "48": "icons/Bell Icon.svg"
+    "48": "icons/bell_icon.svg"
   },
   "version": "1.0",
 
@@ -30,7 +30,7 @@
     "browser_style": false,
     "default_popup": "popup/snooze.html",
     "default_icon": {
-      "32": "icons/Bell Icon.svg"
+      "32": "icons/bell_icon.svg"
     }
   }
 }

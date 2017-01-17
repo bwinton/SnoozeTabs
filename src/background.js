@@ -25,9 +25,9 @@ function updateButtonForTab(tabId, changeInfo) {
   const url = changeInfo.url;
   if (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('file:') ||
       url.startsWith('ftp:') || url.startsWith('app:')) {
-    browser.browserAction.setIcon({path: 'icons/Bell Icon.svg', tabId: tabId});
+    browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
   } else {
-    browser.browserAction.setIcon({path: 'icons/Disabled Bell Icon.svg', tabId: tabId});
+    browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
   }
 }
 
@@ -49,7 +49,7 @@ function init() {
   });
 
   if (!iconData) {
-    fetch(browser.extension.getURL('icons/Color Bell Icon.png')).then(response => {
+    fetch(browser.extension.getURL('icons/color_bell_icon.png')).then(response => {
       return response.arrayBuffer();
     }).then(function(response) {
       iconData = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
