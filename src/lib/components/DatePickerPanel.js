@@ -73,7 +73,7 @@ export default class DatePickerPanel extends React.Component {
         disabledHours: () => this.makeRangeArray(0, 24),
         disabledMinutes: () => this.makeRangeArray(0, 60),
         disabledSeconds: () => this.makeRangeArray(0, 60)
-      }
+      };
     }
 
     // Disable past times for today as appropriate

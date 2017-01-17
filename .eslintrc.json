@@ -21,6 +21,7 @@
     "no-var": "error",
     "prefer-const": "error",
     "quotes": ["error", "single"],
+    "semi": ["error", "always"],
     "valid-typeof": "warn",
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",

@@ -1,8 +1,8 @@
-import babel from 'rollup-plugin-babel'
-import cjs from 'rollup-plugin-commonjs'
-import globals from 'rollup-plugin-node-globals'
-import replace from 'rollup-plugin-replace'
-import resolve from 'rollup-plugin-node-resolve'
+import babel from 'rollup-plugin-babel';
+import cjs from 'rollup-plugin-commonjs';
+import globals from 'rollup-plugin-node-globals';
+import replace from 'rollup-plugin-replace';
+import resolve from 'rollup-plugin-node-resolve';
 
 export default {
   entry: `src/${process.env.entry}.js`,
@@ -26,4 +26,4 @@ export default {
     })
   ],
   sourceMap: false
-}
+};
