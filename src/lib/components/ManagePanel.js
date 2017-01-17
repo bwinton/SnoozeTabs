@@ -21,7 +21,19 @@ export default class ManagePanel extends React.Component {
     const { datepickerActive } = this.state;
 
     const sortedEntries = [...entries];
-    sortedEntries.sort((a, b) => a.time - b.time);
+    sortedEntries.sort((a, b) => {
+      if (a.time === NEXT_OPEN) {
+        if (b.time === NEXT_OPEN) {
+          return a.title.localeCompare(b.title);
+        } else {
+          return -1;
+        }
+      } else if (b.time === NEXT_OPEN) {
+        return 1;
+      } else {
+        return a.time - b.time;
+      }
+    });
 
     return (
       <div>
@@ -59,6 +71,9 @@ export default class ManagePanel extends React.Component {
   getDate(time) {
     if (time === NEXT_OPEN) {
       return 'Next time';
+    }
+    if (moment(time).year() !== moment().year()) {
+      return moment(time).format('MMM D, YYYY') || 'Later';
     }
     return moment(time).format('ddd, MMM D') || 'Later';
   }
