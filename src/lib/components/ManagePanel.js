@@ -60,7 +60,7 @@ export default class ManagePanel extends React.Component {
     if (time === NEXT_OPEN) {
       return 'Next time';
     }
-    return moment(time).format('ddd, MMM D') || 'Later'
+    return moment(time).format('ddd, MMM D') || 'Later';
   }
 
   getTime(time) {

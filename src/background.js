@@ -60,7 +60,7 @@ function init() {
 
   browser.storage.local.get().then(items => {
     const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
-    const updated = {}
+    const updated = {};
     due.forEach(item => {
       item[1].time = Date.now();
       updated[item[0]] = item[1];
@@ -171,7 +171,7 @@ function handleWake() {
             'title': item.title,
             'message': item.url
           });
-        })
+        });
       })).then(() => {
         browser.storage.local.remove(due.map(entry => entry[0]));
       });
