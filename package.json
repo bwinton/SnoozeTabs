@@ -52,7 +52,7 @@
     "start": "npm run build && npm-run-all --parallel watch run storybook",
     "start-win": "npm run build && npm run watch",
     "build": "npm run clean && npm-run-all --parallel copy:assets bundle:*",
-    "run": "web-ext run -s dist --firefox=firefoxdeveloperedition",
+    "run": "web-ext run -s dist --firefox=nightly",
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo src/icons -o dist/icons && shx cp -r src/popup/*.html dist/popup/",
