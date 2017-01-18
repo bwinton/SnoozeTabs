@@ -6,13 +6,13 @@ export {NEXT_OPEN};
 
 export const times = [
   {id: 'debug', icon: 'nightly.svg', title: 'Real Soon Now!'},
-  {id: 'later', icon: 'Later Today.svg', title: 'Later Today'},
-  {id: 'tomorrow', icon: 'Tomorrow.svg', title: 'Tomorrow'},
-  {id: 'weekend', icon: 'Weekends.svg', title: 'This Weekend'},
-  {id: 'week', icon: 'Next Week.svg', title: 'Next Week'},
-  {id: 'month', icon: 'Next Month.svg', title: 'Next Month'},
-  {id: NEXT_OPEN, icon: 'Next Open.svg', title: 'Next Open'},
-  {id: 'pick', icon: 'Pick Date.svg', title: 'Pick a Date/Time'}
+  {id: 'later', icon: 'later_today.svg', title: 'Later Today'},
+  {id: 'tomorrow', icon: 'tomorrow.svg', title: 'Tomorrow'},
+  {id: 'weekend', icon: 'weekends.svg', title: 'This Weekend'},
+  {id: 'week', icon: 'next_week.svg', title: 'Next Week'},
+  {id: 'month', icon: 'next_month.svg', title: 'Next Month'},
+  {id: NEXT_OPEN, icon: 'next_open.svg', title: 'Next Open'},
+  {id: 'pick', icon: 'pick_date.svg', title: 'Pick a Date/Time'}
 ];
 
 export function timeForId(time, id) {
