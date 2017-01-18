@@ -7,7 +7,7 @@
 'use strict';
 
 import moment from 'moment';
-import { NEXT_OPEN, times, timeForId } from './lib/times';
+import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 
 const DEBUG = (process.env.NODE_ENV === 'development');
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
@@ -19,16 +19,26 @@ function log(...args) {
 let iconData;
 
 function updateButtonForTab(tabId, changeInfo) {
-  if (!changeInfo.url) {
+  if (changeInfo.status !== 'loading' || !changeInfo.url) {
     return;
   }
-  const url = changeInfo.url;
-  if (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('file:') ||
-      url.startsWith('ftp:') || url.startsWith('app:')) {
-    browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
-  } else {
-    browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
-  }
+  browser.tabs.get(tabId).then(tab => {
+    const url = changeInfo.url;
+    if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('file:') ||
+        url.startsWith('ftp:') || url.startsWith('app:'))) {
+      browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
+      if (parent) {
+        browser.contextMenus.update(parent, {enabled: true});
+      }
+    } else {
+      browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
+      if (parent) {
+        browser.contextMenus.update(parent, {enabled: false});
+      }
+    }
+  }).catch(reason => {
+    log('update button get rejected', reason);
+  });
 }
 
 function init() {
@@ -38,11 +48,11 @@ function init() {
   browser.runtime.onMessage.addListener(handleMessage);
   browser.tabs.onUpdated.addListener(updateButtonForTab);
   browser.tabs.onCreated.addListener(tab => {
-    updateButtonForTab(tab.id, {url: tab.url});
+    updateButtonForTab(tab.id, {'status': 'loading', url: tab.url});
   });
   browser.tabs.query({}).then(tabs => {
     for (const tab of tabs) {
-      updateButtonForTab(tab.id, {url: tab.url});
+      updateButtonForTab(tab.id, {'status': 'loading', url: tab.url});
     }
   }).catch(reason => {
     log('init tabs query rejected', reason);
@@ -185,14 +195,19 @@ function handleNotificationClick(notificationId) {
   browser.tabs.update(+tabId, {active: true});
 }
 
+let parent;
+
 if (browser.contextMenus.ContextType.TAB) {
-  const parent = chrome.contextMenus.create({
+  parent = chrome.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
     title: 'Snooze Tab until…',
     documentUrlPatterns: ['<all_urls>']
   });
   for (const item in times) {
     const time = times[item];
+    if (time.id === PICK_TIME) {
+      continue;
+    }
     chrome.contextMenus.create({
       parentId: parent,
       id: time.id,
@@ -201,27 +216,22 @@ if (browser.contextMenus.ContextType.TAB) {
     });
   }
 
-  browser.contextMenus.onClicked.addListener(function(info/*, tab*/) {
+  browser.contextMenus.onClicked.addListener(function(info, tab) {
+    if (tab.incognito) {
+      return; // Canʼt snooze private tabs
+    }
     const [time, ] = timeForId(moment(), info.menuItemId);
     browser.tabs.query({currentWindow: true}).then(tabs => {
-      let addBlank = true;
-      const closers = [];
-      for (const tab of tabs) {
-        if (!tab.active) {
-          addBlank = false;
-          continue;
+      const addBlank = tabs.length <= 1;
+      handleMessage({
+        'op': 'schedule',
+        'message': {
+          'time': time.valueOf(),
+          'title': tab.title || 'Tab woke up…',
+          'url': tab.url,
+          'windowId': tab.windowId
         }
-        handleMessage({
-          'op': 'schedule',
-          'message': {
-            'time': time.valueOf(),
-            'title': tab.title || 'Tab woke up…',
-            'url': tab.url,
-            'windowId': tab.windowId
-          }
-        });
-        closers.push(tab.id);
-      }
+      });
       if (addBlank) {
         browser.tabs.create({
           active: true,
@@ -229,8 +239,7 @@ if (browser.contextMenus.ContextType.TAB) {
         });
       }
       window.setTimeout(() => {
-        browser.tabs.remove(closers);
-        window.close();
+        browser.tabs.remove(tab.id);
       }, 500);
     }).catch(reason => {
       log('handleNotificationClick query rejected', reason);
