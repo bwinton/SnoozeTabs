@@ -4,7 +4,7 @@ import moment from 'moment';
 import classnames from 'classnames';
 
 import Calendar from 'rc-calendar';
-import TimePickerPanel from 'rc-time-picker/lib/Panel';
+import TimePicker from 'rc-time-picker';
 
 // Arbitrary 0.5s interval for live validation of time selection
 const VALIDATION_INTERVAL = 500;
@@ -35,21 +35,28 @@ export default class DatePickerPanel extends React.Component {
   render() {
     const { id, header, active, onClose } = this.props;
     const { currentValue, confirmDisabled } = this.state;
+    const disabledTimeFns = this.disabledTime();
 
     return (
       <div id={id} className={classnames('panel', { active })}>
         <div className="header">{header}</div>
         <Calendar showOk={false}
                   showDateInput={false}
+                  showToday={false}
                   value={currentValue}
-                  timePicker={(
-                    <TimePickerPanel value={currentValue}
-                      showHour={true} showMinute={true} showSecond={false} />
-                  )}
                   disabledDate={this.disabledDate.bind(this)}
                   disabledTime={this.disabledTime.bind(this)}
                   onChange={value => this.handleChange(value)}
                   onSelect={value => this.handleChange(value)} />
+        <div className="time-wrapper">
+          <TimePicker showSecond={false}
+                      hideDisabledOptions={true}
+                      allowEmpty={false}
+                      value={currentValue}
+                      format="h:mm a"
+                      onChange={value => this.handleChange(value)}
+                      {...disabledTimeFns} />
+        </div>
         <div className="footer">
           <div className="back"
                onClick={onClose}><span>« Back</span></div>

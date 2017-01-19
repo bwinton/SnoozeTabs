@@ -1,34 +1,86 @@
 @import 'node_modules/rc-calendar/assets/index';
 @import 'node_modules/rc-time-picker/assets/index';
 
-$panel-width: 250px;
+$panel-width: 320px;
+$panel-height: 474px;
+$panel-shadow-width: 13px;
+
+$narrow-panel-width: 225px;
+$narrow-panel-height: 100%;
+$narrow-panel-shadow-width: 7px;
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: url('FiraSans-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
 
 html,
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Fira Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Droid Sans', 'Helvetica Neue', sans-serif;
-  font-size: 14px;
-  width: $panel-width;
+  font-family: 'Fira Sans';
+  font-size: 16px;
+  color: #000000;
+  letter-spacing: -.69px;
   cursor: default;
   overflow: hidden;
 }
 
 body {
-  margin: 0 0 50px 0;
+  margin: 0;
   -moz-user-select: none;
   user-select: none;
+}
+
+.panel-wrapper {
+  background-color: #333333;
+  height: $panel-height;
+
+  >div {
+    height: 100%;
+  }
+}
+
+.panel {
+  margin: 0 0 50px 0;
+  transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
+  position: absolute;
+  top: 0;
+  left: $panel-width + $panel-shadow-width;
+  width: $panel-width - $panel-shadow-width;
+  height: 100%;
+  background: #fff;
+  opacity: .3;
+
+  &.active {
+    left: $panel-shadow-width;
+    opacity: 1;
+  }
+
+  &.obscured {
+    opacity: .6;
+  }
+
+  &.static {
+    position: inherit;
+    width: $panel-width;
+    left: 0;
+    transition: opacity 250ms ease-in-out;
+  }
+
+  &.static.active {
+    left: 0;
+    transition: opacity 250ms ease-in-out;
+  }
 }
 
 .header {
   color: #6E6E6E;
   border-bottom: 1px solid #e9e9e9;
-}
-
-#manage .header,
-#manageCalendar .header,
-#calendar .header {
   justify-content: center;
 }
 
@@ -45,23 +97,102 @@ ul {
   width: 100%;
 }
 
+li,
 .header,
-.footer,
-li {
-  padding: 0 10px;
-  height: 40px;
+.footer {
+  padding: 1px 10px;
   display: flex;
   align-items: center;
 }
 
+.header,
+.footer {
+  height: 50px;
+}
+
+ul.times {
+  li.option {
+    height: 50px;
+    margin-left: 58px;
+    padding: 1px 20px 1px 0;
+    border-bottom: 1px solid rgba(38, 38, 38, .15);
+
+    .icon {
+      padding: 17px 20px 19px 20px;
+      width: 18px;
+      height: 18px;
+      margin-left: -58px;
+    }
+
+    .title {
+      flex: 1 0 0;
+    }
+
+    .date {
+      min-width: 1em;
+      text-align: right;
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: -.52px;
+      color: #999999;
+      flex: 0 0 65px;
+    }
+
+    &:hover {
+      background: #f0f0f0;
+      border-bottom: 0;
+      padding-bottom: 2px;
+    }
+
+    &:hover .icon {
+      background: #f0f0f0;
+    }
+
+    &:active,
+    &:active .icon {
+      background: #d4d4d4;
+    }
+
+    &#pick .date {
+      &::after {
+        font-size: 24px;
+        content: '\232a';
+      }
+    }
+  }
+}
+
+div.empty-entries {
+  height: calc(100% - 105px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  color: #b1b1b1;
+  font-size: 14px;
+
+  .icon img {
+    opacity: .6;
+  }
+
+  .message {
+    padding: 12px;
+  }
+}
+
 ul.entries {
-  height: calc(100% - 80px);
+  height: calc(100% - 105px);
   overflow-x: hidden;
   overflow-y: auto;
 
   &.big {
     height: calc(100% - 40px);
   }
+}
+
+.static div.empty-entries,
+.static ul.entries {
+  height: calc(100% - 55px);
 }
 
 li.entry {
@@ -102,7 +233,9 @@ li.entry {
     justify-content: center;
     padding: 4px 4px 4px 0;
     line-height: 1.5em;
-    font-size: 10px;
+    font-size: 12px;
+    color: #b4b4b4;
+    border-bottom: 1px solid rgba(38, 38, 38, .15);
 
     &.editable {
       &:hover {
@@ -125,23 +258,24 @@ li.entry {
     justify-content: center;
     line-height: 1.5em;
     white-space: nowrap;
-    padding: 0 4px;
+    padding: 0 4px 0 0;
+    border-bottom: 1px solid rgba(38, 38, 38, .15);
 
     .title {
-      color: #333;
+      color: #000000;
       &:hover { color: #000; }
 
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      font-size: 12px;
-      line-height: 14px;
+      font-size: 15px;
+      line-height: 20px;
     }
 
     .url {
       font-size: 11px;
       line-height: 13px;
-      color: #6E6E6E;
+      color: #b4b4b4;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -166,17 +300,6 @@ li.entry {
   }
 }
 
-li.option {
-  &:hover {
-    cursor: pointer;
-    background: #e3e3e3;
-  }
-
-  &:active {
-    background: #d4d4d4;
-  }
-}
-
 
 .footer {
   position: absolute;
@@ -184,67 +307,71 @@ li.option {
   bottom: 0;
   padding: 0;
   background: #efefef;
-  font-size: 12px;
-  line-height: 13px;
+  font-size: 14px;
+  line-height: 15px;
   justify-content: center;
   border-top: 1px solid #d4d4d4;
   flex-direction: row;
   align-items: stretch;
   align-content: stretch;
 
-  &:active {
-    background: #b1b1b1;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+
+  & > div {
+    flex-grow: 1;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #fbfbfb;
+
+    &:hover {
+      background: #ebebeb;
+    }
+
+    &:active {
+      background: #d4d4d4;
+    }
+
+    & > span {
+      display: block;
+      margin: 0;
+      text-align: center;
+    }
   }
-}
 
-.footer > div {
-  flex-grow: 1;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .back {
+    border-bottom-left-radius: 4px;
 
-  & > span {
-    display: block;
-    margin: 0;
-    text-align: center;
+    &:active {
+      background: #b1b1b1;
+    }
   }
-}
 
-.footer .back {
-  background: #f2f2f2;
+  .confirm {
+    color: #ffffff;
+    background: #0094FB;
 
-  &:active {
-    background: #b1b1b1;
+    &:hover {
+      background: #006ECF;
+    }
+
+    &:active {
+      background: #0059AE;
+    }
+
   }
-}
 
-.footer .confirm {
-  background: #1e98f5;
-  color: #ffffff;
-
-  &:active {
-    background: #155bb3;
+  .disabled {
+    opacity: .2;
+    cursor: not-allowed;
   }
-}
 
-.footer .disabled {
-  opacity: .2;
-  cursor: not-allowed;
-}
-
-.footer.hide {
-  display: none;
-}
-
-.option > .icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 14px;
-}
-
-.option > .title {
-  flex: 1 0 0;
+  &.hide {
+    display: none;
+  }
 }
 
 .date {
@@ -254,53 +381,127 @@ li.option {
   color: #6E6E6E;
 }
 
-.option > .date {
-  flex: 0 0 65px;
-}
-
-#calendar,
-#manageCalendar,
-#manage {
-  transition: left 250ms ease-in-out;
-  position: absolute;
-  top: 0;
-  left: $panel-width + 3px;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-}
-
-#manage.static {
-  transition: none;
-}
-
-#calendar.active,
-#manageCalendar.active,
-#manage.active {
-  left: 0;
-}
-
 .rc-calendar {
-  border: 0;
+  font-family: 'Fira Sans';
+  font-size: 14px;
+  letter-spacing: -.69px;
+  width: 100%;
   box-shadow: none;
+  border: 0;
+  padding: 20px 16px;
+}
+
+.rc-calendar-date-panel {
+  border: 1px solid #e9e9e9;
+  border-radius: 2px;
+}
+
+.rc-calendar-header {
+  border-bottom: 0;
+  background: #efefef;
+  color: #848484;
+
+  .rc-calendar-prev-month-btn {
+    left: 50px;
+
+    &::after {
+      content: '\25c4';
+    }
+  }
+
+  .rc-calendar-next-month-btn {
+    right: 50px;
+
+    &::after {
+      content: '\25ba';
+    }
+  }
+
+  .rc-calendar-next-year-btn,
+  .rc-calendar-prev-year-btn {
+    display: none;
+  }
+
+  .rc-calendar-year-select,
+  .rc-calendar-month-select,
+  .rc-calendar-day-select {
+    font-size: 14px;
+    color: #848484;
+    padding: 0 .25em;
+  }
+
 }
 
 .rc-calendar-footer {
-  padding: 10px 0;
-}
-
-.rc-calendar-date {
-  width: 24px;
-  height: 24px;
+  padding: 0;
+  border-top: 0;
 }
 
 .rc-calendar-body {
-  padding: 2px 2px 5px 2px;
+  padding: 0;
   height: inherit;
 }
 
-.rc-calendar-time-picker-panel .rc-time-picker-panel-select ul {
-  max-height: 190px;
+.rc-calendar-table {
+  thead tr {
+    background: #efefef;
+    color: #b3b3b3;
+  }
+}
+
+.rc-calendar-tbody {
+
+  tr {
+    &:nth-child(even) {
+      background: #efefef;
+    }
+  }
+
+  .rc-calendar-date {
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    line-height: 30px;
+    border-radius: 16px;
+    color: #888888;
+
+    &:hover {
+      background: #d5d5d5;
+    }
+  }
+
+  .rc-calendar-today .rc-calendar-date {
+    color: #fff;
+    background: #a5a5a5;
+    border-color: #a5a5a5;
+  }
+
+  .rc-calendar-selected-day .rc-calendar-date {
+    color: #fff;
+    background: #1b9ef9;
+    border-color: #1b9ef9;
+  }
+
+  .rc-calendar-disabled-cell .rc-calendar-date,
+  .rc-calendar-next-month-btn-day .rc-calendar-date {
+    background: transparent;
+    color: #e4e4e4;
+  }
+
+  .rc-calendar-next-month-btn-day .rc-calendar-date {
+    &:hover {
+      background: #d5d5d5;
+    }
+  }
+
+}
+
+.rc-calendar-month-panel-body {
+  padding: 1px;
+}
+
+.rc-calendar-month-panel-table {
+  height: 180px;
 }
 
 .rc-calendar-footer-btn {
@@ -312,6 +513,162 @@ li.option {
   flex-grow: 1;
 }
 
-.rc-time-picker-panel-select ul li {
-  justify-content: center;
+.time-wrapper {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.rc-time-picker {
+
+  .rc-time-picker-input {
+    width: 6em;
+    text-align: center;
+    font-family: 'Fira Sans';
+    font-size: 18px;
+  }
+}
+
+.rc-time-picker-panel {
+
+  .rc-time-picker-panel-input {
+    width: 6em;
+    text-align: center;
+    font-family: 'Fira Sans';
+    font-size: 18px;
+    border-radius: 6px;
+  }
+
+  .rc-time-picker-panel-inner {
+    border-radius: 6px;
+  }
+
+  .rc-time-picker-panel-input-wrap {
+    padding: 0;
+  }
+
+  .rc-time-picker-panel-select ul li {
+    font-size: 16px;
+
+    &:hover {
+      background: #d5d5d5;
+    }
+
+    &.rc-time-picker-panel-select-option-selected {
+      color: #fff;
+      background: #1b9ef9;
+    }
+  }
+
+}
+
+.popup-narrow {
+
+  &.panel-wrapper {
+    height: $narrow-panel-height;
+  }
+
+  .panel {
+    height: $narrow-panel-height;
+    left: $narrow-panel-width + $narrow-panel-shadow-width;
+    width: $narrow-panel-width - $narrow-panel-shadow-width;
+
+    &.active {
+      left: $narrow-panel-shadow-width;
+      opacity: 1;
+    }
+
+    &.obscured {
+      opacity: .6;
+    }
+
+    &.static {
+      margin: 0;
+      width: 100%;
+      left: 0;
+      transition: opacity 250ms ease-in-out;
+    }
+
+    &.static.active {
+      left: 0;
+      transition: opacity 250ms ease-in-out;
+    }
+  }
+
+  .header {
+    font-size: 14px;
+  }
+
+  ul.times li.option {
+    margin-left: 46px;
+
+    .icon {
+      padding: 17px 14px 19px 14px;
+      margin-left: -46px;
+    }
+
+    .title {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .date {
+      font-size: 11px;
+      line-height: 14px;
+    }
+  }
+
+  .rc-calendar-header {
+    .rc-calendar-prev-month-btn {
+      left: 20px;
+    }
+
+    .rc-calendar-next-month-btn {
+      right: 20px;
+    }
+
+    .rc-calendar-year-select,
+    .rc-calendar-month-select,
+    .rc-calendar-day-select {
+      font-size: 12px;
+    }
+  }
+
+  .rc-calendar-date {
+    font-size: 14px;
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    border-radius: 14px;
+  }
+
+  .rc-time-picker-input {
+    font-size: 16px;
+  }
+
+  .rc-time-picker-panel-input {
+    font-size: 16px;
+  }
+
+  .rc-time-picker-panel-select ul li {
+    font-size: 14px;
+  }
+
+  li.entry {
+    .date {
+      font-size: 11px;
+    }
+
+    .content {
+      .title {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
+  }
+
+  .footer {
+    font-size: 12px;
+    line-height: 13px;
+  }
+
 }
