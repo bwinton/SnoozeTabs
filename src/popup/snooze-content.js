@@ -47,7 +47,8 @@ function scheduleSnoozedTab(time) {
           'time': time.valueOf(),
           'title': tab.title || 'Tab woke up…',
           'url': tab.url,
-          'windowId': tab.windowId
+          'windowId': tab.windowId,
+          'icon': tab.favIconUrl
         }
       });
       closers.push(tab.id);
