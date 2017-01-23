@@ -6,13 +6,26 @@ import classnames from 'classnames';
 import Calendar from 'rc-calendar';
 import TimePickerPanel from 'rc-time-picker/lib/Panel';
 
+// Arbitrary 0.5s interval for live validation of time selection
+const VALIDATION_INTERVAL = 500;
+
 export default class DatePickerPanel extends React.Component {
   constructor(props) {
     super(props);
+    this.validationTimer = null;
     this.state = {
       currentValue: props.defaultValue,
       confirmDisabled: false
     };
+  }
+
+  componentDidMount() {
+    this.validationTimer = setInterval(this.validateOnTimeChange.bind(this),
+                                       VALIDATION_INTERVAL);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.validationTimer);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -100,6 +113,14 @@ export default class DatePickerPanel extends React.Component {
       currentValue: value,
       confirmDisabled: (value.valueOf() <= Date.now())
     });
+  }
+
+  validateOnTimeChange() {
+    const { currentValue, confirmDisabled } = this.state;
+    const newConfirmDisabled = (currentValue.valueOf() <= Date.now());
+    if (confirmDisabled !== newConfirmDisabled) {
+      this.setState({ confirmDisabled: newConfirmDisabled });
+    }
   }
 
   handleConfirm() {
