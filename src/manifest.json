@@ -17,6 +17,7 @@
 
   "permissions": [
     "alarms",
+    "bookmarks",
     "contextMenus",
     "notifications",
     "storage",
