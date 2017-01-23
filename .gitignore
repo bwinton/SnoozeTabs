@@ -1,5 +1,6 @@
 .DS_Store
 profile.testing/
+web-ext-artifacts/
 dist/
 node_modules
 *.zip
