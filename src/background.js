@@ -76,9 +76,7 @@ function init() {
       updated[item[0]] = item[1];
     });
     log('setting next open tabs to now', updated);
-    return browser.storage.local.set(updated).then(() => {
-      updateWakeAlarm();
-    });
+    return browser.storage.local.set(updated).then(updateWakeAndBookmarks);
   }).catch(reason => {
     log('init storage get rejected', reason);
   });
@@ -95,18 +93,56 @@ const messageOps = {
   schedule: message => {
     const toSave = {};
     toSave[idForItem(message)] = message;
-    return browser.storage.local.set(toSave).then(updateWakeAlarm);
+    return browser.storage.local.set(toSave).then(updateWakeAndBookmarks);
   },
   cancel: message =>
-    browser.storage.local.remove(idForItem(message)).then(updateWakeAlarm),
+    browser.storage.local.remove(idForItem(message)).then(updateWakeAndBookmarks),
   update: message =>
     messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated))
 };
 
-function updateWakeAlarm() {
+function syncBookmarks(items) {
+  browser.bookmarks.search({title: 'Snoozed Tabs'}).then(folders => {
+    return Promise.all(folders.map(folder => {
+      return browser.bookmarks.removeTree(folder.id);
+    }));
+  }).then(() => {
+    return browser.bookmarks.create({title: 'Snoozed Tabs'});
+  }).then(snoozeTabsFolder => {
+    log('Sync Folder!', snoozeTabsFolder, Object.values(items));
+    const sortedEntries = [...Object.values(items)];
+    sortedEntries.sort((a, b) => {
+      if (a.time === NEXT_OPEN) {
+        if (b.time === NEXT_OPEN) {
+          return -(a.title.localeCompare(b.title));
+        } else {
+          return 1;
+        }
+      } else if (b.time === NEXT_OPEN) {
+        return -1;
+      } else {
+        return b.time - a.time;
+      }
+    });
+
+    return Promise.all(sortedEntries.map(item => {
+      return browser.bookmarks.create({
+        parentId: snoozeTabsFolder.id,
+        title: item.title,
+        url: item.url,
+        index: 0
+      });
+    }));
+  }).catch(reason => {
+    log('syncBookmarks rejected', reason);
+  });
+}
+
+function updateWakeAndBookmarks() {
   return browser.alarms.clearAll()
     .then(() => browser.storage.local.get())
     .then(items => {
+      syncBookmarks(items);
       const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_OPEN);
       if (!times.length) { return; }
 
@@ -186,7 +222,7 @@ function handleWake() {
         browser.storage.local.remove(due.map(entry => entry[0]));
       });
     });
-  }).then(updateWakeAlarm);
+  }).then(updateWakeAndBookmarks);
 }
 
 function handleNotificationClick(notificationId) {
