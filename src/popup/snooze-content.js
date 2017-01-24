@@ -19,6 +19,7 @@ let state = {
   activePanel: 'main',
   tabIsSnoozable: true,
   narrowPopup: false,
+  dontShow: false,
   entries: []
 };
 
@@ -32,14 +33,8 @@ function log(...args) {
 }
 
 function scheduleSnoozedTab(time, timeType) {
-  browser.tabs.query({currentWindow: true}).then(tabs => {
-    let addBlank = true;
-    const closers = [];
+  browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
     for (const tab of tabs) {
-      if (!tab.active) {
-        addBlank = false;
-        continue;
-      }
       if (tab.incognito) {
         continue;
       }
@@ -55,16 +50,8 @@ function scheduleSnoozedTab(time, timeType) {
           'icon': tab.favIconUrl
         }
       });
-      closers.push(tab.id);
-    }
-    if (addBlank) {
-      browser.tabs.create({
-        active: true,
-        url: 'about:home'
-      });
     }
     window.setTimeout(() => {
-      browser.tabs.remove(closers);
       window.close();
     }, 500);
   }).catch(reason => {
@@ -98,6 +85,13 @@ function updateSnoozedTab(item, updatedItem) {
   });
 }
 
+function updateDontShow(dontShow) {
+  browser.runtime.sendMessage({
+    'op': 'setconfirm',
+    'message': {dontShow: dontShow}
+  });
+}
+
 function render() {
   ReactDOM.render(
     <SnoozePopup {...state}
@@ -105,7 +99,8 @@ function render() {
                  scheduleSnoozedTab={scheduleSnoozedTab}
                  openSnoozedTab={openSnoozedTab}
                  cancelSnoozedTab={cancelSnoozedTab}
-                 updateSnoozedTab={updateSnoozedTab} />,
+                 updateSnoozedTab={updateSnoozedTab}
+                 updateDontShow={updateDontShow} />,
     document.getElementById('app'));
 }
 
@@ -116,7 +111,9 @@ function switchPanel(name) {
 function fetchEntries() {
   log('fetching items');
   browser.storage.local.get().then(items => {
-    log('fetched items', items);
+    const dontShow = items.dontShow;
+    delete items.dontShow;
+    log('fetched items', dontShow, items);
     return browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
       let tabIsSnoozable = true;
       let activePanel = 'main';
@@ -133,7 +130,8 @@ function fetchEntries() {
       setState({
         entries: Object.values(items || {}),
         tabIsSnoozable: tabIsSnoozable,
-        activePanel: activePanel
+        activePanel: activePanel,
+        dontShow: dontShow
       });
     });
   }).catch(reason => {

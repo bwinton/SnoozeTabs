@@ -17,7 +17,7 @@ export default class ManagePanel extends React.Component {
   }
 
   render() {
-    const { id, entries, active, switchPanel, tabIsSnoozable } = this.props;
+    const { id, entries, active, switchPanel, tabIsSnoozable, dontShow, updateDontShow } = this.props;
     const { datepickerActive } = this.state;
 
     const sortedEntries = [...entries];
@@ -51,6 +51,11 @@ export default class ManagePanel extends React.Component {
               <div className="message">No upcoming snoozes</div>
             </div>
           )}
+          <div className="confirm">
+            <input type="checkbox" id="confirm-checkbox" checked={!dontShow}
+              onChange={event => updateDontShow(!event.target.checked)}/>
+            <label htmlFor="confirm-checkbox">Ask for confirmation when snoozing tabs</label>
+          </div>
           <div className={classnames('footer', { 'hide': !tabIsSnoozable })}>
             <div className="back" onClick={ () => switchPanel('main') }><span>« Back</span></div>
           </div>
