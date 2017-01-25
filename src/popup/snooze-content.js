@@ -29,7 +29,7 @@ function log(...args) {
   if (DEBUG) { console.log('SnoozeTabs (FE):', ...args); }  // eslint-disable-line no-console
 }
 
-function scheduleSnoozedTab(time) {
+function scheduleSnoozedTab(time, timeType) {
   browser.tabs.query({currentWindow: true}).then(tabs => {
     let addBlank = true;
     const closers = [];
@@ -45,8 +45,10 @@ function scheduleSnoozedTab(time) {
         op: 'schedule',
         message: {
           'time': time.valueOf(),
+          'timeType': timeType,
           'title': tab.title || 'Tab woke up…',
           'url': tab.url,
+          'tabId': tab.id,
           'windowId': tab.windowId,
           'icon': tab.favIconUrl
         }
@@ -73,6 +75,10 @@ function openSnoozedTab(item) {
   browser.tabs.create({
     active: true,
     url: item.url
+  });
+  browser.runtime.sendMessage({
+    op: 'click',
+    message: item
   });
 }
 
@@ -140,6 +146,7 @@ function init() {
   });
   fetchEntries();
   render();
+  browser.runtime.sendMessage({ op: 'panelOpened' });
 }
 
 init();

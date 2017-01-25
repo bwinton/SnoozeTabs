@@ -57,7 +57,7 @@ export default class MainPanel extends React.Component {
       return;
     }
     const [time, ] = timeForId(moment(), item.id);
-    scheduleSnoozedTab(time);
+    scheduleSnoozedTab(time, item.id);
   }
 
   closeTimeSelect() {
@@ -67,6 +67,6 @@ export default class MainPanel extends React.Component {
   confirmTimeSelect(dateChoice) {
     const { scheduleSnoozedTab } = this.props;
     if (!dateChoice) { return; }
-    scheduleSnoozedTab(dateChoice);
+    scheduleSnoozedTab(dateChoice, PICK_TIME);
   }
 }
