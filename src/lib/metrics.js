@@ -1,32 +1,49 @@
+/* global Metrics */
+
+// Use of package.json for configuration
+import packageMeta from '../../package.json';
+
 // Track recent tabs woken to see whether they're later closed or focused
 let unseenWakeHistory = {};
 let seenWakeHistory = {};
 
-// BroadcastChannel for sending metrics pings to Test Pilot add-on
-let pingChannel = null;
-
-// Name of the metrics BroadcastChannel expected by the Test Pilot add-on
-const TESTPILOT_TELEMETRY_CHANNEL = 'testpilot-telemetry';
+// Channel for sending metrics pings to Test Pilot add-on
+let testpilotMetrics = null;
 
 const DEBUG = (process.env.NODE_ENV === 'development');
-
 function log(...args) {
   if (DEBUG) { console.log('SnoozeTabs (Metrics):', ...args); }  // eslint-disable-line no-console
 }
 
 export default {
-  init(BroadcastChannel, tabs) {
+  init(tabs) {
     unseenWakeHistory = {};
     seenWakeHistory = {};
-    pingChannel = new BroadcastChannel(TESTPILOT_TELEMETRY_CHANNEL);
+
+    testpilotMetrics = new Metrics({
+      id: packageMeta.id,
+      version: packageMeta.version,
+      tid: packageMeta.config.GA_TRACKING_ID,
+      type: 'webextension',
+      uid: '123-456-7890' // TODO: Generate & persist a client-unique ID
+    });
+
     tabs.onActivated.addListener(this.handleTabActivated.bind(this));
     tabs.onRemoved.addListener(this.handleTabRemoved.bind(this));
     log('init()');
   },
 
-  postMessage(message) {
-    log('postMessage', message);
-    return (!pingChannel) ? null : pingChannel.postMessage(message);
+  sendEvent(message) {
+    log('sendEvent', message);
+    if (testpilotMetrics) {
+      testpilotMetrics.sendEvent(message, (input, output) => ({
+        ...output,
+        ec: 'interactions',
+        ea: message.event,
+        cd2: message.snooze_time_type,
+        cd3: message.snooze_time
+      }));
+    }
   },
 
   handleTabActivated(activeInfo) {
@@ -54,23 +71,24 @@ export default {
   },
 
   panelOpened() {
-    this.postMessage({ event: 'panel-opened' });
+    this.sendEvent({ event: 'panel-opened' });
   },
 
-  _commonTabPostMessage(event, item) {
-    this.postMessage({
+  _commonTabSendEvent(event, item) {
+    this.sendEvent({
       event,
-      snooze_time: item.time,
-      snooze_time_type: item.timeType
+      snooze_time_type: item.timeType,
+      // Normalize from datestamp to delay in seconds
+      snooze_time: Math.ceil((item.time - Date.now()) / 1000)
     });
   },
 
   clickSnoozedTab(item) {
-    this._commonTabPostMessage('clicked', item);
+    this._commonTabSendEvent('clicked', item);
   },
 
   cancelSnoozedTab(item) {
-    this._commonTabPostMessage('cancelled', item);
+    this._commonTabSendEvent('cancelled', item);
   },
 
   scheduleSnoozedTab(item) {
@@ -78,26 +96,26 @@ export default {
     if (tabId in seenWakeHistory || tabId in unseenWakeHistory) {
       delete seenWakeHistory[tabId];
       delete unseenWakeHistory[tabId];
-      this._commonTabPostMessage('resnoozed', item);
+      this._commonTabSendEvent('resnoozed', item);
     } else {
-      this._commonTabPostMessage('snoozed', item);
+      this._commonTabSendEvent('snoozed', item);
     }
   },
 
   updateSnoozedTab(item) {
-    this._commonTabPostMessage('updated', item);
+    this._commonTabSendEvent('updated', item);
   },
 
   tabWoken(item, tab) {
     unseenWakeHistory[tab.id] = item;
-    this._commonTabPostMessage('woken', item);
+    this._commonTabSendEvent('woken', item);
   },
 
   wokenTabFocused(item) {
-    this._commonTabPostMessage('focused', item);
+    this._commonTabSendEvent('focused', item);
   },
 
   wokenTabClosed(item) {
-    this._commonTabPostMessage('closed-unfocused', item);
+    this._commonTabSendEvent('closed-unfocused', item);
   }
 };

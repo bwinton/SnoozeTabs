@@ -40,7 +40,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "snoozed",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -49,7 +49,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "woken",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -58,7 +58,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "focused",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -67,7 +67,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "closed-unfocused",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -76,7 +76,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "resnoozed",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -85,7 +85,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "cancelled",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -94,7 +94,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "updated",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```
@@ -103,7 +103,7 @@ portion of a `testpilottest` telemetry ping for each scenario.
 ```js
 {
   "event": "clicked",
-  "snooze_time": 1484345836165,
+  "snooze_time": 86400,
   "snooze_time_type": "tomorrow"
 }
 ```

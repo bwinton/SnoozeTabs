@@ -22,10 +22,11 @@
     "notifications",
     "storage",
     "tabs",
-    "<all_urls>"],
+    "<all_urls>"
+  ],
 
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["testpilot-metrics.js", "background.js"]
   },
   "browser_action": {
     "browser_style": false,

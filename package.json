@@ -29,6 +29,7 @@
     "rollup": "^0.36.4",
     "rollup-plugin-babel": "^2.6.1",
     "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-json": "^2.1.0",
     "rollup-plugin-node-globals": "^1.1.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-replace": "^1.1.1",
@@ -52,14 +53,18 @@
     "type": "git",
     "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
+  "config": {
+    "GA_TRACKING_ID": "UA-90911916-1"
+  },
   "scripts": {
     "start": "npm run build && npm-run-all --parallel test watch run storybook",
     "start-win": "npm run build && npm-run-all --parallel test watch",
-    "build": "npm run clean && npm-run-all --parallel copy:assets bundle:*",
+    "build": "npm run clean && npm-run-all --parallel copy:* bundle:*",
     "run": "web-ext run -s dist --firefox=nightly",
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo src/icons -o dist/icons && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
+    "copy:js": "shx cp node_modules/testpilot-metrics/testpilot-metrics.js dist/",
     "bundle:js": "npm run lint:js && rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content && rollup -c --environment entry:lib/confirm-bar",
     "bundle:css": "npm run lint:sass && shx mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
     "package": "npm run build && web-ext build -s dist -a .",
@@ -81,6 +86,8 @@
     "rc-calendar": "^7.5.1",
     "rc-time-picker": "^2.2.1",
     "react": "^15.4.1",
-    "react-dom": "^15.4.1"
+    "react-dom": "^15.4.1",
+    "testpilot-metrics": "^2.0.1",
+    "uuid": "^3.0.1"
   }
 }

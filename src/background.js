@@ -39,7 +39,7 @@ function updateButtonForTab(tabId, changeInfo) {
 
 function init() {
   log('init()');
-  Metrics.init(window.BroadcastChannel, browser.tabs);
+  Metrics.init(browser.tabs);
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);

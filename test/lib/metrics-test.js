@@ -1,4 +1,5 @@
 /* global describe, beforeEach, it */
+const packageMeta = require('../../package.json');
 
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -6,58 +7,78 @@ import sinon from 'sinon';
 import { PICK_TIME } from '../../src/lib/times';
 import Metrics from '../../src/lib/metrics';
 
-function mockBroadcastChannel(onNew) {
-  return function(name) {
-    this.name = name;
-    this.postMessage = sinon.spy();
-    onNew(this);
-    return this;
-  };
-}
+const ONE_SECOND_IN_MS = 1000;
+const ONE_DAY_IN_SECONDS = 86400;
 
 describe('Metrics', () => {
   let item;
-  let channel;
   let browser;
-
-  const BroadcastChannel = mockBroadcastChannel(obj => channel = obj);
-
-  const assertTabMessagePosted = (event, item) => {
-    expect(channel.postMessage.called).to.be.true;
-    const msg = channel.postMessage.lastCall.args[0];
-    expect(msg).to.deep.equal({
-      event,
-      snooze_time: item.time,
-      snooze_time_type: item.timeType
-    });
-  };
 
   beforeEach(() => {
     item = {
-      time: 8675309,
+      time: Date.now() + (ONE_DAY_IN_SECONDS * ONE_SECOND_IN_MS),
       timeType: PICK_TIME,
       url: 'https://example.com/bar'
     };
-    channel = null;
+
     browser = {
       tabs: {
         onActivated: { addListener: sinon.spy() },
         onRemoved: { addListener: sinon.spy() }
       }
     };
-    Metrics.init(BroadcastChannel, browser.tabs);
+
+    // HACK: Mock testpilot-metrics as the global var Metrics
+    global.Metrics = function (params) {
+      expect(params).to.deep.equal({
+        id: packageMeta.id,
+        version: packageMeta.version,
+        tid: packageMeta.config.GA_TRACKING_ID,
+        type: 'webextension',
+        uid: '123-456-7890' // TODO: Generate & persist a client-unique ID
+      });
+
+      global.Metrics.current = this;
+      this.sendEvent = sinon.spy();
+      return this;
+    };
+    global.Metrics.current = null;
+
+    Metrics.init(browser.tabs);
   });
 
-  it('should initialize a BroadcastChannel for testpilot-telemetry', () => {
-    expect(channel).to.exist;
-    expect(channel.name).to.equal('testpilot-telemetry');
+  const assertTabMessagePosted = (event, item) => {
+    const sendEvent = global.Metrics.current.sendEvent;
+    expect(sendEvent.called).to.be.true;
+
+    const lastCall = sendEvent.lastCall;
+
+    const msg = lastCall.args[0];
+    expect(msg).to.deep.equal({
+      event,
+      snooze_time_type: item.timeType,
+      snooze_time: ONE_DAY_IN_SECONDS
+    });
+
+    const gaTransform = lastCall.args[1];
+    expect(gaTransform(msg, {foo: 1})).to.deep.equal({
+      foo: 1,
+      ec: 'interactions',
+      ea: msg.event,
+      cd2: msg.snooze_time_type,
+      cd3: msg.snooze_time
+    });
+  };
+
+  it('should initialize successfully', () => {
+    expect(global.Metrics.current).to.exist;
     expect(browser.tabs.onActivated.addListener.called).to.be.true;
     expect(browser.tabs.onRemoved.addListener.called).to.be.true;
   });
 
   it('should measure each time the snooze panel is opened', () => {
     Metrics.panelOpened();
-    const msg = channel.postMessage.lastCall.args[0];
+    const msg = global.Metrics.current.sendEvent.lastCall.args[0];
     expect(msg).to.deep.equal({ event: 'panel-opened' });
   });
 
@@ -96,17 +117,17 @@ describe('Metrics', () => {
       url: item.url
     };
     Metrics.tabWoken(item, tab);
-    expect(channel.postMessage.callCount).to.equal(1);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
     const handleTabActivated = browser.tabs.onActivated.addListener.lastCall.args[0];
 
     // Unrecognized tab ID shouldn't fire a new metrics event.
     handleTabActivated({ tabId: 456, windowId: 454 });
-    expect(channel.postMessage.callCount).to.equal(1);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
     // But, the ID of a previously woken tab should fire a new event!
     handleTabActivated({ tabId: tab.id, windowId: 234 });
-    expect(channel.postMessage.callCount).to.equal(2);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(2);
 
     assertTabMessagePosted('focused', item);
   });
@@ -117,17 +138,17 @@ describe('Metrics', () => {
       url: item.url
     };
     Metrics.tabWoken(item, tab);
-    expect(channel.postMessage.callCount).to.equal(1);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
     const handleTabRemoved = browser.tabs.onRemoved.addListener.lastCall.args[0];
 
     // Unrecognized tab ID shouldn't fire a new metrics event.
     handleTabRemoved(456);
-    expect(channel.postMessage.callCount).to.equal(1);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
     // But, the ID of a previously woken tab should fire a new event!
     handleTabRemoved(tab.id);
-    expect(channel.postMessage.callCount).to.equal(2);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(2);
 
     assertTabMessagePosted('closed-unfocused', item);
   });
@@ -140,7 +161,7 @@ describe('Metrics', () => {
     item.tabId = tab.id;
 
     Metrics.tabWoken(item, tab);
-    expect(channel.postMessage.callCount).to.equal(1);
+    expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
     Metrics.scheduleSnoozedTab(item);
     assertTabMessagePosted('resnoozed', item);
