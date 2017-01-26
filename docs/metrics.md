@@ -113,6 +113,7 @@ A Redshift schema for the payload:
 ```lua
 local schema = {
 --   column name       field type   length  attributes   field name
+    {"client_id",        "VARCHAR",    255,     nil,       GUID()},
     {"event",            "VARCHAR",    255,     nil,       "Fields[payload.event]"},
     {"snooze_time",      "INTEGER",    nil,     nil,       "Fields[payload.snooze_time]"},
     {"snooze_time_type", "VARCHAR",    255,     nil,       "Fields[payload.snooze_time_type]"},
