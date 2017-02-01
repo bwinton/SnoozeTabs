@@ -10,14 +10,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SnoozePopup from '../lib/components/SnoozePopup';
 
+// HACK: Arbitrary value found by measuring menu panel popup width
+const NARROW_PANEL_MIN_WIDTH = 225;
+
 const DEBUG = (process.env.NODE_ENV === 'development');
 
 let state = {
   activePanel: 'main',
   tabIsSnoozable: true,
-  entries: [
-    { title: 'foo', url: 'http://qz.com', date: Date.now() }
-  ]
+  narrowPopup: false,
+  entries: []
 };
 
 function setState(data) {
@@ -139,13 +141,34 @@ function fetchEntries() {
   });
 }
 
+// Resize handler that lets us switch styles & rendering when the popup is
+// summoned from the toolbar versus from the menu panel. Toolbar size is based
+// on content size, menu panel body size is forcibly fixed.
+function setupResizeHandler() {
+  const handler = () => {
+    const clientWidth = document.body.clientWidth;
+    if (clientWidth === 0) { return; }
+
+    const newNarrowPopup = (clientWidth < NARROW_PANEL_MIN_WIDTH);
+    log('resize', clientWidth, state.narrowPopup, newNarrowPopup);
+
+    if (newNarrowPopup !== state.narrowPopup) {
+      setState({ narrowPopup: newNarrowPopup });
+    }
+  };
+  handler();
+  window.addEventListener('resize', handler);
+}
+
 function init() {
+  log('init');
+  setupResizeHandler();
+  render();
   browser.storage.onChanged.addListener((changes, area) => {
     // TODO: granularly apply the changes, rather than triggering a refresh?
     if (area === 'local') { fetchEntries(); }
   });
   fetchEntries();
-  render();
   browser.runtime.sendMessage({ op: 'panelOpened' });
 }
 

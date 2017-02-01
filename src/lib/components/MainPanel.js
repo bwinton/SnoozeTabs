@@ -21,7 +21,7 @@ export default class MainPanel extends React.Component {
 
     return (
       <div>
-        <div id={id} className={classnames('panel', { active })}>
+        <div id={id} className={classnames('static', 'panel', { active, obscured: datepickerActive })}>
           <ul className="times">
             { times.map(item => this.renderTime(item)) }
           </ul>
