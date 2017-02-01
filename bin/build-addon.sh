@@ -1,11 +1,11 @@
 #!/bin/bash
 set -ex
 npm install
-npm run build
 
 if [[ -z $TESTPILOT_AMO_USER || -z $TESTPILOT_AMO_SECRET ]]; then
   npm run package
 else
+  npm run build
   rm -f ./web-ext-artifacts/*.xpi
   ./node_modules/.bin/web-ext sign \
     --source-dir dist \
