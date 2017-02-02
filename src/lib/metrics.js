@@ -8,6 +8,7 @@ let unseenWakeHistory = {};
 let seenWakeHistory = {};
 
 // Channel for sending metrics pings to Test Pilot add-on
+let clientUUID = null;
 let testpilotMetrics = null;
 
 const DEBUG = (process.env.NODE_ENV === 'development');
@@ -16,7 +17,8 @@ function log(...args) {
 }
 
 export default {
-  init(tabs) {
+  init(uuid) {
+    clientUUID = uuid;
     unseenWakeHistory = {};
     seenWakeHistory = {};
 
@@ -25,16 +27,16 @@ export default {
       version: packageMeta.version,
       tid: packageMeta.config.GA_TRACKING_ID,
       type: 'webextension',
-      uid: '123-456-7890' // TODO: Generate & persist a client-unique ID
+      uid: clientUUID
     });
 
-    tabs.onActivated.addListener(this.handleTabActivated.bind(this));
-    tabs.onRemoved.addListener(this.handleTabRemoved.bind(this));
+    browser.tabs.onActivated.addListener(this.handleTabActivated.bind(this));
+    browser.tabs.onRemoved.addListener(this.handleTabRemoved.bind(this));
     log('init()');
   },
 
   sendEvent(message) {
-    log('sendEvent', message);
+    log('sendEvent', clientUUID, message);
     if (testpilotMetrics) {
       testpilotMetrics.sendEvent(message, (input, output) => ({
         ...output,

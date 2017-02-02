@@ -9,6 +9,8 @@
 import moment from 'moment';
 import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
+import { getAlarms, saveAlarms, removeAlarms,
+         getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
 
 const DEBUG = (process.env.NODE_ENV === 'development');
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
@@ -39,7 +41,6 @@ function updateButtonForTab(tabId, changeInfo) {
 
 function init() {
   log('init()');
-  Metrics.init(browser.tabs);
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
@@ -75,8 +76,10 @@ function init() {
     });
   }
 
-  browser.storage.local.get().then(items => {
-    delete items.dontShow;
+  getMetricsUUID().then(clientUUID => {
+    Metrics.init(clientUUID);
+    return getAlarms();
+  }).then(items => {
     const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
     const updated = {};
     due.forEach(item => {
@@ -84,7 +87,7 @@ function init() {
       updated[item[0]] = item[1];
     });
     log('setting next open tabs to now', updated);
-    return browser.storage.local.set(updated).then(updateWakeAndBookmarks);
+    return saveAlarms(updated).then(updateWakeAndBookmarks);
   }).catch(reason => {
     log('init storage get rejected', reason);
   });
@@ -99,8 +102,8 @@ const idForItem = item => `${item.time}-${item.url}`;
 
 const messageOps = {
   schedule: message => {
-    return browser.storage.local.get('dontShow').then(items => {
-      if (items.dontShow) {
+    return getDontShow().then(dontShow => {
+      if (dontShow) {
         return messageOps.confirm(message);
       }
 
@@ -125,7 +128,7 @@ const messageOps = {
         });
       }
     }).then(() => {
-      return browser.storage.local.set(toSave);
+      return saveAlarms(toSave);
     }).then(() => {
       if (tabId) {
         window.setTimeout(() => {
@@ -138,14 +141,14 @@ const messageOps = {
   },
   cancel: message => {
     Metrics.cancelSnoozedTab(message);
-    return browser.storage.local.remove(idForItem(message)).then(updateWakeAndBookmarks);
+    return removeAlarms(idForItem(message)).then(updateWakeAndBookmarks);
   },
   update: message => {
     Metrics.updateSnoozedTab(message);
     return messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated));
   },
   setconfirm: message => {
-    browser.storage.local.set({dontShow:message.dontShow});
+    setDontShow(message.dontShow);
   },
   click: message => {
     Metrics.clickSnoozedTab(message);
@@ -194,9 +197,8 @@ function syncBookmarks(items) {
 
 function updateWakeAndBookmarks() {
   return browser.alarms.clearAll()
-    .then(() => browser.storage.local.get())
+    .then(() => getAlarms())
     .then(items => {
-      delete items.dontShow;
       syncBookmarks(items);
       const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_OPEN);
       if (!times.length) { return; }
@@ -215,8 +217,7 @@ function updateWakeAndBookmarks() {
 function handleWake() {
   const now = Date.now();
   log('woke at', now);
-  return browser.storage.local.get().then(items => {
-    delete items.dontShow;
+  return getAlarms().then(items => {
     const due = Object.entries(items).filter(entry => entry[1].time <= now);
     log('tabs due to wake', due.length);
     return browser.windows.getAll({
@@ -276,7 +277,7 @@ function handleWake() {
           });
         });
       })).then(() => {
-        browser.storage.local.remove(due.map(entry => entry[0]));
+        removeAlarms(due.map(entry => entry[0]));
       });
     });
   }).then(updateWakeAndBookmarks);

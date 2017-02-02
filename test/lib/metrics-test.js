@@ -1,4 +1,3 @@
-/* global describe, beforeEach, it */
 const packageMeta = require('../../package.json');
 
 import { expect } from 'chai';
@@ -10,9 +9,8 @@ import Metrics from '../../src/lib/metrics';
 const ONE_SECOND_IN_MS = 1000;
 const ONE_DAY_IN_SECONDS = 86400;
 
-describe('Metrics', () => {
+describe('lib/metrics', () => {
   let item;
-  let browser;
 
   beforeEach(() => {
     item = {
@@ -21,7 +19,7 @@ describe('Metrics', () => {
       url: 'https://example.com/bar'
     };
 
-    browser = {
+    global.browser = {
       tabs: {
         onActivated: { addListener: sinon.spy() },
         onRemoved: { addListener: sinon.spy() }
@@ -35,7 +33,7 @@ describe('Metrics', () => {
         version: packageMeta.version,
         tid: packageMeta.config.GA_TRACKING_ID,
         type: 'webextension',
-        uid: '123-456-7890' // TODO: Generate & persist a client-unique ID
+        uid: '123-456-7890'
       });
 
       global.Metrics.current = this;
@@ -44,7 +42,7 @@ describe('Metrics', () => {
     };
     global.Metrics.current = null;
 
-    Metrics.init(browser.tabs);
+    Metrics.init('123-456-7890');
   });
 
   const assertTabMessagePosted = (event, item) => {
@@ -72,8 +70,8 @@ describe('Metrics', () => {
 
   it('should initialize successfully', () => {
     expect(global.Metrics.current).to.exist;
-    expect(browser.tabs.onActivated.addListener.called).to.be.true;
-    expect(browser.tabs.onRemoved.addListener.called).to.be.true;
+    expect(global.browser.tabs.onActivated.addListener.called).to.be.true;
+    expect(global.browser.tabs.onRemoved.addListener.called).to.be.true;
   });
 
   it('should measure each time the snooze panel is opened', () => {
@@ -119,7 +117,7 @@ describe('Metrics', () => {
     Metrics.tabWoken(item, tab);
     expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
-    const handleTabActivated = browser.tabs.onActivated.addListener.lastCall.args[0];
+    const handleTabActivated = global.browser.tabs.onActivated.addListener.lastCall.args[0];
 
     // Unrecognized tab ID shouldn't fire a new metrics event.
     handleTabActivated({ tabId: 456, windowId: 454 });
@@ -140,7 +138,7 @@ describe('Metrics', () => {
     Metrics.tabWoken(item, tab);
     expect(global.Metrics.current.sendEvent.callCount).to.equal(1);
 
-    const handleTabRemoved = browser.tabs.onRemoved.addListener.lastCall.args[0];
+    const handleTabRemoved = global.browser.tabs.onRemoved.addListener.lastCall.args[0];
 
     // Unrecognized tab ID shouldn't fire a new metrics event.
     handleTabRemoved(456);
