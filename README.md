@@ -1,4 +1,7 @@
 # SnoozeTabs
+
+[![CircleCI](https://circleci.com/gh/bwinton/SnoozeTabs.svg?style=svg)](https://circleci.com/gh/bwinton/SnoozeTabs)
+
 An add-on to let you snooze your tabs for a while.
 
 ## How to run
