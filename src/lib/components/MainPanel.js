@@ -16,7 +16,7 @@ export default class MainPanel extends React.Component {
   }
 
   render() {
-    const { id, active, switchPanel } = this.props;
+    const { id, active } = this.props;
     const { datepickerActive } = this.state;
 
     return (
@@ -26,7 +26,7 @@ export default class MainPanel extends React.Component {
             { times.map(item => this.renderTime(item)) }
           </ul>
           <div className="footer">
-            <div className="manage" onClick={ () => switchPanel('manage') }><span>Manage Snoozed Tabs</span></div>
+            <div className="manage" onClick={ () => this.handleManageClick() }><span>Manage Snoozed Tabs</span></div>
           </div>
         </div>
         <DatePickerPanel id="calendar"
@@ -51,13 +51,20 @@ export default class MainPanel extends React.Component {
   }
 
   handleOptionClick(ev, item) {
-    const { scheduleSnoozedTab } = this.props;
+    const { active, scheduleSnoozedTab } = this.props;
+    if (!active) { return; }
     if (item.id === PICK_TIME) {
       this.setState({ datepickerActive: true });
       return;
     }
     const [time, ] = timeForId(moment(), item.id);
     scheduleSnoozedTab(time, item.id);
+  }
+
+  handleManageClick() {
+    const { active, switchPanel } = this.props;
+    if (!active) { return; }
+    switchPanel('manage');
   }
 
   closeTimeSelect() {
