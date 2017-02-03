@@ -163,7 +163,7 @@ ul.times {
 }
 
 div.empty-entries {
-  height: calc(100% - 105px);
+  height: calc(100% - 145px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -181,18 +181,18 @@ div.empty-entries {
 }
 
 ul.entries {
-  height: calc(100% - 105px);
+  height: calc(100% - 145px);
   overflow-x: hidden;
   overflow-y: auto;
 
   &.big {
-    height: calc(100% - 40px);
+    height: calc(100% - 80px);
   }
 }
 
 .static div.empty-entries,
 .static ul.entries {
-  height: calc(100% - 55px);
+  height: calc(100% - 95px);
 }
 
 li.entry {
@@ -435,6 +435,21 @@ li.entry {
 .rc-calendar-footer {
   padding: 0;
   border-top: 0;
+}
+
+.confirm {
+  align-items: center;
+  color: #595959;
+  display: flex;
+  font-size: 11px;
+  justify-content: center;
+  padding: 8px 0;
+  margin: 0;
+}
+
+#confirm-checkbox {
+  margin-left: -2px;
+  margin-right: 8px;
 }
 
 .rc-calendar-body {

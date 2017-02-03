@@ -60,7 +60,7 @@
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo src/icons -o dist/icons && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
-    "bundle:js": "npm run lint:js && rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content",
+    "bundle:js": "npm run lint:js && rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content && rollup -c --environment entry:lib/confirm-bar",
     "bundle:css": "npm run lint:sass && shx mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
     "package": "npm run build && web-ext build -s dist -a .",
     "lint": "npm-run-all --parallel lint:*",

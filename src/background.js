@@ -18,6 +18,7 @@ function log(...args) {
 }
 
 let iconData;
+let closeData;
 
 function updateButtonForTab(tabId, changeInfo) {
   if (changeInfo.status !== 'loading' || !changeInfo.url) {
@@ -66,11 +67,22 @@ function init() {
     }).then(function(response) {
       iconData = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
     }).catch(reason => {
-      log('init getUrl rejected', reason);
+      log('init get iconData rejected', reason);
+    });
+  }
+
+  if (!closeData) {
+    fetch(browser.extension.getURL('icons/stop.svg')).then(response => {
+      return response.arrayBuffer();
+    }).then(function(response) {
+      closeData = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
+    }).catch(reason => {
+      log('init get closeData rejected', reason);
     });
   }
 
   browser.storage.local.get().then(items => {
+    delete items.dontShow;
     const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
     const updated = {};
     due.forEach(item => {
@@ -93,10 +105,42 @@ const idForItem = item => `${item.time}-${item.url}`;
 
 const messageOps = {
   schedule: message => {
+    return browser.storage.local.get('dontShow').then(items => {
+      if (items.dontShow) {
+        return messageOps.confirm(message);
+      }
+
+      browser.tabs.executeScript(message.tabId, {file: './lib/confirm-bar.js'}).then(() => {
+        return chrome.tabs.sendMessage(message.tabId, {message, iconData, closeData});
+      }).catch(reason => {
+        log('schedule inject rejected', reason);
+      });
+    });
+  },
+  confirm: message => {
     Metrics.scheduleSnoozedTab(message);
     const toSave = {};
+    const tabId = message.tabId;
+    delete message.tabId;
     toSave[idForItem(message)] = message;
-    return browser.storage.local.set(toSave).then(updateWakeAndBookmarks);
+    return browser.tabs.query({}).then(tabs => {
+      if (tabs.length <= 1) {
+        browser.tabs.create({
+          active: true,
+          url: 'about:home'
+        });
+      }
+    }).then(() => {
+      return browser.storage.local.set(toSave);
+    }).then(() => {
+      if (tabId) {
+        window.setTimeout(() => {
+          browser.tabs.remove(tabId);
+        }, 500);
+      }
+    }).then(updateWakeAndBookmarks).catch(reason => {
+      log('confirm rejected', reason);
+    });
   },
   cancel: message => {
     Metrics.cancelSnoozedTab(message);
@@ -105,6 +149,9 @@ const messageOps = {
   update: message => {
     Metrics.updateSnoozedTab(message);
     return messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated));
+  },
+  setconfirm: message => {
+    browser.storage.local.set({dontShow:message.dontShow});
   },
   click: message => {
     Metrics.clickSnoozedTab(message);
@@ -155,6 +202,7 @@ function updateWakeAndBookmarks() {
   return browser.alarms.clearAll()
     .then(() => browser.storage.local.get())
     .then(items => {
+      delete items.dontShow;
       syncBookmarks(items);
       const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_OPEN);
       if (!times.length) { return; }
@@ -174,6 +222,7 @@ function handleWake() {
   const now = Date.now();
   log('woke at', now);
   return browser.storage.local.get().then(items => {
+    delete items.dontShow;
     const due = Object.entries(items).filter(entry => entry[1].time <= now);
     log('tabs due to wake', due.length);
     return browser.windows.getAll({
@@ -271,28 +320,16 @@ if (browser.contextMenus.ContextType.TAB) {
       return; // Canʼt snooze private tabs
     }
     const [time, ] = timeForId(moment(), info.menuItemId);
-    browser.tabs.query({currentWindow: true}).then(tabs => {
-      const addBlank = tabs.length <= 1;
-      handleMessage({
-        'op': 'schedule',
-        'message': {
-          'time': time.valueOf(),
-          'title': tab.title || 'Tab woke up…',
-          'url': tab.url,
-          'windowId': tab.windowId
-        }
-      });
-      if (addBlank) {
-        browser.tabs.create({
-          active: true,
-          url: 'about:home'
-        });
+    handleMessage({
+      'op': 'schedule',
+      'message': {
+        'time': time.valueOf(),
+        'timeType': info.menuItemId,
+        'title': tab.title || 'Tab woke up…',
+        'url': tab.url,
+        'tabId': tab.id,
+        'windowId': tab.windowId
       }
-      window.setTimeout(() => {
-        browser.tabs.remove(tab.id);
-      }, 500);
-    }).catch(reason => {
-      log('handleNotificationClick query rejected', reason);
     });
   });
 }
