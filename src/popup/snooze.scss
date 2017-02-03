@@ -5,10 +5,6 @@ $panel-width: 320px;
 $panel-height: 474px;
 $panel-shadow-width: 13px;
 
-$narrow-panel-width: 225px;
-$narrow-panel-height: 100%;
-$narrow-panel-shadow-width: 7px;
-
 @font-face {
   font-family: 'Fira Sans';
   src: url('FiraSans-Regular.woff') format('woff');
@@ -579,16 +575,16 @@ li.entry {
 .popup-narrow {
 
   &.panel-wrapper {
-    height: $narrow-panel-height;
+    height: 100%;
   }
 
   .panel {
-    height: $narrow-panel-height;
-    left: $narrow-panel-width + $narrow-panel-shadow-width;
-    width: $narrow-panel-width - $narrow-panel-shadow-width;
+    height: 100%;
+    left: calc(100% + 7px);
+    width: calc(100% - 7px);
 
     &.active {
-      left: $narrow-panel-shadow-width;
+      left: 7px;
       opacity: 1;
     }
 
