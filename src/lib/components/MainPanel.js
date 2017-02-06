@@ -50,9 +50,15 @@ export default class MainPanel extends React.Component {
     );
   }
 
+  shouldIgnoreClicks() {
+    const { active } = this.props;
+    const { datepickerActive } = this.state;
+    return !active || datepickerActive;
+  }
+
   handleOptionClick(ev, item) {
-    const { active, scheduleSnoozedTab } = this.props;
-    if (!active) { return; }
+    if (this.shouldIgnoreClicks()) { return; }
+    const { scheduleSnoozedTab } = this.props;
     if (item.id === PICK_TIME) {
       this.setState({ datepickerActive: true });
       return;
@@ -62,8 +68,8 @@ export default class MainPanel extends React.Component {
   }
 
   handleManageClick() {
-    const { active, switchPanel } = this.props;
-    if (!active) { return; }
+    if (this.shouldIgnoreClicks()) { return; }
+    const { switchPanel } = this.props;
     switchPanel('manage');
   }
 
