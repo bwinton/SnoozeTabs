@@ -29,14 +29,8 @@ function updateButtonForTab(tabId, changeInfo) {
     if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('file:') ||
         url.startsWith('ftp:') || url.startsWith('app:'))) {
       browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
-      if (parent) {
-        browser.contextMenus.update(parent, {enabled: true});
-      }
     } else {
       browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
-      if (parent) {
-        browser.contextMenus.update(parent, {enabled: false});
-      }
     }
   }).catch(reason => {
     log('update button get rejected', reason);
