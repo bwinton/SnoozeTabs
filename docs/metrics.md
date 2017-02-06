@@ -120,5 +120,4 @@ local schema = {
 }
 ```
 
-All Mozilla data is kept by default for 180 days and in accordance with our
-privacy policies.
+We keep this data for 180 days in accordance with our standard policy.
