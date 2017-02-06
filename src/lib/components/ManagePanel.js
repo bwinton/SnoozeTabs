@@ -17,7 +17,7 @@ export default class ManagePanel extends React.Component {
   }
 
   render() {
-    const { id, entries, active, switchPanel, tabIsSnoozable, dontShow, updateDontShow } = this.props;
+    const { id, entries, active, tabIsSnoozable, dontShow, updateDontShow } = this.props;
     const { datepickerActive } = this.state;
 
     const sortedEntries = [...entries];
@@ -57,7 +57,7 @@ export default class ManagePanel extends React.Component {
             <label htmlFor="confirm-checkbox">Ask for confirmation when snoozing tabs</label>
           </div>
           <div className={classnames('footer', { 'hide': !tabIsSnoozable })}>
-            <div className="back" onClick={ () => switchPanel('main') }><span>« Back</span></div>
+            <div className="back" onClick={ () => this.handleBack() }><span>« Back</span></div>
           </div>
         </div>
         <DatePickerPanel id="manageCalendar"
@@ -107,14 +107,13 @@ export default class ManagePanel extends React.Component {
   }
 
   renderEntry(idx, item) {
-    const { openSnoozedTab, cancelSnoozedTab } = this.props;
     const url = this.getDisplayUrl(item.url);
     return (
       <li className="entry" key={idx}>
         <div className="icon">
           <img src={item.icon || '../icons/nightly.svg'} />
         </div>
-        <div className="content" onClick={() => openSnoozedTab(item)}>
+        <div className="content" onClick={() => this.handleItemClick(item)}>
           <div className="title" title={item.title}>{item.title || '&nbsp;'}</div>
           <div className="url" title={item.url}>{url}</div>
         </div>
@@ -122,14 +121,39 @@ export default class ManagePanel extends React.Component {
           <span>{this.getDate(item.time)}</span>
           <span>{this.getTime(item.time)}</span>
         </div>
-        <div className="delete" onClick={() => cancelSnoozedTab(item)}>
+        <div className="delete" onClick={() => this.handleItemDelete(item)}>
           <img src="../icons/trash.svg" width="16" height="16" />
         </div>
       </li>
     );
   }
 
+  shouldIgnoreClicks() {
+    const { active } = this.props;
+    const { datepickerActive } = this.state;
+    return !active || datepickerActive;
+  }
+
+  handleBack() {
+    if (this.shouldIgnoreClicks()) { return; }
+    const { switchPanel } = this.props;
+    switchPanel('main');
+  }
+
+  handleItemClick(item) {
+    if (this.shouldIgnoreClicks()) { return; }
+    const { openSnoozedTab } = this.props;
+    openSnoozedTab(item);
+  }
+
+  handleItemDelete(item) {
+    if (this.shouldIgnoreClicks()) { return; }
+    const { cancelSnoozedTab } = this.props;
+    cancelSnoozedTab(item);
+  }
+
   handleEntryEdit(item) {
+    if (this.shouldIgnoreClicks()) { return; }
     if (!this.getEditable(item.time)) {
       // Just open the tab if we can't edit it.
       this.props.openSnoozedTab(item);
