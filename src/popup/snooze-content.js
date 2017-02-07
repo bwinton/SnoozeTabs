@@ -8,6 +8,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { getAlarmsAndProperties } from '../lib/storage';
 import SnoozePopup from '../lib/components/SnoozePopup';
 
 // HACK: Arbitrary value found by measuring menu panel popup width
@@ -110,9 +111,9 @@ function switchPanel(name) {
 
 function fetchEntries() {
   log('fetching items');
-  browser.storage.local.get().then(items => {
-    const dontShow = items.dontShow;
-    delete items.dontShow;
+  getAlarmsAndProperties().then(data => {
+    const dontShow = data.dontShow;
+    const items = data.alarms;
     log('fetched items', dontShow, items);
     return browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
       let tabIsSnoozable = true;
