@@ -2,7 +2,7 @@
   "name": "snoozetabs",
   "description": "An add-on to let you snooze your tabs for a while.",
   "id": "snoozetabs@mozilla",
-  "version": "1.0.9",
+  "version": "1.0.11",
   "author": "Blake Winton <bwinton@latte.ca>",
   "contributors": [
     "Les Orchard <me@lmorchard.com> (http://lmorchard.com/)"
