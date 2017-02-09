@@ -10,13 +10,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { getAlarmsAndProperties } from '../lib/storage';
 import SnoozePopup from '../lib/components/SnoozePopup';
+import { makeLogger } from '../lib/utils';
+
+const log = makeLogger('FE');
 
 // HACK: Arbitrary breakpoint for styles below which to use "narrow" variant
 // The panel width is specified in Firefox in em units, so it can vary between
 // platforms. OS X is around 224px, Windows is around 248px.
 const NARROW_PANEL_MIN_WIDTH = 275;
-
-const DEBUG = (process.env.NODE_ENV === 'development');
 
 let state = {
   activePanel: 'main',
@@ -29,10 +30,6 @@ let state = {
 function setState(data) {
   state = {...state, ...data};
   render();
-}
-
-function log(...args) {
-  if (DEBUG) { console.log('SnoozeTabs (FE):', ...args); }  // eslint-disable-line no-console
 }
 
 function scheduleSnoozedTab(time, timeType) {

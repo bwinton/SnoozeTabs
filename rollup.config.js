@@ -23,7 +23,7 @@ export default {
       exclude: 'node_modules/process-es6/**',
     }),
     globals(),
-    replace({ 'process.env.NODE_ENV': '"development"' }),
+    replace({ 'process.env.NODE_ENV': `"${process.env.NODE_ENV || 'development'}"` }),
     resolve({
       browser: true,
       main: true

@@ -11,13 +11,11 @@ import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
 import { getAlarms, saveAlarms, removeAlarms,
          getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
+import { makeLogger } from './lib/utils';
 
-const DEBUG = (process.env.NODE_ENV === 'development');
+const log = makeLogger('BE');
+
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
-
-function log(...args) {
-  if (DEBUG) { console.log('SnoozeTabs (BE):', ...args); }  // eslint-disable-line no-console
-}
 
 let iconData;
 let closeData;

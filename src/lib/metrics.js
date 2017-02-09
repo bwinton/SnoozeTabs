@@ -1,4 +1,7 @@
 /* global Metrics */
+import { makeLogger } from './utils';
+
+const log = makeLogger('Metrics');
 
 // Use of package.json for configuration
 import packageMeta from '../../package.json';
@@ -10,11 +13,6 @@ let seenWakeHistory = {};
 // Channel for sending metrics pings to Test Pilot add-on
 let clientUUID = null;
 let testpilotMetrics = null;
-
-const DEBUG = (process.env.NODE_ENV === 'development');
-function log(...args) {
-  if (DEBUG) { console.log('SnoozeTabs (Metrics):', ...args); }  // eslint-disable-line no-console
-}
 
 export default {
   init(uuid) {
