@@ -5,6 +5,7 @@
 An add-on to let you snooze your tabs for a while.
 
 ## How to run
+* `npm install`
 
 * To develop: `npm start`
   * Builds the extension
