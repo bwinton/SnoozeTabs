@@ -43,6 +43,7 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         box-shadow: 0 1px 0 0 rgba(0,0,0,0.35);
         color: #6a6a6a;
         display: flex;
+        flex-direction: row;
         font-family: Lucida Grande, Tahoma, sans-serif;
         font-size: 14px;
         min-height: 40px;
@@ -61,8 +62,10 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         width: 24px;
       }
       button {
+        padding: 0;
         background-color: #fbfbfb;
         border: 1px solid #b1b1b1;
+        font-family: Lucida Grande, Tahoma, sans-serif;
         font-size: 12px;
         height: 24px;
         width: 6em;
