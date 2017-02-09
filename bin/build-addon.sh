@@ -3,9 +3,12 @@ set -ex
 npm install
 
 if [[ -z $TESTPILOT_AMO_USER || -z $TESTPILOT_AMO_SECRET ]]; then
-  npm run package
+  rm -f ./*.zip
+  NODE_ENV=development npm run package
+  mv snoozetabs*.zip snoozetabs-dev.zip
+  NODE_ENV=production npm run package
 else
-  npm run build
+  NODE_ENV=production npm run build
   rm -f ./web-ext-artifacts/*.xpi
   ./node_modules/.bin/web-ext sign \
     --source-dir dist \

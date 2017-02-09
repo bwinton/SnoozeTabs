@@ -6,7 +6,6 @@ const PICK_TIME = 'pick';
 export {NEXT_OPEN, PICK_TIME};
 
 export const times = [
-  {id: 'debug', icon: 'nightly.svg', title: 'Real Soon Now!'},
   {id: 'later', icon: 'later_today.svg', title: 'Later Today'},
   {id: 'tomorrow', icon: 'tomorrow.svg', title: 'Tomorrow'},
   {id: 'weekend', icon: 'weekends.svg', title: 'This Weekend'},
@@ -15,6 +14,10 @@ export const times = [
   {id: NEXT_OPEN, icon: 'next_open.svg', title: 'Next Open'},
   {id: PICK_TIME, icon: 'pick_date.svg', title: 'Pick a Date/Time'}
 ];
+
+if (process.env.NODE_ENV === 'development') {
+  times.unshift({id: 'debug', icon: 'nightly.svg', title: 'Real Soon Now!'});
+}
 
 export function timeForId(time, id) {
   let rv = moment(time);
