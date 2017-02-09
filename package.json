@@ -38,7 +38,7 @@
     "sinon": "^1.17.6",
     "storybook-host": "^1.0.8",
     "svgo": "^0.7.1",
-    "web-ext": "1.7.0"
+    "web-ext": "^1.8.1"
   },
   "homepage": "https://github.com/bwinton/SnoozeTabs#readme",
   "keywords": [
