@@ -289,6 +289,10 @@ li.entry {
     background: #D82016;
     text-align: center;
 
+    &:hover {
+      background: #951400;
+    }
+
     img {
       width: 16px;
       height: 16px;
