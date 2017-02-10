@@ -22,7 +22,7 @@ An add-on to let you snooze your tabs for a while.
 
 * To lint: `npm run lint`
 
-* To work with a production-style release, set the env var `NODE_ENV=production`. 
+* To work with a production-style release, set the env var `NODE_ENV=production`.
   This will turn on production optiimzations, while turning off logging &
   various development conveniences. For example:
   * Continuous file watcher builds:
@@ -43,6 +43,17 @@ An add-on to let you snooze your tabs for a while.
 * We’ll need something to convert [Pontoon][pontoon]-format l10n files into [WebExtension l10n][l10n] files…
 
 
+## Thanks
+
+Many of our icons came from [the Noun Project][nouns]:
+* Snooze Tabs logo: "[Bell][bell]" by Aysgl Avcu, from the Noun Project. (Modified)
+* Later Today: "[Stopwatch][stopwatch]" By Marvin Wilhelm, from the Noun Project.
+* Tomorrow:  "[Future][future]" By Arthur Shlain, from the Noun Project.
+* Weekend: "[Sunglasses][sunglasses]" By NAS, from the Noun Project.
+* Next Month: "[Calendar][calendar]" By artworkbean, from the Noun Project. (Modified)
+* Pick a Date: "[Calendar][calendar]" By artworkbean, from the Noun Project.
+
+
 [flow]: https://flowtype.org/
 [gulp]: http://gulpjs.com/
 [grunt]: http://gruntjs.com/
@@ -52,3 +63,9 @@ An add-on to let you snooze your tabs for a while.
 [sass]: http://sass-lang.com/
 [spec]: https://mozilla.invisionapp.com/share/MV9F846SY#/screens
 [webext]: https://developer.mozilla.org/en-US/Add-ons/WebExtensions
+[nouns]: https://thenounproject.com/
+[bell]: https://thenounproject.com/term/bell/242717/
+[stopwatch]: https://thenounproject.com/term/stopwatch/190330/
+[future]: https://thenounproject.com/term/future/101713/
+[sunglasses]: https://thenounproject.com/nas.ztu/collection/travel/?oq=weekend&cidx=0&i=58827
+[calendar]: https://thenounproject.com/term/calendar/124931/
