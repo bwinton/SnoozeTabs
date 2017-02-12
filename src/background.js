@@ -157,12 +157,13 @@ const messageOps = {
 };
 
 function syncBookmarks(items) {
-  browser.bookmarks.search({title: 'Snoozed Tabs'}).then(folders => {
+  const title = browser.i18n.getMessage('bookmarkFolderTitle');
+  browser.bookmarks.search({title: title}).then(folders => {
     return Promise.all(folders.map(folder => {
       return browser.bookmarks.removeTree(folder.id);
     }));
   }).then(() => {
-    return browser.bookmarks.create({title: 'Snoozed Tabs'});
+    return browser.bookmarks.create({title: title});
   }).then(snoozeTabsFolder => {
     log('Sync Folder!', snoozeTabsFolder, Object.values(items));
     const sortedEntries = [...Object.values(items)];
@@ -290,9 +291,10 @@ function handleNotificationClick(notificationId) {
 let parent;
 
 if (browser.contextMenus.ContextType.TAB) {
-  parent = chrome.contextMenus.create({
+  const title = browser.i18n.getMessage('contextMenuTitle');
+    parent = chrome.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
-    title: 'Snooze Tab until…',
+    title: title,
     documentUrlPatterns: ['<all_urls>']
   });
   for (const item in times) {
@@ -312,13 +314,14 @@ if (browser.contextMenus.ContextType.TAB) {
     if (tab.incognito) {
       return; // Canʼt snooze private tabs
     }
+    const title = browser.i18n.getMessage('notificationTitle');
     const [time, ] = timeForId(moment(), info.menuItemId);
     handleMessage({
       'op': 'schedule',
       'message': {
         'time': time.valueOf(),
         'timeType': info.menuItemId,
-        'title': tab.title || 'Tab woke up…',
+        'title': tab.title || title,
         'url': tab.url,
         'tabId': tab.id,
         'windowId': tab.windowId

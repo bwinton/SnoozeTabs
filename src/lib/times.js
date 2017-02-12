@@ -6,17 +6,17 @@ const PICK_TIME = 'pick';
 export {NEXT_OPEN, PICK_TIME};
 
 export const times = [
-  {id: 'later', icon: 'later_today.svg', title: 'Later Today'},
-  {id: 'tomorrow', icon: 'tomorrow.svg', title: 'Tomorrow'},
-  {id: 'weekend', icon: 'weekends.svg', title: 'This Weekend'},
-  {id: 'week', icon: 'next_week.svg', title: 'Next Week'},
-  {id: 'month', icon: 'next_month.svg', title: 'Next Month'},
-  {id: NEXT_OPEN, icon: 'next_open.svg', title: 'Next Open'},
-  {id: PICK_TIME, icon: 'pick_date.svg', title: 'Pick a Date/Time'}
+  {id: 'later', icon: 'later_today.svg', title: browser.i18n.getMessage('timeLaterToday')},
+  {id: 'tomorrow', icon: 'tomorrow.svg', title: browser.i18n.getMessage('timeTomorrow')},
+  {id: 'weekend', icon: 'weekends.svg', title: browser.i18n.getMessage('timeThisWeekend')},
+  {id: 'week', icon: 'next_week.svg', title: browser.i18n.getMessage('timeNextWeek')},
+  {id: 'month', icon: 'next_month.svg', title: browser.i18n.getMessage('timeNextMonth')},
+  {id: NEXT_OPEN, icon: 'next_open.svg', title: browser.i18n.getMessage('timeNextOpen')},
+  {id: PICK_TIME, icon: 'pick_date.svg', title: browser.i18n.getMessage('timePickADate')},
 ];
 
 if (process.env.NODE_ENV === 'development') {
-  times.unshift({id: 'debug', icon: 'nightly.svg', title: 'Real Soon Now!'});
+  times.unshift({ id: 'debug', icon: 'nightly.svg', title: browser.i18n.getMessage('timeRealSoonNow')});
 }
 
 export function timeForId(time, id) {
@@ -63,23 +63,27 @@ export function timeForId(time, id) {
 
 export function confirmationTime(time, timeType) {
   if (timeType === NEXT_OPEN) {
-    return 'the next time Firefox opens';
+    return browser.i18n.getMessage('timeNextOpenLong');
   }
 
   let rv;
   const endOfDay = moment().endOf('day');
   const endOfTomorrow = moment().add(1, 'day').endOf('day');
   const upcoming = moment(time);
-  if (upcoming.isBefore(endOfDay)) {
-    rv = '[later today at ]h';
-  } else if (upcoming.isBefore(endOfTomorrow)) {
-    rv = '[tomorrow at ]h';
-  } else {
-    rv = 'ddd[,] MMM D[ at ]h';
-  }
+  let timeStr = ']h';
   if (upcoming.minutes()) {
-    rv += ':mm';
+    timeStr += ':mm';
   }
-  rv += 'a';
+  timeStr += 'a[';
+  const weekday = ']ddd[';
+  const month = ']MMM[';
+  const date = ']D[';
+  if (upcoming.isBefore(endOfDay)) {
+    rv = `[${browser.i18n.getMessage('timeUpcomingToday', timeStr)}]`;
+  } else if (upcoming.isBefore(endOfTomorrow)) {
+    rv = `[${browser.i18n.getMessage('timeUpcomingTomorrow', timeStr)}]`;
+  } else {
+    rv = `[${browser.i18n.getMessage('timeUpcomingLater', [weekday, month, date, timeStr])}]`;
+  }
   return upcoming.format(rv);
 }

@@ -25,6 +25,12 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
   const cancelId = 'snoozetabs-cancel';
   const showId = 'snoozetabs-dontshow';
   const closeId = 'snoozetabs-close';
+  const iconAltText = browser.i18n.getMessage('confirmIconAltText');
+  const timeTitle = browser.i18n.getMessage('confirmTimeTitle', atTime);
+  const okTitle = browser.i18n.getMessage('confirmOkButton');
+  const cancelTitle = browser.i18n.getMessage('confirmCancelButton');
+  const dontShowLabel = browser.i18n.getMessage('confirmDontShowLabel');
+  const closeAltText = browser.i18n.getMessage('confirmCloseAltText');
 
   let confirmationBar = document.getElementById(confirmationId);
   if (!confirmationBar) {
@@ -101,13 +107,13 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         width: 10px;
       }
     </style>
-    <img src="${iconData}" alt="tab icon">
-    <span>This tab will snooze until ${atTime}.</span>
-    <button class="ok" id="${okId}">OK</button>
-    <button id="${cancelId}">Cancel</button>
+    <img src="${iconData}" alt="${iconAltText}">
+    <span>${timeTitle}</span>
+    <button class="ok" id="${okId}">${okTitle}</button>
+    <button id="${cancelId}">${cancelTitle}</button>
     <div class="spacer"></div>
-    <input type="checkbox" id="${showId}"/><label for="${showId}">Donʼt show this again</label>
-    <img id="${closeId}" src="${closeData}" alt="close button">
+    <input type="checkbox" id="${showId}"/><label for="${showId}">${dontShowLabel}</label>
+    <img id="${closeId}" src="${closeData}" alt="${closeAltText}">
   </div>`;
 
   confirmationBar = document.getElementById(confirmationId);

@@ -26,12 +26,14 @@ export default class MainPanel extends React.Component {
             { times.map(item => this.renderTime(item)) }
           </ul>
           <div className="footer">
-            <div className="manage" onClick={ () => this.handleManageClick() }><span>Manage Snoozed Tabs</span></div>
+            <div className="manage" onClick={ () => this.handleManageClick() }><span>{
+              browser.i18n.getMessage('mainManageButton')
+            }</span></div>
           </div>
         </div>
         <DatePickerPanel id="calendar"
                          active={datepickerActive}
-                         header="Pick a Date/Time"
+                         header={browser.i18n.getMessage('mainCalendarHeader')}
                          defaultValue={moment()}
                          onClose={ () => this.closeTimeSelect() }
                          onSelect={ value => this.confirmTimeSelect(value) } />

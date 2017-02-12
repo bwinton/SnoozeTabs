@@ -31,7 +31,7 @@
   },
   "browser_action": {
     "browser_style": false,
-    "default_title": "Snooze tab until…",
+    "default_title": "__MSG_popupTitle__",
     "default_popup": "popup/snooze.html",
     "default_icon": {
       "32": "icons/bell_icon.svg"

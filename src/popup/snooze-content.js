@@ -38,12 +38,13 @@ function scheduleSnoozedTab(time, timeType) {
       if (tab.incognito) {
         continue;
       }
+      const title = browser.i18n.getMessage('notificationTitle');
       browser.runtime.sendMessage({
         op: 'schedule',
         message: {
           'time': time.valueOf(),
           'timeType': timeType,
-          'title': tab.title || 'Tab woke up…',
+          'title': tab.title || title,
           'url': tab.url,
           'tabId': tab.id,
           'windowId': tab.windowId,

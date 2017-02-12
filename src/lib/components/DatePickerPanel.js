@@ -59,10 +59,12 @@ export default class DatePickerPanel extends React.Component {
         </div>
         <div className="footer">
           <div className="back"
-               onClick={onClose}><span>« Back</span></div>
+            onClick={onClose}><span>{browser.i18n.getMessage('datePickerBack')}</span></div>
           <div className={classnames('confirm', 'snooze', { disabled: confirmDisabled })}
-               title={confirmDisabled ? 'Time selection is in the past' : ''}
-               onClick={() => this.handleConfirm()}><span>Snooze!</span></div>
+               title={confirmDisabled ? browser.i18n.getMessage('datePickerDisabled') : ''}
+               onClick={() => this.handleConfirm()}><span>{
+                 browser.i18n.getMessage('datePickerSnooze')
+               }</span></div>
         </div>
       </div>
     );
