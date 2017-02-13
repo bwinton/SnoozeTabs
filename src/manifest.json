@@ -5,7 +5,8 @@
     }
   },
 
-  "description": "An add-on to let you snooze your tabs for a while.",
+  "default_locale": "en_US",
+  "description": "__MSG_extDesc__",
   "manifest_version": 2,
   "name": "snoozetabs",
   "author": "Mozilla (https://mozilla.org/)",
@@ -30,7 +31,7 @@
   },
   "browser_action": {
     "browser_style": false,
-    "default_title": "Snooze tab until…",
+    "default_title": "__MSG_popupTitle__",
     "default_popup": "popup/snooze.html",
     "default_icon": {
       "32": "icons/bell_icon.svg"

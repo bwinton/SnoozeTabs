@@ -14,6 +14,14 @@ import { makeLogger } from '../lib/utils';
 
 const log = makeLogger('FE');
 
+import moment from 'moment';
+import 'moment/min/locales.min';
+browser.i18n.getAcceptLanguages().then(languages => {
+  moment.locale(languages);
+}).catch(reason => {
+  log('getAcceptLanguages rejected', reason);
+});
+
 // HACK: Arbitrary breakpoint for styles below which to use "narrow" variant
 // The panel width is specified in Firefox in em units, so it can vary between
 // platforms. OS X is around 224px, Windows is around 248px.
@@ -38,12 +46,13 @@ function scheduleSnoozedTab(time, timeType) {
       if (tab.incognito) {
         continue;
       }
+      const title = browser.i18n.getMessage('notificationTitle');
       browser.runtime.sendMessage({
         op: 'schedule',
         message: {
           'time': time.valueOf(),
           'timeType': timeType,
-          'title': tab.title || 'Tab woke up…',
+          'title': tab.title || title,
           'url': tab.url,
           'tabId': tab.id,
           'windowId': tab.windowId,
@@ -100,7 +109,8 @@ function render() {
                  openSnoozedTab={openSnoozedTab}
                  cancelSnoozedTab={cancelSnoozedTab}
                  updateSnoozedTab={updateSnoozedTab}
-                 updateDontShow={updateDontShow} />,
+                 updateDontShow={updateDontShow}
+                 moment={moment} />,
     document.getElementById('app'));
 }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import moment from 'moment';
 import classnames from 'classnames';
 import { NEXT_OPEN } from '../times';
 
@@ -12,12 +11,12 @@ export default class ManagePanel extends React.Component {
     this.state = {
       datepickerActive: false,
       editedItem: null,
-      dateChoice: moment()
+      dateChoice: props.moment()
     };
   }
 
   render() {
-    const { id, entries, active, tabIsSnoozable, dontShow, updateDontShow } = this.props;
+    const { id, entries, active, tabIsSnoozable, dontShow, updateDontShow, moment } = this.props;
     const { datepickerActive } = this.state;
 
     const sortedEntries = [...entries];
@@ -38,7 +37,7 @@ export default class ManagePanel extends React.Component {
     return (
       <div>
         <div id={id} className={classnames('panel', { active, obscured: datepickerActive, static: !tabIsSnoozable })}>
-          <div className="header">Manage Snoozed Tabs</div>
+          <div className="header">{browser.i18n.getMessage('manageHeader')}</div>
           { (sortedEntries.length > 0) ? (
             <ul className={classnames('entries', { 'big': !tabIsSnoozable })}>
               { sortedEntries.map((item, idx) => this.renderEntry(idx, item)) }
@@ -48,24 +47,27 @@ export default class ManagePanel extends React.Component {
               <div className="icon">
                 <img src="../icons/bell_icon.svg" width="64" height="64" />
               </div>
-              <div className="message">No upcoming snoozes</div>
+              <div className="message">{browser.i18n.getMessage('manageNoSnoozes')}</div>
             </div>
           )}
           <div className="confirm">
             <input type="checkbox" id="confirm-checkbox" checked={!dontShow}
               onChange={event => updateDontShow(!event.target.checked)}/>
-            <label htmlFor="confirm-checkbox">Ask for confirmation when snoozing tabs</label>
+            <label htmlFor="confirm-checkbox">{browser.i18n.getMessage('manageConfirmLabel')}</label>
           </div>
           <div className={classnames('footer', { 'hide': !tabIsSnoozable })}>
-            <div className="back" onClick={ () => this.handleBack() }><span>« Back</span></div>
+            <div className="back" onClick={() => this.handleBack()}><span>{
+              browser.i18n.getMessage('manageBack')
+            }</span></div>
           </div>
         </div>
         <DatePickerPanel id="manageCalendar"
                          active={datepickerActive}
-                         header="Edit Date/Time"
+                         header={browser.i18n.getMessage('manageCalendarHeader')}
                          defaultValue={this.state.dateChoice}
                          onClose={ () => this.closeTimeSelect() }
-                         onSelect={ value => this.confirmTimeSelect(value) } />
+                         onSelect={ value => this.confirmTimeSelect(value) }
+                         moment={ moment } />
       </div>
     );
   }
@@ -84,19 +86,20 @@ export default class ManagePanel extends React.Component {
 
   getDate(time) {
     if (time === NEXT_OPEN) {
-      return 'Next time';
+      return browser.i18n.getMessage('manageDateNext');
     }
+    const moment = this.props.moment;
     if (moment(time).year() !== moment().year()) {
-      return moment(time).format('MMM D, YYYY') || 'Later';
+      return moment(time).format('MMM D, YYYY') || browser.i18n.getMessage('manageDateLater');
     }
-    return moment(time).format('ddd, MMM D') || 'Later';
+    return moment(time).format('ddd, MMM D') || browser.i18n.getMessage('manageDateLater');
   }
 
   getTime(time) {
     if (time === NEXT_OPEN) {
-      return 'Firefox opens';
+      return browser.i18n.getMessage('manageTimeNext');
     }
-    return moment(time).format('[@] ha') || '';
+    return this.props.moment(time).format('[@] ha') || '';
   }
 
   getEditable(time) {
@@ -162,7 +165,7 @@ export default class ManagePanel extends React.Component {
     this.setState({
       datepickerActive: true,
       editedItem: item,
-      dateChoice: moment(item.time)
+      dateChoice: this.props.moment(item.time)
     });
   }
 
