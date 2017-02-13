@@ -1,7 +1,7 @@
 import React from 'react';
 
 import classnames from 'classnames';
-import moment from 'moment';
+
 import { PICK_TIME, times, timeForId } from '../times';
 
 import DatePickerPanel from './DatePickerPanel';
@@ -16,8 +16,9 @@ export default class MainPanel extends React.Component {
   }
 
   render() {
-    const { id, active } = this.props;
+    const { id, active, moment } = this.props;
     const { datepickerActive } = this.state;
+
 
     return (
       <div>
@@ -34,15 +35,16 @@ export default class MainPanel extends React.Component {
         <DatePickerPanel id="calendar"
                          active={datepickerActive}
                          header={browser.i18n.getMessage('mainCalendarHeader')}
-                         defaultValue={moment()}
+                         defaultValue={this.props.moment()}
                          onClose={ () => this.closeTimeSelect() }
-                         onSelect={ value => this.confirmTimeSelect(value) } />
+                         onSelect={ value => this.confirmTimeSelect(value) }
+                         moment={ moment } />
       </div>
     );
   }
 
   renderTime(item) {
-    const [, date] = timeForId(moment(), item.id);
+    const [, date] = timeForId(this.props.moment(), item.id);
     return (
       <li className="option" key={item.id} id={item.id} onClick={ ev => this.handleOptionClick(ev, item) }>
         <img src={ `../icons/${item.icon || 'nightly.svg'}` } className="icon" />
@@ -65,7 +67,7 @@ export default class MainPanel extends React.Component {
       this.setState({ datepickerActive: true });
       return;
     }
-    const [time, ] = timeForId(moment(), item.id);
+    const [time, ] = timeForId(this.props.moment(), item.id);
     scheduleSnoozedTab(time, item.id);
   }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import moment from 'moment';
 import classnames from 'classnames';
 import { NEXT_OPEN } from '../times';
 
@@ -12,12 +11,12 @@ export default class ManagePanel extends React.Component {
     this.state = {
       datepickerActive: false,
       editedItem: null,
-      dateChoice: moment()
+      dateChoice: props.moment()
     };
   }
 
   render() {
-    const { id, entries, active, tabIsSnoozable, dontShow, updateDontShow } = this.props;
+    const { id, entries, active, tabIsSnoozable, dontShow, updateDontShow, moment } = this.props;
     const { datepickerActive } = this.state;
 
     const sortedEntries = [...entries];
@@ -67,7 +66,8 @@ export default class ManagePanel extends React.Component {
                          header={browser.i18n.getMessage('manageCalendarHeader')}
                          defaultValue={this.state.dateChoice}
                          onClose={ () => this.closeTimeSelect() }
-                         onSelect={ value => this.confirmTimeSelect(value) } />
+                         onSelect={ value => this.confirmTimeSelect(value) }
+                         moment={ moment } />
       </div>
     );
   }
@@ -88,6 +88,7 @@ export default class ManagePanel extends React.Component {
     if (time === NEXT_OPEN) {
       return browser.i18n.getMessage('manageDateNext');
     }
+    const moment = this.props.moment;
     if (moment(time).year() !== moment().year()) {
       return moment(time).format('MMM D, YYYY') || browser.i18n.getMessage('manageDateLater');
     }
@@ -98,7 +99,7 @@ export default class ManagePanel extends React.Component {
     if (time === NEXT_OPEN) {
       return browser.i18n.getMessage('manageTimeNext');
     }
-    return moment(time).format('[@] ha') || '';
+    return this.props.moment(time).format('[@] ha') || '';
   }
 
   getEditable(time) {
@@ -164,7 +165,7 @@ export default class ManagePanel extends React.Component {
     this.setState({
       datepickerActive: true,
       editedItem: item,
-      dateChoice: moment(item.time)
+      dateChoice: this.props.moment(item.time)
     });
   }
 

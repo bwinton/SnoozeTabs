@@ -1,6 +1,5 @@
 import React from 'react';
 
-import moment from 'moment';
 import classnames from 'classnames';
 
 import Calendar from 'rc-calendar';
@@ -72,7 +71,7 @@ export default class DatePickerPanel extends React.Component {
 
   disabledDate(current) {
     if (!current) { return false; }
-    const today = moment().hour(0).minute(0).second(0);
+    const today = this.props.moment().hour(0).minute(0).second(0);
     return current.valueOf() < today.valueOf();
   }
 
@@ -89,7 +88,7 @@ export default class DatePickerPanel extends React.Component {
     if (!currentValue) { return; }
 
     // All time selection disabled for past dates
-    const today = moment().hour(0).minute(0).second(0);
+    const today = this.props.moment().hour(0).minute(0).second(0);
     if (currentValue.valueOf() < today.valueOf()) {
       return {
         disabledHours: () => this.makeRangeArray(0, 24),
@@ -99,7 +98,7 @@ export default class DatePickerPanel extends React.Component {
     }
 
     // Disable past times for today as appropriate
-    const now = moment();
+    const now = this.props.moment();
     if (now.date() === currentValue.date() &&
         now.month() === currentValue.month() &&
         now.year() === currentValue.year()) {

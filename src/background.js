@@ -6,15 +6,21 @@
 
 'use strict';
 
+import { makeLogger } from './lib/utils';
+const log = makeLogger('BE');
+
 import moment from 'moment';
+import 'moment/min/locales.min';
+browser.i18n.getAcceptLanguages().then(languages => {
+  moment.locale(languages);
+}).catch(reason => {
+  log('getAcceptLanguages rejected', reason);
+});
+
 import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
 import { getAlarms, saveAlarms, removeAlarms,
          getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
-import { makeLogger } from './lib/utils';
-
-const log = makeLogger('BE');
-
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
 
 let iconData;
