@@ -58,7 +58,7 @@
     "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
   "config": {
-    "GA_TRACKING_ID": "UA-90911916-1"
+    "GA_TRACKING_ID": "UA-90911916-2"
   },
   "scripts": {
     "start": "npm run build && npm-run-all --parallel test watch run storybook",
