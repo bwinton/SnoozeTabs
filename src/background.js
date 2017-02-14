@@ -149,7 +149,7 @@ const messageOps = {
   },
   update: message => {
     Metrics.updateSnoozedTab(message);
-    return messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated));
+    return messageOps.cancel(message.old).then(() => messageOps.confirm(message.updated));
   },
   setconfirm: message => {
     setDontShow(message.dontShow);
