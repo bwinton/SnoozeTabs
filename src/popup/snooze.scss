@@ -311,7 +311,7 @@ li.entry {
   width: 100%;
   bottom: 0;
   padding: 0;
-  background: #efefef;
+  background: #e9e9e9;
   font-size: 14px;
   line-height: 15px;
   justify-content: center;
@@ -330,14 +330,12 @@ li.entry {
     justify-content: center;
     align-items: center;
 
-    background: #fbfbfb;
-
     &:hover {
-      background: #ebebeb;
+      background: #dedede;
     }
 
     &:active {
-      background: #d4d4d4;
+      background: #d2d2d2;
     }
 
     & > span {
@@ -349,10 +347,6 @@ li.entry {
 
   .back {
     border-bottom-left-radius: 4px;
-
-    &:active {
-      background: #b1b1b1;
-    }
   }
 
   .confirm {
