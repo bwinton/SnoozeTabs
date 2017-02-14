@@ -10,6 +10,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const Habitat = require('habitat');
 Habitat.load();
 
+const regexPlaceholders = /\{([A-Za-z0-9_@]*)\}/g;
 let supportedLocales = process.env.SUPPORTED_LOCALES || '*';
 
 const config = {
@@ -94,7 +95,7 @@ function getContentPlaceholders() {
             if (message.indexOf('{') !== -1) {
               const placeholder = {};
               let index = 1;
-              message.replace(/\{([A-Za-z]*)\}/g, (item, key) => {
+              message.replace(regexPlaceholders, (item, key) => {
                 placeholder[key.toLowerCase()] = { content: `$${index}` };
                 index++;
               });
@@ -125,7 +126,7 @@ function getContentMessages(locale, placeholders) {
             let message = messages[key];
             messages[key] = { 'message': message };
             if (placeholders[key]) {
-              message = message.replace(/\{([A-Za-z]*)\}/g, (item, key) => `\$${key.toUpperCase()}\$`);
+              message = message.replace(regexPlaceholders, (item, key) => `\$${key.toUpperCase()}\$`);
               messages[key] = {
                 'message': message,
                 'placeholders': placeholders[key]

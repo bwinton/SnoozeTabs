@@ -86,7 +86,8 @@ export default class ManagePanel extends React.Component {
 
   getDate(time) {
     if (time === NEXT_OPEN) {
-      return browser.i18n.getMessage('manageDateNext');
+      const message = browser.i18n.getMessage('manageDateNextOpen');
+      return message.split('<br>', '2')[0] || message;
     }
     const moment = this.props.moment;
     if (moment(time).year() !== moment().year()) {
@@ -97,7 +98,8 @@ export default class ManagePanel extends React.Component {
 
   getTime(time) {
     if (time === NEXT_OPEN) {
-      return browser.i18n.getMessage('manageTimeNext');
+      const message = browser.i18n.getMessage('manageDateNextOpen');
+      return message.split('<br>', '2')[1] || '';
     }
     return this.props.moment(time).format('[@] ha') || '';
   }

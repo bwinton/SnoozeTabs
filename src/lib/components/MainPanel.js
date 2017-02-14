@@ -11,14 +11,14 @@ export default class MainPanel extends React.Component {
     super(props);
     this.state = {
       datepickerActive: false,
-      dateChoice: null
+      dateChoice: null,
+      defaultDateChoice: props.moment()
     };
   }
 
   render() {
     const { id, active, moment } = this.props;
-    const { datepickerActive } = this.state;
-
+    const { datepickerActive, defaultDateChoice } = this.state;
 
     return (
       <div>
@@ -35,7 +35,7 @@ export default class MainPanel extends React.Component {
         <DatePickerPanel id="calendar"
                          active={datepickerActive}
                          header={browser.i18n.getMessage('mainCalendarHeader')}
-                         defaultValue={this.props.moment()}
+                         defaultValue={defaultDateChoice}
                          onClose={ () => this.closeTimeSelect() }
                          onSelect={ value => this.confirmTimeSelect(value) }
                          moment={ moment } />
@@ -49,7 +49,7 @@ export default class MainPanel extends React.Component {
       <li className="option" key={item.id} id={item.id} onClick={ ev => this.handleOptionClick(ev, item) }>
         <img src={ `../icons/${item.icon || 'nightly.svg'}` } className="icon" />
         <div className="title">{item.title || '&nbsp;'}</div>
-        <div className="date">{date}</div>
+        <div className="date" onClick={ev => this.handleOptionDateClick(ev, item)}>{date}</div>
       </li>
     );
   }
@@ -64,11 +64,24 @@ export default class MainPanel extends React.Component {
     if (this.shouldIgnoreClicks()) { return; }
     const { scheduleSnoozedTab } = this.props;
     if (item.id === PICK_TIME) {
-      this.setState({ datepickerActive: true });
+      this.setState({
+        datepickerActive: true,
+        defaultDateChoice: this.props.moment()
+      });
       return;
     }
     const [time, ] = timeForId(this.props.moment(), item.id);
     scheduleSnoozedTab(time, item.id);
+  }
+
+  handleOptionDateClick(ev, item) {
+    if (this.shouldIgnoreClicks()) { return; }
+    ev.stopPropagation();
+    const [time, ] = timeForId(this.props.moment(), item.id);
+    this.setState({
+      datepickerActive: true,
+      defaultDateChoice: time
+    });
   }
 
   handleManageClick() {

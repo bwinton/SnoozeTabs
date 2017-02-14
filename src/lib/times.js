@@ -73,7 +73,7 @@ export function timeForId(time, id) {
 
 export function confirmationTime(time, timeType) {
   if (timeType === NEXT_OPEN) {
-    return browser.i18n.getMessage('timeNextOpenLong');
+    return browser.i18n.getMessage('timeUpcomingNextOpen');
   }
 
   let rv;
