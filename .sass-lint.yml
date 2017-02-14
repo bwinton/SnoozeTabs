@@ -11,3 +11,4 @@ rules:
   shorthand-values: 0
   no-vendor-prefixes: 0
   no-qualifying-elements: 0
+  nesting-depth: 3

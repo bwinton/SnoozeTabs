@@ -132,6 +132,11 @@ ul.times {
       letter-spacing: -.52px;
       color: #999999;
       flex: 0 0 65px;
+
+      &:hover {
+        color: #009CFC;
+        cursor: pointer;
+      }
     }
 
     &:hover {
