@@ -20,7 +20,7 @@
     "no-unused-vars": "warn",
     "no-var": "error",
     "prefer-const": "error",
-    "quotes": ["error", "single"],
+    "quotes": ["error", "single", {"avoidEscape": true}],
     "semi": ["error", "always"],
     "valid-typeof": "warn",
     "react/jsx-uses-react": "error",
