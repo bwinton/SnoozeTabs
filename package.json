@@ -68,7 +68,7 @@
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:locales": "node pontoon-to-webext",
-    "copy:assets": "shx cp -r src/manifest.json dist/ && svgo src/icons -o dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
+    "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
     "copy:js": "shx cp node_modules/testpilot-metrics/testpilot-metrics.js dist/",
     "bundle:js": "npm run lint:js && rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content && rollup -c --environment entry:lib/confirm-bar",
     "bundle:css": "npm run lint:sass && shx mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
