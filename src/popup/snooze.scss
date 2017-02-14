@@ -589,16 +589,17 @@ li.entry {
 
   .panel {
     height: 100%;
-    left: calc(100% + 7px);
-    width: calc(100% - 7px);
+    left: 100%;
+    width: 100%;
+    opacity: 1;
 
     &.active {
-      left: 7px;
+      left: 0;
       opacity: 1;
     }
 
     &.obscured {
-      opacity: .6;
+      opacity: 1;
     }
 
     &.static {
