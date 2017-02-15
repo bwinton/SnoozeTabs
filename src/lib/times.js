@@ -1,15 +1,8 @@
 /* exported timeForId */
 
-import { makeLogger } from './utils';
-const log = makeLogger('TI');
-
 import moment from 'moment';
 import 'moment/min/locales.min';
-browser.i18n.getAcceptLanguages().then(languages => {
-  moment.locale(languages);
-}).catch(reason => {
-  log('getAcceptLanguages rejected', reason);
-});
+moment.locale(browser.i18n.getUILanguage());
 
 const NEXT_OPEN = 'next';
 const PICK_TIME = 'pick';

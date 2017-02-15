@@ -16,11 +16,7 @@ const log = makeLogger('FE');
 
 import moment from 'moment';
 import 'moment/min/locales.min';
-browser.i18n.getAcceptLanguages().then(languages => {
-  moment.locale(languages);
-}).catch(reason => {
-  log('getAcceptLanguages rejected', reason);
-});
+moment.locale(browser.i18n.getUILanguage());
 
 // HACK: Arbitrary breakpoint for styles below which to use "narrow" variant
 // The panel width is specified in Firefox in em units, so it can vary between
