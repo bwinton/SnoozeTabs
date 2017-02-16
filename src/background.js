@@ -11,11 +11,7 @@ const log = makeLogger('BE');
 
 import moment from 'moment';
 import 'moment/min/locales.min';
-browser.i18n.getAcceptLanguages().then(languages => {
-  moment.locale(languages);
-}).catch(reason => {
-  log('getAcceptLanguages rejected', reason);
-});
+moment.locale(browser.i18n.getUILanguage());
 
 import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
