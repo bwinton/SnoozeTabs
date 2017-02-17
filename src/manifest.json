@@ -1,7 +1,8 @@
 {
   "applications": {
     "gecko": {
-      "id": "snoozetabs@mozilla.com"
+      "id": "snoozetabs@mozilla.com",
+      "update_url": "https://testpilot.firefox.com/files/snoozetabs@mozilla/updates.json"
     }
   },
 
