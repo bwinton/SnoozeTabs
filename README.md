@@ -24,7 +24,7 @@ An add-on to let you snooze your tabs for a while.
 * To lint: `npm run lint`
 
 * To work with a production-style release, set the env var `NODE_ENV=production`.
-  This will turn on production optiimzations, while turning off logging &
+  This will turn on production optimizations, while turning off logging &
   various development conveniences. For example:
   * Continuous file watcher builds:
     * `NODE_ENV=production npm start`
