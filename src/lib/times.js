@@ -2,6 +2,7 @@
 
 import moment from 'moment';
 import 'moment/min/locales.min';
+import {formats} from './time-formats';
 moment.locale(browser.i18n.getUILanguage());
 
 const NEXT_OPEN = 'next';
@@ -22,33 +23,54 @@ if (process.env.NODE_ENV === 'development') {
   times.unshift({ id: 'debug', icon: 'nightly.svg', title: browser.i18n.getMessage('timeRealSoonNow')});
 }
 
+
+const i18n_formats = ((locale) => {
+  let rv = Object.assign({}, formats.default);
+  const baseLocale = locale.split('_')[0];
+  Object.keys(formats).forEach(key => {
+    if (key.split(',').indexOf(baseLocale) !== -1) {
+      rv = Object.assign(rv, formats[key]);
+    }
+  });
+  Object.keys(formats).forEach(key => {
+    if (key.split(',').indexOf(locale) !== -1) {
+      rv = Object.assign(rv, formats[key]);
+    }
+  });
+  return rv;
+})(browser.i18n.getUILanguage() || 'en_US');
+
+const getFormat = function (format) {
+  return i18n_formats[format];
+};
+
 export function timeForId(time, id) {
   let rv = moment(time);
   let text = rv.fromNow();
   switch (id) {
     case 'debug':
       rv = rv.add(5, 'seconds');
-      text = rv.format('[@] ha');
+      text = rv.format(getFormat('short_time'));
       break;
     case 'later':
       rv = rv.add(3, 'hours').minute(0);
-      text = rv.format('[@] ha');
+      text = rv.format(getFormat('short_time'));
       break;
     case 'tomorrow':
       rv = rv.add(1, 'day').hour(9).minute(0);
-      text = rv.format('ddd [@] ha');
+      text = rv.format(getFormat('short_date_time'));
       break;
     case 'weekend':
       rv = rv.day(6).hour(9).minute(0);
-      text = rv.format('ddd [@] ha');
+      text = rv.format(getFormat('short_date_time'));
       break;
     case 'week':
       rv = rv.add(1, 'week').hour(9).minute(0);
-      text = rv.format('ddd MMM D \ [@] ha');
+      text = rv.format(getFormat('long_date_time'));
       break;
     case 'month':
       rv = rv.add(1, 'month').hour(9).minute(0);
-      text = rv.format('ddd MMM D \ [@] ha');
+      text = rv.format(getFormat('long_date_time'));
       break;
     case NEXT_OPEN:
       rv = NEXT_OPEN;
