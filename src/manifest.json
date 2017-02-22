@@ -15,7 +15,7 @@
   "icons": {
     "48": "icons/bell_icon.svg"
   },
-  "version": "1.0.14",
+  "version": "1.0.15",
 
   "permissions": [
     "alarms",
