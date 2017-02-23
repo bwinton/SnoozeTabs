@@ -2,6 +2,7 @@ import React from 'react';
 
 import classnames from 'classnames';
 import { NEXT_OPEN } from '../times';
+import {getFormat} from '../time-formats';
 
 import DatePickerPanel from './DatePickerPanel';
 
@@ -91,9 +92,9 @@ export default class ManagePanel extends React.Component {
     }
     const moment = this.props.moment;
     if (moment(time).year() !== moment().year()) {
-      return moment(time).format('MMM D, YYYY') || browser.i18n.getMessage('manageDateLater');
+      return moment(time).format(getFormat('date_year')) || browser.i18n.getMessage('manageDateLater');
     }
-    return moment(time).format('ddd, MMM D') || browser.i18n.getMessage('manageDateLater');
+    return moment(time).format(getFormat('date_day')) || browser.i18n.getMessage('manageDateLater');
   }
 
   getTime(time) {
@@ -101,7 +102,7 @@ export default class ManagePanel extends React.Component {
       const message = browser.i18n.getMessage('manageDateNextOpen');
       return message.split('<br>', '2')[1] || '';
     }
-    return this.props.moment(time).format('[@] ha') || '';
+    return this.props.moment(time).format(getFormat('short_time')) || '';
   }
 
   getEditable(time) {
