@@ -1,9 +1,7 @@
 /* exported timeForId */
 
 import moment from 'moment';
-import 'moment/min/locales.min';
-import {formats} from './time-formats';
-moment.locale(browser.i18n.getUILanguage());
+import { getLocalizedDateTime } from './time-formats';
 
 const NEXT_OPEN = 'next';
 const PICK_TIME = 'pick';
@@ -23,54 +21,33 @@ if (process.env.NODE_ENV === 'development') {
   times.unshift({ id: 'debug', icon: 'nightly.svg', title: browser.i18n.getMessage('timeRealSoonNow')});
 }
 
-
-const i18n_formats = ((locale) => {
-  let rv = Object.assign({}, formats.default);
-  const baseLocale = locale.split('_')[0];
-  Object.keys(formats).forEach(key => {
-    if (key.split(',').indexOf(baseLocale) !== -1) {
-      rv = Object.assign(rv, formats[key]);
-    }
-  });
-  Object.keys(formats).forEach(key => {
-    if (key.split(',').indexOf(locale) !== -1) {
-      rv = Object.assign(rv, formats[key]);
-    }
-  });
-  return rv;
-})(browser.i18n.getUILanguage() || 'en_US');
-
-const getFormat = function (format) {
-  return i18n_formats[format];
-};
-
 export function timeForId(time, id) {
   let rv = moment(time);
   let text = rv.fromNow();
   switch (id) {
     case 'debug':
       rv = rv.add(5, 'seconds');
-      text = rv.format(getFormat('short_time'));
+      text = getLocalizedDateTime(rv, 'short_time');
       break;
     case 'later':
       rv = rv.add(3, 'hours').minute(0);
-      text = rv.format(getFormat('short_time'));
+      text = getLocalizedDateTime(rv, 'short_time');
       break;
     case 'tomorrow':
       rv = rv.add(1, 'day').hour(9).minute(0);
-      text = rv.format(getFormat('short_date_time'));
+      text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'weekend':
       rv = rv.day(6).hour(9).minute(0);
-      text = rv.format(getFormat('short_date_time'));
+      text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'week':
       rv = rv.add(1, 'week').hour(9).minute(0);
-      text = rv.format(getFormat('long_date_time'));
+      text = getLocalizedDateTime(rv, 'long_date_time');
       break;
     case 'month':
       rv = rv.add(1, 'month').hour(9).minute(0);
-      text = rv.format(getFormat('long_date_time'));
+      text = getLocalizedDateTime(rv, 'long_date_time');
       break;
     case NEXT_OPEN:
       rv = NEXT_OPEN;
@@ -95,20 +72,19 @@ export function confirmationTime(time, timeType) {
   const endOfDay = moment().endOf('day');
   const endOfTomorrow = moment().add(1, 'day').endOf('day');
   const upcoming = moment(time);
-  let timeStr = ']h';
+
+  let timeStr = getLocalizedDateTime(upcoming, 'confirmation_time_no_minutes');
   if (upcoming.minutes()) {
-    timeStr += ':mm';
+    timeStr = getLocalizedDateTime(upcoming, 'confirmation_time');
   }
-  timeStr += 'a[';
-  const weekday = ']ddd[';
-  const month = ']MMM[';
-  const date = ']D[';
+  const dateStr = getLocalizedDateTime(upcoming, 'confirmation_date');
+
   if (upcoming.isBefore(endOfDay)) {
-    rv = `[${browser.i18n.getMessage('timeUpcomingToday', timeStr)}]`;
+    rv = browser.i18n.getMessage('timeUpcomingToday', timeStr);
   } else if (upcoming.isBefore(endOfTomorrow)) {
-    rv = `[${browser.i18n.getMessage('timeUpcomingTomorrow', timeStr)}]`;
+    rv = browser.i18n.getMessage('timeUpcomingTomorrow', timeStr);
   } else {
-    rv = `[${browser.i18n.getMessage('timeUpcomingLater', [weekday, month, date, timeStr])}]`;
+    rv = browser.i18n.getMessage('timeUpcomingOther', [dateStr, timeStr]);
   }
-  return upcoming.format(rv);
+  return rv;
 }
