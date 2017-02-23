@@ -41,7 +41,7 @@ export default {
         ec: 'interactions',
         ea: message.event,
         cd2: message.snooze_time_type,
-        cd3: message.snooze_time
+        cm1: message.snooze_time
       }));
     }
   },

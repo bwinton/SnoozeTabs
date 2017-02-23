@@ -64,7 +64,7 @@ describe('lib/metrics', () => {
       ec: 'interactions',
       ea: msg.event,
       cd2: msg.snooze_time_type,
-      cd3: msg.snooze_time
+      cm1: msg.snooze_time
     });
   };
 
