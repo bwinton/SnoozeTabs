@@ -15,8 +15,6 @@ import { makeLogger } from '../lib/utils';
 const log = makeLogger('FE');
 
 import moment from 'moment';
-import 'moment/min/locales.min';
-moment.locale(browser.i18n.getUILanguage());
 
 // HACK: Arbitrary breakpoint for styles below which to use "narrow" variant
 // The panel width is specified in Firefox in em units, so it can vary between

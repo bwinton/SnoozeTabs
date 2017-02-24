@@ -2,6 +2,7 @@ import React from 'react';
 
 import classnames from 'classnames';
 
+import 'moment/min/locales.min';
 import Calendar from 'rc-calendar';
 import TimePicker from 'rc-time-picker';
 
