@@ -36,6 +36,12 @@ export default class DatePickerPanel extends React.Component {
     const { currentValue, confirmDisabled } = this.state;
     const disabledTimeFns = this.disabledTime();
 
+    const uiLocale = [browser.i18n.getUILanguage().replace('_', '-'), 'en-US'];
+    const dtf = new Intl.DateTimeFormat(uiLocale, {hour: 'numeric'});
+    const timeFormat = (dtf.resolvedOptions().hour12)
+      ? 'h:mm a'
+      : 'HH:MM';
+
     return (
       <div id={id} className={classnames('panel', { active })}>
         <div className="header">{header}</div>
@@ -52,7 +58,7 @@ export default class DatePickerPanel extends React.Component {
                       hideDisabledOptions={true}
                       allowEmpty={false}
                       value={currentValue}
-                      format="h:mm a"
+                      format={timeFormat}
                       onChange={value => this.handleChange(value)}
                       {...disabledTimeFns} />
         </div>
