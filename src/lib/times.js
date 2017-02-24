@@ -2,7 +2,7 @@
 
 import moment from 'moment';
 import 'moment/min/locales.min';
-import {formats} from './time-formats';
+import {getFormat} from './time-formats';
 moment.locale(browser.i18n.getUILanguage());
 
 const NEXT_OPEN = 'next';
@@ -22,27 +22,6 @@ export const times = [
 if (process.env.NODE_ENV === 'development') {
   times.unshift({ id: 'debug', icon: 'nightly.svg', title: browser.i18n.getMessage('timeRealSoonNow')});
 }
-
-
-const i18n_formats = ((locale) => {
-  let rv = Object.assign({}, formats.default);
-  const baseLocale = locale.split('_')[0];
-  Object.keys(formats).forEach(key => {
-    if (key.split(',').indexOf(baseLocale) !== -1) {
-      rv = Object.assign(rv, formats[key]);
-    }
-  });
-  Object.keys(formats).forEach(key => {
-    if (key.split(',').indexOf(locale) !== -1) {
-      rv = Object.assign(rv, formats[key]);
-    }
-  });
-  return rv;
-})(browser.i18n.getUILanguage() || 'en_US');
-
-const getFormat = function (format) {
-  return i18n_formats[format];
-};
 
 export function timeForId(time, id) {
   let rv = moment(time);
