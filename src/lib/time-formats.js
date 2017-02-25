@@ -1,6 +1,10 @@
-/* exported getLocalizedDateTime */
+/* exported getLocalizedDateTime, use12hFormat */
 
 const uiLocales = [browser.i18n.getUILanguage().replace('_', '-'), 'en-US'];
+
+// Determine if locale is using 12h or 24h format
+const dtf = new Intl.DateTimeFormat(uiLocales[0], {hour: 'numeric'});
+export const use12hFormat = dtf.resolvedOptions().hour12;
 
 const formats = {
   'date_day': new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric' }),
