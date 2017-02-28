@@ -50,7 +50,7 @@ export default class ManagePanel extends React.Component {
               <div className="message">{browser.i18n.getMessage('manageNoSnoozes')}</div>
             </div>
           )}
-          <div className="confirm">
+          <div className="manage-confirm">
             <input type="checkbox" id="confirm-checkbox" checked={!dontShow}
               onChange={event => updateDontShow(!event.target.checked)}/>
             <label htmlFor="confirm-checkbox">{browser.i18n.getMessage('manageConfirmLabel')}</label>
