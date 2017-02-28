@@ -1,15 +1,7 @@
 /* exported timeForId */
 
-import { makeLogger } from './utils';
-const log = makeLogger('TI');
-
 import moment from 'moment';
-import 'moment/min/locales.min';
-browser.i18n.getAcceptLanguages().then(languages => {
-  moment.locale(languages);
-}).catch(reason => {
-  log('getAcceptLanguages rejected', reason);
-});
+import { getLocalizedDateTime } from './time-formats';
 
 const NEXT_OPEN = 'next';
 const PICK_TIME = 'pick';
@@ -35,27 +27,27 @@ export function timeForId(time, id) {
   switch (id) {
     case 'debug':
       rv = rv.add(5, 'seconds');
-      text = rv.format('[@] ha');
+      text = getLocalizedDateTime(rv, 'short_time');
       break;
     case 'later':
       rv = rv.add(3, 'hours').minute(0);
-      text = rv.format('[@] ha');
+      text = getLocalizedDateTime(rv, 'short_time');
       break;
     case 'tomorrow':
       rv = rv.add(1, 'day').hour(9).minute(0);
-      text = rv.format('ddd [@] ha');
+      text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'weekend':
       rv = rv.day(6).hour(9).minute(0);
-      text = rv.format('ddd [@] ha');
+      text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'week':
       rv = rv.add(1, 'week').hour(9).minute(0);
-      text = rv.format('ddd MMM D \ [@] ha');
+      text = getLocalizedDateTime(rv, 'long_date_time');
       break;
     case 'month':
       rv = rv.add(1, 'month').hour(9).minute(0);
-      text = rv.format('ddd MMM D \ [@] ha');
+      text = getLocalizedDateTime(rv, 'long_date_time');
       break;
     case NEXT_OPEN:
       rv = NEXT_OPEN;
@@ -80,20 +72,19 @@ export function confirmationTime(time, timeType) {
   const endOfDay = moment().endOf('day');
   const endOfTomorrow = moment().add(1, 'day').endOf('day');
   const upcoming = moment(time);
-  let timeStr = ']h';
+
+  let timeStr = getLocalizedDateTime(upcoming, 'confirmation_time_no_minutes');
   if (upcoming.minutes()) {
-    timeStr += ':mm';
+    timeStr = getLocalizedDateTime(upcoming, 'confirmation_time');
   }
-  timeStr += 'a[';
-  const weekday = ']ddd[';
-  const month = ']MMM[';
-  const date = ']D[';
+  const dateStr = getLocalizedDateTime(upcoming, 'confirmation_date');
+
   if (upcoming.isBefore(endOfDay)) {
-    rv = `[${browser.i18n.getMessage('timeUpcomingToday', timeStr)}]`;
+    rv = browser.i18n.getMessage('timeUpcomingToday', timeStr);
   } else if (upcoming.isBefore(endOfTomorrow)) {
-    rv = `[${browser.i18n.getMessage('timeUpcomingTomorrow', timeStr)}]`;
+    rv = browser.i18n.getMessage('timeUpcomingTomorrow', timeStr);
   } else {
-    rv = `[${browser.i18n.getMessage('timeUpcomingLater', [weekday, month, date, timeStr])}]`;
+    rv = browser.i18n.getMessage('timeUpcomingOther', [dateStr, timeStr]);
   }
-  return upcoming.format(rv);
+  return rv;
 }

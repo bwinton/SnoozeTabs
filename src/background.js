@@ -10,12 +10,7 @@ import { makeLogger } from './lib/utils';
 const log = makeLogger('BE');
 
 import moment from 'moment';
-import 'moment/min/locales.min';
-browser.i18n.getAcceptLanguages().then(languages => {
-  moment.locale(languages);
-}).catch(reason => {
-  log('getAcceptLanguages rejected', reason);
-});
+import { getLocalizedDateTime } from './lib/time-formats';
 
 import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
@@ -149,7 +144,7 @@ const messageOps = {
   },
   update: message => {
     Metrics.updateSnoozedTab(message);
-    return messageOps.cancel(message.old).then(() => messageOps.schedule(message.updated));
+    return messageOps.cancel(message.old).then(() => messageOps.confirm(message.updated));
   },
   setconfirm: message => {
     setDontShow(message.dontShow);
@@ -214,7 +209,7 @@ function updateWakeAndBookmarks() {
       const soon = Date.now() + 5000;
       const nextAlarm = Math.max(nextTime, soon);
 
-      log('updated wake alarm to', nextAlarm, ' ', moment(nextAlarm).format());
+      log('updated wake alarm to', nextAlarm, ' ', getLocalizedDateTime(moment(nextAlarm), 'long_date_time'));
       return browser.alarms.create(WAKE_ALARM_NAME, { when: nextAlarm });
     });
 }

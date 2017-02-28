@@ -2,7 +2,7 @@ import React from 'react';
 
 import classnames from 'classnames';
 import { NEXT_OPEN } from '../times';
-
+import { getLocalizedDateTime } from '../time-formats';
 import DatePickerPanel from './DatePickerPanel';
 
 export default class ManagePanel extends React.Component {
@@ -50,7 +50,7 @@ export default class ManagePanel extends React.Component {
               <div className="message">{browser.i18n.getMessage('manageNoSnoozes')}</div>
             </div>
           )}
-          <div className="confirm">
+          <div className="manage-confirm">
             <input type="checkbox" id="confirm-checkbox" checked={!dontShow}
               onChange={event => updateDontShow(!event.target.checked)}/>
             <label htmlFor="confirm-checkbox">{browser.i18n.getMessage('manageConfirmLabel')}</label>
@@ -91,9 +91,9 @@ export default class ManagePanel extends React.Component {
     }
     const moment = this.props.moment;
     if (moment(time).year() !== moment().year()) {
-      return moment(time).format('MMM D, YYYY') || browser.i18n.getMessage('manageDateLater');
+      return getLocalizedDateTime(moment(time), 'date_year') || browser.i18n.getMessage('manageDateLater');
     }
-    return moment(time).format('ddd, MMM D') || browser.i18n.getMessage('manageDateLater');
+    return getLocalizedDateTime(moment(time), 'date_day') || browser.i18n.getMessage('manageDateLater');
   }
 
   getTime(time) {
@@ -101,7 +101,7 @@ export default class ManagePanel extends React.Component {
       const message = browser.i18n.getMessage('manageDateNextOpen');
       return message.split('<br>', '2')[1] || '';
     }
-    return this.props.moment(time).format('[@] ha') || '';
+    return getLocalizedDateTime(this.props.moment(time), 'short_time') || '';
   }
 
   getEditable(time) {

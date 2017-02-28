@@ -1,8 +1,8 @@
 {
   "name": "snoozetabs",
   "description": "An add-on to let you snooze your tabs for a while.",
-  "id": "snoozetabs@mozilla",
-  "version": "1.0.12",
+  "id": "snoozetabs@mozilla.com",
+  "version": "1.0.15",
   "author": "Blake Winton <bwinton@latte.ca>",
   "contributors": [
     "Les Orchard <me@lmorchard.com> (http://lmorchard.com/)"
@@ -58,7 +58,7 @@
     "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
   "config": {
-    "GA_TRACKING_ID": "UA-90911916-1"
+    "GA_TRACKING_ID": "UA-90911916-2"
   },
   "scripts": {
     "start": "npm run build && npm-run-all --parallel test watch run storybook",
@@ -68,14 +68,14 @@
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:locales": "node pontoon-to-webext",
-    "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo src/icons -o dist/icons && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
+    "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
     "copy:js": "shx cp node_modules/testpilot-metrics/testpilot-metrics.js dist/",
     "bundle:js": "npm run lint:js && rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content && rollup -c --environment entry:lib/confirm-bar",
     "bundle:css": "npm run lint:sass && shx mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
     "package": "npm run build && web-ext build -s dist -a .",
     "lint": "npm-run-all --parallel lint:*",
     "lint:js": "eslint --max-warnings=0 .",
-    "lint:sass": "sass-lint --max-warnings 0 --verbose --no-exit src/**/*.scss",
+    "lint:sass": "sass-lint --max-warnings 0 --verbose --no-exit",
     "watch:js": "onchange -p -v 'src/**/*.js' -- npm-run-all --parallel bundle:js test:js",
     "watch:test:js": "onchange -p -v 'test/**/*.js' -- npm-run-all --parallel test:js",
     "watch:css": "onchange -p -v 'src/**/*.scss' -- npm run bundle:css",
@@ -93,7 +93,7 @@
     "rc-time-picker": "^2.2.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
-    "testpilot-metrics": "^2.0.1",
+    "testpilot-metrics": "2.1.2",
     "uuid": "^3.0.1"
   }
 }

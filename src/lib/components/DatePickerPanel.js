@@ -2,8 +2,10 @@ import React from 'react';
 
 import classnames from 'classnames';
 
+import 'moment/min/locales.min';
 import Calendar from 'rc-calendar';
 import TimePicker from 'rc-time-picker';
+import { use12hFormat } from '../time-formats.js';
 
 // Arbitrary 0.5s interval for live validation of time selection
 const VALIDATION_INTERVAL = 500;
@@ -36,6 +38,8 @@ export default class DatePickerPanel extends React.Component {
     const { currentValue, confirmDisabled } = this.state;
     const disabledTimeFns = this.disabledTime();
 
+    const timeFormat = use12hFormat ? 'h:mm a' : 'HH:mm';
+
     return (
       <div id={id} className={classnames('panel', { active })}>
         <div className="header">{header}</div>
@@ -52,7 +56,7 @@ export default class DatePickerPanel extends React.Component {
                       hideDisabledOptions={true}
                       allowEmpty={false}
                       value={currentValue}
-                      format="h:mm a"
+                      format={timeFormat}
                       onChange={value => this.handleChange(value)}
                       {...disabledTimeFns} />
         </div>

@@ -1,5 +1,6 @@
 # SnoozeTabs
 
+[![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/snooze-tabs)
 [![CircleCI](https://circleci.com/gh/bwinton/SnoozeTabs.svg?style=svg)](https://circleci.com/gh/bwinton/SnoozeTabs)
 
 An add-on to let you snooze your tabs for a while.
@@ -23,7 +24,7 @@ An add-on to let you snooze your tabs for a while.
 * To lint: `npm run lint`
 
 * To work with a production-style release, set the env var `NODE_ENV=production`.
-  This will turn on production optiimzations, while turning off logging &
+  This will turn on production optimizations, while turning off logging &
   various development conveniences. For example:
   * Continuous file watcher builds:
     * `NODE_ENV=production npm start`
