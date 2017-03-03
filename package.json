@@ -7,6 +7,7 @@
   "contributors": [
     "Les Orchard <me@lmorchard.com> (http://lmorchard.com/)"
   ],
+  "homepage": "https://github.com/bwinton/SnoozeTabs#readme",
   "bugs": {
     "url": "https://github.com/bwinton/SnoozeTabs/issues"
   },
@@ -60,6 +61,44 @@
   "config": {
     "GA_TRACKING_ID": "UA-90911916-2"
   },
+  "webextensionManifest": {
+    "manifest_version": 2,
+
+    "applications": {
+      "gecko": {
+        "update_url": "https://testpilot.firefox.com/files/snoozetabs@mozilla/updates.json"
+      }
+    },
+
+    "default_locale": "en_US",
+    "description": "__MSG_extDesc__",
+    "icons": {
+      "48": "icons/bell_icon.svg"
+    },
+
+    "permissions": [
+      "alarms",
+      "bookmarks",
+      "contextMenus",
+      "notifications",
+      "storage",
+      "tabs",
+      "<all_urls>"
+    ],
+
+    "background": {
+      "scripts": ["testpilot-metrics.js", "background.js"]
+    },
+
+    "browser_action": {
+      "browser_style": false,
+      "default_title": "__MSG_popupTitle__",
+      "default_popup": "popup/snooze.html",
+      "default_icon": {
+        "32": "icons/bell_icon.svg"
+      }
+    }
+  },
   "scripts": {
     "start": "npm run build && npm-run-all --parallel test watch run storybook",
     "start-win": "npm run build && npm-run-all --parallel test watch",
@@ -67,19 +106,21 @@
     "run": "web-ext run -s dist --firefox=nightly",
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
-    "copy:locales": "node pontoon-to-webext",
-    "copy:assets": "shx cp -r src/manifest.json src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
+    "copy:locales": "node ./bin/pontoon-to-webext",
+    "copy:assets": "shx cp -r src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
     "copy:js": "shx cp node_modules/testpilot-metrics/testpilot-metrics.js dist/",
+    "bundle:manifest": "node ./bin/generate-manifest",
     "bundle:js": "npm run lint:js && rollup -c --environment entry:background && rollup -c --environment entry:popup/snooze-content && rollup -c --environment entry:lib/confirm-bar",
     "bundle:css": "npm run lint:sass && shx mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
     "package": "npm run build && web-ext build -s dist -a .",
     "lint": "npm-run-all --parallel lint:*",
     "lint:js": "eslint --max-warnings=0 .",
     "lint:sass": "sass-lint --max-warnings 0 --verbose --no-exit",
+    "watch:manifest": "onchange -p -v 'bin/generate-manifest.js' 'package.json' -- npm run bundle:manifest",
     "watch:js": "onchange -p -v 'src/**/*.js' -- npm-run-all --parallel bundle:js test:js",
     "watch:test:js": "onchange -p -v 'test/**/*.js' -- npm-run-all --parallel test:js",
     "watch:css": "onchange -p -v 'src/**/*.scss' -- npm run bundle:css",
-    "watch:assets": "onchange -p -v 'src/{manifest.json,icons/*,popup/*.html}' -- npm run copy:assets",
+    "watch:assets": "onchange -p -v 'src/{icons/*,popup/*.html}' -- npm run copy:assets",
     "watch:locales": "onchange -p -v 'locales/**/*.properties' -- npm run copy:locales",
     "storybook": "start-storybook -s ./dist -p 6006",
     "build-storybook": "build-storybook",
