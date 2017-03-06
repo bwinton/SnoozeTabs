@@ -2,7 +2,6 @@
 @import 'node_modules/rc-time-picker/assets/index';
 
 $panel-width: 320px;
-$panel-height: 474px;
 $panel-shadow-width: 13px;
 
 @font-face {
@@ -34,7 +33,6 @@ body {
 
 .panel-wrapper {
   background-color: #333333;
-  height: $panel-height;
 
   >div {
     height: 100%;
