@@ -9,13 +9,14 @@ An add-on to let you snooze your tabs for a while.
 * `npm install`
 
 * To develop: `npm start`
-  * Builds the extension
-  * Starts a file watcher to rebuild on changes
-  * Launches Firefox Dev Edition with the extension, reloaded on changes
-
-* If youʼre on Windows, youʼll need to use `npm run start-win`
-  * Builds the extension
-  * Starts a file watcher to rebuild on changes
+  * This task does 3 things:
+    1. Builds the extension
+    1. Starts a file watcher to rebuild on changes
+    1. Runs tests on file changes
+  * You can load the Web Extension into Firefox like so:
+    1. Type `about:debugging` into the URL bar - [read more about this page on MDN](https://developer.mozilla.org/en-US/docs/Tools/about:debugging).
+    1. Click the "Load Temporary Add-on" button
+    1. Navigate to your Snooze Tabs project directory and select `dist/manifest.json`
 
 * To run once: `npm run build && npm run run`
 

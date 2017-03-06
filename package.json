@@ -100,8 +100,7 @@
     }
   },
   "scripts": {
-    "start": "npm run build && npm-run-all --parallel test watch run storybook",
-    "start-win": "npm run build && npm-run-all --parallel test watch",
+    "start": "npm run build && npm-run-all --parallel test watch",
     "build": "npm run clean && npm-run-all --parallel copy:* bundle:*",
     "run": "web-ext run -s dist --firefox=nightly",
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
