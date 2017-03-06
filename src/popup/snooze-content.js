@@ -16,24 +16,6 @@ const log = makeLogger('FE');
 
 import moment from 'moment';
 
-// HACK: Arbitrary breakpoint for styles below which to use "narrow" variant
-// The panel width is specified in Firefox in em units, so it can vary between
-// platforms. OS X is around 224px, Windows is around 248px.
-const NARROW_PANEL_MIN_WIDTH = 275;
-
-let state = {
-  activePanel: 'main',
-  tabIsSnoozable: true,
-  narrowPopup: false,
-  dontShow: false,
-  entries: []
-};
-
-function setState(data) {
-  state = {...state, ...data};
-  render();
-}
-
 function scheduleSnoozedTab(time, timeType) {
   browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
     for (const tab of tabs) {
@@ -95,82 +77,35 @@ function updateDontShow(dontShow) {
   });
 }
 
-function render() {
-  ReactDOM.render(
-    <SnoozePopup {...state}
-                 switchPanel={switchPanel}
-                 scheduleSnoozedTab={scheduleSnoozedTab}
-                 openSnoozedTab={openSnoozedTab}
-                 cancelSnoozedTab={cancelSnoozedTab}
-                 updateSnoozedTab={updateSnoozedTab}
-                 updateDontShow={updateDontShow}
-                 moment={moment} />,
-    document.getElementById('app'));
-}
-
-function switchPanel(name) {
-  setState({ activePanel: name });
-}
-
-function fetchEntries() {
-  log('fetching items');
-  getAlarmsAndProperties().then(data => {
-    const dontShow = data.dontShow;
-    const items = data.alarms;
-    log('fetched items', dontShow, items);
-    return browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
-      let tabIsSnoozable = true;
-      let activePanel = 'main';
-
-      if (tabs.length) {
-        const url = tabs[0].url;
-        if (tabs[0].incognito ||
-            !url.startsWith('http:') && !url.startsWith('https:') && !url.startsWith('file:') &&
-            !url.startsWith('ftp:') && !url.startsWith('app:')) {
-          tabIsSnoozable = false;
-          activePanel = 'manage';
-        }
+function queryTabIsSnoozable() {
+  return browser.tabs.query({currentWindow: true, active: true}).then(tabs => {
+    let tabIsSnoozable = true;
+    if (tabs.length) {
+      const url = tabs[0].url;
+      if (tabs[0].incognito ||
+          !url.startsWith('http:') && !url.startsWith('https:') && !url.startsWith('file:') &&
+          !url.startsWith('ftp:') && !url.startsWith('app:')) {
+        tabIsSnoozable = false;
       }
-      setState({
-        entries: Object.values(items || {}),
-        tabIsSnoozable: tabIsSnoozable,
-        activePanel: activePanel,
-        dontShow: dontShow
-      });
-    });
-  }).catch(reason => {
-    log('fetchEntries storage get rejected', reason);
-  });
-}
-
-// Resize handler that lets us switch styles & rendering when the popup is
-// summoned from the toolbar versus from the menu panel. Toolbar size is based
-// on content size, menu panel body size is forcibly fixed.
-function setupResizeHandler() {
-  const handler = () => {
-    const clientWidth = document.body.clientWidth;
-    if (clientWidth === 0) { return; }
-
-    const newNarrowPopup = (clientWidth < NARROW_PANEL_MIN_WIDTH);
-    log('resize', clientWidth, state.narrowPopup, newNarrowPopup);
-
-    if (newNarrowPopup !== state.narrowPopup) {
-      setState({ narrowPopup: newNarrowPopup });
     }
-  };
-  handler();
-  window.addEventListener('resize', handler);
+    return tabIsSnoozable;
+  });
 }
 
 function init() {
   log('init');
-  setupResizeHandler();
-  render();
-  browser.storage.onChanged.addListener((changes, area) => {
-    // TODO: granularly apply the changes, rather than triggering a refresh?
-    if (area === 'local') { fetchEntries(); }
-  });
-  fetchEntries();
+  ReactDOM.render(
+    <SnoozePopup {...{
+      queryTabIsSnoozable,
+      getAlarmsAndProperties,
+      scheduleSnoozedTab,
+      openSnoozedTab,
+      cancelSnoozedTab,
+      updateSnoozedTab,
+      updateDontShow,
+      moment
+    }} />,
+    document.getElementById('app'));
   browser.runtime.sendMessage({ op: 'panelOpened' });
 }
 
