@@ -319,7 +319,7 @@ if (browser.contextMenus.ContextType.TAB) {
     const title = browser.i18n.getMessage('notificationTitle');
     const [time, ] = timeForId(moment(), info.menuItemId);
     handleMessage({
-      'op': 'schedule',
+      'op': tab.active ? 'schedule' : 'confirm',
       'message': {
         'time': time.valueOf(),
         'timeType': info.menuItemId,
