@@ -271,7 +271,7 @@ function handleWake() {
           });
           return browser.notifications.create(`${item.windowId}:${tab.id}`, {
             'type': 'basic',
-            'iconUrl': browser.extension.getURL('link.png'),
+            'iconUrl': 'chrome://branding/content/about-logo@2x.png',
             'title': item.title,
             'message': item.url
           });
