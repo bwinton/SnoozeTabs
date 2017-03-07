@@ -52,6 +52,7 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         flex-direction: row;
         font-family: Lucida Grande, Tahoma, sans-serif;
         font-size: 14px;
+        text-shadow: none;
         min-height: 40px;
         margin: 0;
         position: fixed;
