@@ -49,7 +49,6 @@
     "svgo": "^0.7.1",
     "web-ext": "^1.8.1"
   },
-  "homepage": "https://github.com/bwinton/SnoozeTabs#readme",
   "keywords": [
     "snooze",
     "tabs",
@@ -67,19 +66,16 @@
   },
   "webextensionManifest": {
     "manifest_version": 2,
-
     "applications": {
       "gecko": {
         "update_url": "https://testpilot.firefox.com/files/snoozetabs@mozilla/updates.json"
       }
     },
-
     "default_locale": "en_US",
     "description": "__MSG_extDesc__",
     "icons": {
       "48": "icons/bell_icon.svg"
     },
-
     "permissions": [
       "alarms",
       "bookmarks",
@@ -89,11 +85,12 @@
       "tabs",
       "<all_urls>"
     ],
-
     "background": {
-      "scripts": ["testpilot-metrics.js", "background.js"]
+      "scripts": [
+        "testpilot-metrics.js",
+        "background.js"
+      ]
     },
-
     "browser_action": {
       "browser_style": false,
       "default_title": "__MSG_popupTitle__",
@@ -136,6 +133,7 @@
     "rc-calendar": "^7.5.1",
     "rc-time-picker": "^2.2.1",
     "react": "^15.4.1",
+    "react-addons-css-transition-group": "^15.4.2",
     "react-dom": "^15.4.1",
     "testpilot-metrics": "2.1.2",
     "uuid": "^3.0.1"

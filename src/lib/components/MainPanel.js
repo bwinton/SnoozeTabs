@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import classnames from 'classnames';
 
@@ -21,7 +22,7 @@ export default class MainPanel extends React.Component {
     const { datepickerActive, defaultDateChoice } = this.state;
 
     return (
-      <div>
+      <ReactCSSTransitionGroup component="div" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
         <div id={id} className={classnames('static', 'panel', { active, obscured: datepickerActive })}>
           <ul className="times">
             { times.map(item => this.renderTime(item)) }
@@ -32,14 +33,14 @@ export default class MainPanel extends React.Component {
             }</span></div>
           </div>
         </div>
-        <DatePickerPanel id="calendar"
+        {datepickerActive && <DatePickerPanel id="calendar" key="calendar"
                          active={datepickerActive}
                          header={browser.i18n.getMessage('mainCalendarHeader')}
                          defaultValue={defaultDateChoice}
                          onClose={ () => this.closeTimeSelect() }
                          onSelect={ value => this.confirmTimeSelect(value) }
-                         moment={ moment } />
-      </div>
+                         moment={ moment } />}
+      </ReactCSSTransitionGroup>
     );
   }
 
