@@ -110,6 +110,7 @@ const messageOps = {
         return chrome.tabs.sendMessage(message.tabId, {message, iconData, closeData});
       }).catch(reason => {
         log('schedule inject rejected', reason);
+        return messageOps.confirm(message);
       });
     });
   },
