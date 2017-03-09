@@ -69,15 +69,24 @@ export function confirmationTime(time, timeType) {
   }
 
   let rv;
+  const thisYear = moment().year();
   const endOfDay = moment().endOf('day');
   const endOfTomorrow = moment().add(1, 'day').endOf('day');
   const upcoming = moment(time);
 
-  let timeStr = getLocalizedDateTime(upcoming, 'confirmation_time_no_minutes');
+  let timeStr;
   if (upcoming.minutes()) {
     timeStr = getLocalizedDateTime(upcoming, 'confirmation_time');
+  } else {
+    timeStr = getLocalizedDateTime(upcoming, 'confirmation_time_no_minutes');
   }
-  const dateStr = getLocalizedDateTime(upcoming, 'confirmation_date');
+
+  let dateStr;
+  if (upcoming.year() === thisYear) {
+    dateStr = getLocalizedDateTime(upcoming, 'confirmation_date');
+  } else {
+    dateStr = getLocalizedDateTime(upcoming, 'confirmation_date_with_year');
+  }
 
   if (upcoming.isBefore(endOfDay)) {
     rv = browser.i18n.getMessage('timeUpcomingToday', timeStr);

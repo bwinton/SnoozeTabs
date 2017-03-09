@@ -17,6 +17,7 @@ const formats = {
   'confirmation_time_no_minutes': new Intl.DateTimeFormat(uiLocales, { hour: 'numeric', minute: 'numeric' }),
   'confirmation_time_no_minutes-en': new Intl.DateTimeFormat(uiLocales, { hour: 'numeric' }),
   'confirmation_date': new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric' }),
+  'confirmation_date_with_year': new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }),
 
   'long_date_time-en': [
     new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric' }),
