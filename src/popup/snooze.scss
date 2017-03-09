@@ -222,8 +222,8 @@ li.entry {
     align-items: center;
 
     img {
-      width: 40px;
-      height: 40px;
+      width: 20px;
+      height: 20px;
     }
   }
 
@@ -259,7 +259,7 @@ li.entry {
     justify-content: center;
     line-height: 1.5em;
     white-space: nowrap;
-    padding: 0 4px 0 0;
+    padding: 0 4px 0 4px;
     border-bottom: 1px solid rgba(38, 38, 38, .15);
 
     .title {
