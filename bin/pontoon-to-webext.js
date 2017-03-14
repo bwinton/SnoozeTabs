@@ -27,6 +27,11 @@ function error(...args) {
   console.error(...args);  // eslint-disable-line no-console
 }
 
+function fatal(...args) {
+  error(...args);
+  process.exit(1);
+}
+
 function getListLocales() {
   return new Promise((resolve, reject) => {
     if (supportedLocales === '*') {
@@ -146,12 +151,10 @@ function getContentMessages(locale, placeholders) {
 
 function processMessageFiles(locales) {
   if (!locales) {
-    error('List of locales was undefined. Cannot run pontoon-to-webext.');
-    process.exit(1);
+    fatal('List of locales was undefined. Cannot run pontoon-to-webext.');
   }
   if (locales.length === 0) {
-    error('Locale list is empty. Cannot run pontoon-to-webext.');
-    process.exit(1);
+    fatal('Locale list is empty. Cannot run pontoon-to-webext.');
   }
   log(`processing the following locales: ${locales.toString()}`);
   return getContentPlaceholders().then(placeholders => {
