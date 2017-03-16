@@ -24,9 +24,11 @@ export default class MainPanel extends React.Component {
     return (
       <ReactCSSTransitionGroup component="div" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
         <div id={id} className={classnames('static', 'panel', { active, obscured: datepickerActive })}>
-          <ul className="times">
-            { times.map(item => this.renderTime(item)) }
-          </ul>
+          <div className="content">
+            <ul className="times">
+              { times.map(item => this.renderTime(item)) }
+            </ul>
+          </div>
           <div className="footer">
             <div className="manage" onClick={ () => this.handleManageClick() }><span>{
               browser.i18n.getMessage('mainManageButton')

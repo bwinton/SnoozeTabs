@@ -94,6 +94,7 @@ function queryTabIsSnoozable() {
 
 function init() {
   log('init');
+
   ReactDOM.render(
     <SnoozePopup {...{
       queryTabIsSnoozable,
@@ -105,7 +106,9 @@ function init() {
       updateDontShow,
       moment
     }} />,
-    document.getElementById('app'));
+    document.getElementById('app')
+  );
+
   browser.runtime.sendMessage({ op: 'panelOpened' });
 }
 

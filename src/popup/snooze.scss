@@ -13,30 +13,31 @@ $panel-shadow-width: 13px;
 
 html,
 body {
-  margin: 0;
   padding: 0;
+  margin: 0;
   box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background-color: #e4e4e4;
   font-family: 'Fira Sans';
   font-size: 16px;
-  color: #000000;
   letter-spacing: -.69px;
   cursor: default;
   overflow: hidden;
 }
 
 body {
-  margin: 0;
   -moz-user-select: none;
   user-select: none;
-  overflow-x: auto;
+}
+
+#app {
+  width: 320px;
+  height: 480px;
 }
 
 .panel-wrapper {
   background-color: #333333;
-
-  >div {
-    height: 100%;
-  }
 }
 
 .panel {
@@ -44,11 +45,14 @@ body {
   position: absolute;
   margin: 0;
   top: 0;
-  left: $panel-width + $panel-shadow-width;
-  width: $panel-width - $panel-shadow-width;
+  left: 100%;
+  width: calc(100% - 13px);
   height: 100%;
   background: #fff;
   opacity: .3;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 
   &.active {
     left: $panel-shadow-width;
@@ -56,13 +60,12 @@ body {
   }
 
   &.obscured {
+    left: $panel-shadow-width;
     opacity: .6;
   }
 
   &.static {
-    position: inherit;
-    width: $panel-width;
-    min-height: 474px;
+    width: 100%;
     left: 0;
     transition: opacity 250ms ease-in-out;
   }
@@ -70,6 +73,12 @@ body {
   &.static.active {
     left: 0;
     transition: opacity 250ms ease-in-out;
+  }
+
+  > .content {
+    flex-grow: 2;
+    overflow-y: auto;
+    background-color: #ffffff;
   }
 }
 
@@ -209,18 +218,14 @@ div.empty-entries {
 }
 
 ul.entries {
-  height: calc(100% - 145px);
+  height: calc(100% - 90px);
   overflow-x: hidden;
   overflow-y: auto;
-
-  &.big {
-    height: calc(100% - 80px);
-  }
 }
 
 .static div.empty-entries,
 .static ul.entries {
-  height: calc(100% - 95px);
+  height: calc(100% - 35px);
 }
 
 li.entry {
@@ -331,7 +336,6 @@ li.entry {
     }
   }
 }
-
 
 .footer {
   position: absolute;
@@ -600,4 +604,144 @@ li.entry {
     }
   }
 
+}
+
+/* narrow adaptation styles ----------- */
+body.narrow {
+
+  #app {
+    width: inherit;
+    height: 100%;
+  }
+
+  .panel {
+    left: 100%;
+    height: 100%;
+    width: 100%;
+    opacity: 1;
+
+    &.active {
+      left: 0;
+      opacity: 1;
+    }
+
+    &.obscured {
+      opacity: 1;
+    }
+
+    &.static {
+      margin: 0;
+      width: 100%;
+      left: 0;
+      transition: opacity 250ms ease-in-out;
+    }
+
+    &.static.active {
+      left: 0;
+      transition: opacity 250ms ease-in-out;
+    }
+  }
+
+  .panel-enter > .panel ,
+  .panel.panel-enter {
+    transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
+    left: 100%;
+    opacity: .3;
+  }
+
+  .panel-enter-active > .panel,
+  .panel.panel-enter-active {
+    left: 0;
+    opacity: 1;
+  }
+
+  .panel-leave > .panel,
+  .panel.panel-leave {
+    transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
+    left: 0;
+    opacity: 1;
+  }
+
+  .panel-leave-active > .panel,
+  .panel.panel-leave-active {
+    left: 100%;
+    opacity: .3;
+  }
+
+  .header {
+    font-size: 14px;
+  }
+
+  ul.times li.option {
+    margin-left: 46px;
+
+    .icon {
+      padding: 17px 14px 19px 14px;
+      margin-left: -46px;
+    }
+
+    .title {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .date {
+      font-size: 11px;
+      line-height: 14px;
+    }
+  }
+
+  .rc-calendar-header {
+    .rc-calendar-prev-month-btn {
+      left: 20px;
+    }
+
+    .rc-calendar-next-month-btn {
+      right: 20px;
+    }
+
+    .rc-calendar-year-select,
+    .rc-calendar-month-select,
+    .rc-calendar-day-select {
+      font-size: 12px;
+    }
+  }
+
+  .rc-calendar-date {
+    font-size: 14px;
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    border-radius: 14px;
+  }
+
+  .rc-time-picker-input {
+    font-size: 16px;
+  }
+
+  .rc-time-picker-panel-input {
+    font-size: 16px;
+  }
+
+  .rc-time-picker-panel-select ul li {
+    font-size: 14px;
+  }
+
+  li.entry {
+    .date {
+      font-size: 11px;
+    }
+
+    .content {
+      .title {
+        font-size: 12px;
+        line-height: 16px;
+      }
+    }
+  }
+
+  .footer {
+    font-size: 12px;
+    line-height: 13px;
+  }
 }

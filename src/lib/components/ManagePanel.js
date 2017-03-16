@@ -39,22 +39,24 @@ export default class ManagePanel extends React.Component {
       <ReactCSSTransitionGroup component="div" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
         <div id={id} className={classnames('panel', { active, obscured: datepickerActive, static: !tabIsSnoozable })}>
           <div className="header">{browser.i18n.getMessage('manageHeader')}</div>
-          { (sortedEntries.length > 0) ? (
-            <ul className={classnames('entries', { 'big': !tabIsSnoozable })}>
-              { sortedEntries.map((item, idx) => this.renderEntry(idx, item)) }
-            </ul>
-          ) : (
-            <div className="empty-entries">
-              <div className="icon">
-                <img src="../icons/bell_icon.svg" width="64" height="64" />
+          <div className="content">
+            { (sortedEntries.length > 0) ? (
+              <ul className="entries">
+                { sortedEntries.map((item, idx) => this.renderEntry(idx, item)) }
+              </ul>
+            ) : (
+              <div className="empty-entries">
+                <div className="icon">
+                  <img src="../icons/bell_icon.svg" width="64" height="64" />
+                </div>
+                <div className="message">{browser.i18n.getMessage('manageNoSnoozes')}</div>
               </div>
-              <div className="message">{browser.i18n.getMessage('manageNoSnoozes')}</div>
+            )}
+            <div className="manage-confirm">
+              <input type="checkbox" id="confirm-checkbox" checked={!dontShow}
+                onChange={event => updateDontShow(!event.target.checked)}/>
+              <label htmlFor="confirm-checkbox">{browser.i18n.getMessage('manageConfirmLabel')}</label>
             </div>
-          )}
-          <div className="manage-confirm">
-            <input type="checkbox" id="confirm-checkbox" checked={!dontShow}
-              onChange={event => updateDontShow(!event.target.checked)}/>
-            <label htmlFor="confirm-checkbox">{browser.i18n.getMessage('manageConfirmLabel')}</label>
           </div>
           <div className={classnames('footer', { 'hide': !tabIsSnoozable })}>
             <div className="back" onClick={() => this.handleBack()}><span>{
