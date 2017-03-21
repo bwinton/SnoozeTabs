@@ -45,6 +45,10 @@ function scheduleSnoozedTab(time, timeType) {
   return;
 }
 
+function undeleteSnoozedTab(item) {
+  browser.runtime.sendMessage({ op: 'confirm', message: item });
+}
+
 function openSnoozedTab(item) {
   browser.tabs.create({
     active: true,
@@ -100,6 +104,7 @@ function init() {
       queryTabIsSnoozable,
       getAlarmsAndProperties,
       scheduleSnoozedTab,
+      undeleteSnoozedTab,
       openSnoozedTab,
       cancelSnoozedTab,
       updateSnoozedTab,

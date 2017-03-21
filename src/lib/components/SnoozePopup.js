@@ -48,7 +48,7 @@ export default class SnoozePopup extends React.Component {
   fetchEntries() {
     this.props.getAlarmsAndProperties().then(data => {
       const dontShow = data.dontShow;
-      const entries = Object.values(data.alarms || {});
+      const entries = data.alarms;
       log('fetched entries', dontShow, entries);
       this.setState({ dontShow, entries });
     }).catch(reason => {
@@ -91,6 +91,7 @@ SnoozePopup.propTypes = {
   openSnoozedTab: React.PropTypes.func.isRequired,
   queryTabIsSnoozable: React.PropTypes.func.isRequired,
   scheduleSnoozedTab: React.PropTypes.func.isRequired,
+  undeleteSnoozedTab: React.PropTypes.func.isRequired,
   updateDontShow: React.PropTypes.func.isRequired,
   updateSnoozedTab: React.PropTypes.func.isRequired,
 };

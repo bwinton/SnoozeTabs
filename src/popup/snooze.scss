@@ -229,12 +229,13 @@ ul.entries {
 }
 
 li.entry {
-  transition: margin-left 150ms ease-in-out;
+  transition: margin-left 150ms ease-in-out, opacity 250ms ease-in-out;
   margin-left: 0;
   padding: 0;
   width: calc(100% + 50px);
   min-height: 50px;
   cursor: pointer;
+  opacity: 1;
 
   display: flex;
   align-items: stretch;
@@ -314,7 +315,12 @@ li.entry {
     }
   }
 
-  .delete {
+  &.undo {
+    opacity: .3;
+  }
+
+  .delete,
+  .undo {
     flex-grow: 0;
     width: 50px;
     height: 50px;
@@ -322,9 +328,10 @@ li.entry {
     display: flex;
     justify-content: center;
     align-items: center;
-    line-height: 16px;
     background: #D82016;
     text-align: center;
+    line-height: 16px;
+    font-size: 12px;
 
     &:hover {
       background: #951400;
@@ -335,6 +342,29 @@ li.entry {
       height: 16px;
     }
   }
+
+  &.entry-enter {
+    transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
+    height: 0;
+    opacity: 0;
+  }
+
+  &.entry-enter-active {
+    height: 1.5em;
+    opacity: 1;
+  }
+
+  &.entry-leave {
+    transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
+    height: 1.5em;
+    opacity: 1;
+  }
+
+  &.entry-leave-active {
+    height: 0;
+    opacity: 0;
+  }
+
 }
 
 .footer {

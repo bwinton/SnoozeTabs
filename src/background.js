@@ -6,7 +6,7 @@
 
 'use strict';
 
-import { makeLogger } from './lib/utils';
+import { idForItem, makeLogger } from './lib/utils';
 const log = makeLogger('BE');
 
 import moment from 'moment';
@@ -96,8 +96,6 @@ function handleMessage({op, message}) {
   log('backend received', op, message);
   if (messageOps[op]) { messageOps[op](message); }
 }
-
-const idForItem = item => `${item.time}-${item.url}`;
 
 const messageOps = {
   schedule: message => {
