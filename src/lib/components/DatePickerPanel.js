@@ -144,3 +144,13 @@ export default class DatePickerPanel extends React.Component {
     }
   }
 }
+
+DatePickerPanel.propTypes = {
+  active: React.PropTypes.bool.isRequired,
+  defaultValue: React.PropTypes.string.isRequired,
+  header: React.PropTypes.string.isRequired,
+  id: React.PropTypes.string.isRequired,
+  moment: React.PropTypes.func.isRequired,
+  onClose: React.PropTypes.func.isRequired,
+  onSelect: React.PropTypes.func.isRequired,
+};
