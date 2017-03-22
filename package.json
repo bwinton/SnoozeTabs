@@ -21,6 +21,7 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
     "chai": "^3.5.0",
+    "cross-spawn": "^5.1.0",
     "eslint": "^3.10.2",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-react": "^6.8.0",
@@ -59,7 +60,8 @@
     "url": "git+https://github.com/bwinton/SnoozeTabs.git"
   },
   "config": {
-    "GA_TRACKING_ID": "UA-90911916-2"
+    "GA_TRACKING_ID": "UA-90911916-2",
+    "productionLocales": "en-US,cs,de,dsb,es-CL,es-MX,fa,fr,fy-NL,he,hsb,hu,id,it,ja,kab,nl,nn-NO,pt-BR,pt-PT,ru,sk,sq,sv-SE,tr,uk,zh-CN,zh-TW"
   },
   "webextensionManifest": {
     "manifest_version": 2,
@@ -103,7 +105,7 @@
     "run": "web-ext run -s dist --firefox=nightly",
     "clean": "rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
-    "copy:locales": "pontoon-to-webext",
+    "copy:locales": "./bin/build-locales.js",
     "copy:assets": "shx cp -r src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* src/popup/snooze-bootstrap.js dist/popup/",
     "copy:js": "shx cp node_modules/testpilot-metrics/testpilot-metrics.js dist/",
     "bundle:manifest": "node ./bin/generate-manifest",
