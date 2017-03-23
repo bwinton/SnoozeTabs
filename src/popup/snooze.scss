@@ -33,6 +33,10 @@ body {
 
 #app {
   width: 320px;
+  height: 424px;
+}
+
+.development #app {
   height: 480px;
 }
 
@@ -534,10 +538,10 @@ li.entry {
 
   .rc-calendar-date {
     font-size: 16px;
-    width: 32px;
-    height: 32px;
-    line-height: 30px;
-    border-radius: 16px;
+    width: 26px;
+    height: 26px;
+    line-height: 24px;
+    border-radius: 13px;
     color: #888888;
 
     &:hover {

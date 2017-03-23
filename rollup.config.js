@@ -1,6 +1,5 @@
 import babel from 'rollup-plugin-babel';
 import cjs from 'rollup-plugin-commonjs';
-import globals from 'rollup-plugin-node-globals';
 import replace from 'rollup-plugin-replace';
 import resolve from 'rollup-plugin-node-resolve';
 import json from 'rollup-plugin-json';
@@ -26,7 +25,6 @@ export default {
     cjs({
       exclude: 'node_modules/process-es6/**',
     }),
-    globals(),
     replace({ 'process.env.NODE_ENV': `"${process.env.NODE_ENV || 'development'}"` }),
     resolve({
       browser: true,
