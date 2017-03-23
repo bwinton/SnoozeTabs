@@ -40,6 +40,20 @@ function updateButtonForTab(tabId, changeInfo) {
 
 function init() {
   log('init()');
+  browser.runtime.onInstalled.addListener((details) => {
+    if (details.reason === 'install') {
+        const title = browser.i18n.getMessage('bookmarkFolderTitle');
+        browser.bookmarks.search({title: title}).then(folders => {
+          return Promise.all(folders.map(folder => {
+            return browser.bookmarks.update(folder.id, {
+              title: `${title} - ${getLocalizedDateTime(moment(), 'date_year')} ${getLocalizedDateTime(moment(), 'confirmation_time')}`
+            });
+          }));
+        }).catch(reason => {
+          log('init bookmark folder rename rejected', reason);
+        });
+    }
+  });
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
