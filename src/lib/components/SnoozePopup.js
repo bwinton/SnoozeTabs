@@ -13,7 +13,6 @@ export default class SnoozePopup extends React.Component {
     this.state = {
       activePanel: 'main',
       tabIsSnoozable: true,
-      narrowPopup: false,
       dontShow: false,
       entries: []
     };
@@ -32,7 +31,7 @@ export default class SnoozePopup extends React.Component {
 
   componentWillUnmount() {
     browser.storage.onChanged.removeListener(this.storageHandler);
-    window.removeEventListner('resize', this.boundHandleResize);
+    window.removeEventListener('resize', this.boundHandleResize);
   }
 
   detectTabIsSnoozable() {
