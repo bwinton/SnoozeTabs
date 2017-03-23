@@ -98,6 +98,9 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         color: #5d5d5d;
         font-size: 10px;
       }
+      label {
+        margin-left: 3px;
+      }
       .spacer {
         flex: 1;
       }
