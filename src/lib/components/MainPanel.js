@@ -103,3 +103,11 @@ export default class MainPanel extends React.Component {
     scheduleSnoozedTab(dateChoice, PICK_TIME);
   }
 }
+
+MainPanel.propTypes = {
+  active: React.PropTypes.bool.isRequired,
+  id: React.PropTypes.string.isRequired,
+  moment: React.PropTypes.func.isRequired,
+  scheduleSnoozedTab: React.PropTypes.func.isRequired,
+  switchPanel: React.PropTypes.func.isRequired,
+};

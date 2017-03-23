@@ -199,3 +199,17 @@ export default class ManagePanel extends React.Component {
   }
 
 }
+
+ManagePanel.propTypes = {
+  dontShow: React.PropTypes.bool.isRequired,
+  active: React.PropTypes.bool.isRequired,
+  entries: React.PropTypes.array.isRequired,
+  id: React.PropTypes.string.isRequired,
+  moment: React.PropTypes.func.isRequired,
+  openSnoozedTab: React.PropTypes.func.isRequired,
+  cancelSnoozedTab: React.PropTypes.func.isRequired,
+  updateSnoozedTab: React.PropTypes.func.isRequired,
+  tabIsSnoozable: React.PropTypes.func.isRequired,
+  updateDontShow: React.PropTypes.func.isRequired,
+  switchPanel: React.PropTypes.func.isRequired,
+};

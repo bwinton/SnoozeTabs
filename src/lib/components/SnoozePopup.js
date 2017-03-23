@@ -83,3 +83,14 @@ export default class SnoozePopup extends React.Component {
     }
   }
 }
+
+SnoozePopup.propTypes = {
+  cancelSnoozedTab: React.PropTypes.func.isRequired,
+  getAlarmsAndProperties: React.PropTypes.func.isRequired,
+  moment: React.PropTypes.func.isRequired,
+  openSnoozedTab: React.PropTypes.func.isRequired,
+  queryTabIsSnoozable: React.PropTypes.func.isRequired,
+  scheduleSnoozedTab: React.PropTypes.func.isRequired,
+  updateDontShow: React.PropTypes.func.isRequired,
+  updateSnoozedTab: React.PropTypes.func.isRequired,
+};
