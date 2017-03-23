@@ -1,13 +1,54 @@
 import React from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { storiesOf, action, linkTo } from '@kadira/storybook';
 import { host } from 'storybook-host';
-
-import SnoozePopup from '../src/lib/components/SnoozePopup';
+import moment from 'moment';
 
 // TODO: Get sass working with storybook
 // import '../src/popup/snooze.scss';
 
 import '../dist/popup/snooze.css';
+
+import MainPanel from '../src/lib/components/MainPanel';
+import ManagePanel from '../src/lib/components/ManagePanel';
+
+// Simplified version of SnoozePopup for rendering canned state
+const SnoozePopup = props => {
+  const { activePanel, tabIsSnoozable } = props;
+  if (!tabIsSnoozable) {
+    return (
+      <div className="panel-wrapper">
+        <ManagePanel {...props} id="manage" key="manage" active={'manage' === activePanel} />
+      </div>
+    );
+  } else {
+    return (
+      <ReactCSSTransitionGroup component="div" className="panel-wrapper" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
+        <MainPanel {...props} id="main" key="main" active={'main' === activePanel} />
+        {('manage' === activePanel) && <ManagePanel {...props} id="manage" key="manage" active={'manage' === activePanel} />}
+      </ReactCSSTransitionGroup>
+    );
+  }
+};
+
+const SnoozePopupNarrow = props =>
+  <div className="narrow"><SnoozePopup {...props} /></div>;
+
+SnoozePopup.propTypes = SnoozePopupNarrow.propTypes = {
+  activePanel: React.PropTypes.string.isRequired,
+  tabIsSnoozable: React.PropTypes.bool.isRequired,
+  moment: React.PropTypes.func.isRequired,
+  dontShow:  React.PropTypes.bool.isRequired,
+  switchPanel: React.PropTypes.func.isRequired,
+  cancelSnoozedTab: React.PropTypes.func.isRequired,
+  getAlarmsAndProperties: React.PropTypes.func.isRequired,
+  openSnoozedTab: React.PropTypes.func.isRequired,
+  queryTabIsSnoozable: React.PropTypes.func.isRequired,
+  scheduleSnoozedTab: React.PropTypes.func.isRequired,
+  undeleteSnoozedTab: React.PropTypes.func.isRequired,
+  updateDontShow: React.PropTypes.func.isRequired,
+  updateSnoozedTab: React.PropTypes.func.isRequired,
+};
 
 const sampleEntries = [
   {'time':1483886277592,'title':'The US companies that rely the most on China (ex-tech components)','url':'https://www.theatlas.com/charts/SJ99cpGXe','windowId':0},
@@ -25,6 +66,8 @@ const sampleEntries = [
 ];
 
 const commonProps = {
+  moment,
+  dontShow: false,
   tabIsSnoozable: true,
   switchPanel: name => linkTo('SnoozePopup (on toolbar)', name)(),
   scheduleSnoozedTab: action('scheduleSnoozedTab'),
@@ -35,7 +78,7 @@ const commonProps = {
 
 storiesOf('SnoozePopup (on toolbar)', module)
   .addDecorator(host({
-    width: 320, height: 476, border: '1px solid #ccc'
+    width: 320, height: 480, border: '1px solid #ccc'
   }))
   .add('main', () => (
     <SnoozePopup
@@ -96,7 +139,6 @@ storiesOf('SnoozePopup (on toolbar)', module)
 
 const narrowCommonProps = {
   ...commonProps,
-  narrowPopup: true,
   switchPanel: name => linkTo('SnoozePopup (in menu)', name)()
 };
 
@@ -105,12 +147,12 @@ storiesOf('SnoozePopup (in menu)', module)
     width: 230, height: 575, border: '1px solid #ccc'
   }))
   .add('main', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{ activePanel: 'main', entries: [] }} />
   ))
   .add('manage (empty)', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{
         activePanel: 'manage',
@@ -118,7 +160,7 @@ storiesOf('SnoozePopup (in menu)', module)
       }} />
   ))
   .add('manage (few entries)', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{
         activePanel: 'manage',
@@ -126,7 +168,7 @@ storiesOf('SnoozePopup (in menu)', module)
       }} />
   ))
   .add('manage (scrolling)', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{
         activePanel: 'manage',
@@ -134,7 +176,7 @@ storiesOf('SnoozePopup (in menu)', module)
       }} />
   ))
   .add('manage (empty, no-snooze tab)', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{
         tabIsSnoozable: false,
@@ -143,7 +185,7 @@ storiesOf('SnoozePopup (in menu)', module)
       }} />
   ))
   .add('manage (few entries, no-snooze tab)', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{
         tabIsSnoozable: false,
@@ -152,7 +194,7 @@ storiesOf('SnoozePopup (in menu)', module)
       }} />
   ))
   .add('manage (scrolling, no-snooze tab)', () => (
-    <SnoozePopup
+    <SnoozePopupNarrow
       {...narrowCommonProps}
       {...{
         tabIsSnoozable: false,

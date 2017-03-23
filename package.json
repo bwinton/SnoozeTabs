@@ -12,7 +12,7 @@
     "url": "https://github.com/bwinton/SnoozeTabs/issues"
   },
   "devDependencies": {
-    "@kadira/storybook": "^2.21.0",
+    "@kadira/storybook": "2.35.3",
     "@kadira/storybook-addon-knobs": "^1.7.1",
     "babel-cli": "^6.23.0",
     "babel-plugin-external-helpers": "^6.18.0",
