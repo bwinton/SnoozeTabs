@@ -1,6 +1,10 @@
 log('init');
 const NARROW_MIN_WIDTH = 320;
 
+if (process.env.NODE_ENV !== 'production') {
+  document.body.classList.add('development');
+}
+
 // HACK: debounce resize event handling with a flag & requestAnimationFrame
 // https://developer.mozilla.org/en-US/docs/Web/Events/resize
 let resizePending = false;
