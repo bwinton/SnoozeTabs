@@ -579,6 +579,8 @@ li.entry {
   padding: 1px;
 }
 
+.rc-calendar-decade-panel-table,
+.rc-calendar-year-panel-table,
 .rc-calendar-month-panel-table {
   height: 180px;
 }
@@ -590,6 +592,12 @@ li.entry {
 
 .rc-calendar-footer-btn > a {
   flex-grow: 1;
+}
+
+.rc-calendar-decade-panel-decade,
+.rc-calendar-year-panel-year {
+  height: 18px;
+  line-height: 18px;
 }
 
 .time-wrapper {
