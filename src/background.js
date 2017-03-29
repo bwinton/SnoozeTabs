@@ -159,7 +159,17 @@ const messageOps = {
   },
   update: message => {
     Metrics.updateSnoozedTab(message);
-    return messageOps.cancel(message.old).then(() => messageOps.confirm(message.updated));
+
+    const newId = idForItem(message.updated);
+    const oldId = idForItem(message.old);
+    if (newId === oldId) { return; }
+
+    const toSave = {};
+    toSave[newId] = message.updated;
+    return saveAlarms(toSave)
+      .then(() => removeAlarms(idForItem(message.old)))
+      .then(updateWakeAndBookmarks)
+      .catch(reason => log('confirm rejected', reason));
   },
   setconfirm: message => {
     setDontShow(message.dontShow);
