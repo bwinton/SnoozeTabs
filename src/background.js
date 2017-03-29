@@ -173,36 +173,30 @@ const messageOps = {
 function syncBookmarks(items) {
   const title = browser.i18n.getMessage('bookmarkFolderTitle');
   browser.bookmarks.search({title: title}).then(folders => {
-    return Promise.all(folders.map(folder => {
-      return browser.bookmarks.removeTree(folder.id);
-    }));
-  }).then(() => {
+    if (folders.length) {
+      return folders[0];
+    }
     return browser.bookmarks.create({title: title});
   }).then(snoozeTabsFolder => {
     log('Sync Folder!', snoozeTabsFolder, Object.values(items));
-    const sortedEntries = [...Object.values(items)];
-    sortedEntries.sort((a, b) => {
-      if (a.time === NEXT_OPEN) {
-        if (b.time === NEXT_OPEN) {
-          return -(a.title.localeCompare(b.title));
-        } else {
-          return 1;
-        }
-      } else if (b.time === NEXT_OPEN) {
-        return -1;
-      } else {
-        return b.time - a.time;
-      }
-    });
+    return browser.bookmarks.getChildren(snoozeTabsFolder.id).then((bookmarks) => {
+      const tabs = [...Object.values(items)];
+      const toCreate = tabs.filter((tab) => !bookmarks.find((bookmark) => tab.url === bookmark.url));
+      const toRemove = bookmarks.filter((bookmark) => !tabs.find((tab) => bookmark.url === tab.url));
 
-    return Promise.all(sortedEntries.map(item => {
-      return browser.bookmarks.create({
-        parentId: snoozeTabsFolder.id,
-        title: item.title,
-        url: item.url,
-        index: 0
-      });
-    }));
+      const operations = toCreate.map(item => {
+        log(`Creating ${item.url}.`);
+        return browser.bookmarks.create({
+          parentId: snoozeTabsFolder.id,
+          title: item.title,
+          url: item.url
+        });
+      }).concat(toRemove.map(item => {
+        log(`Removing ${item.url}.`);
+        return browser.bookmarks.remove(item.id);
+      }));
+      return Promise.all(operations);
+    });
   }).catch(reason => {
     log('syncBookmarks rejected', reason);
   });
