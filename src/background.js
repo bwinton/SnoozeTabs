@@ -42,16 +42,18 @@ function init() {
   log('init()');
   browser.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
-        const title = browser.i18n.getMessage('bookmarkFolderTitle');
-        browser.bookmarks.search({title: title}).then(folders => {
+      getMetricsUUID().then(clientUUID => {
+        const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
+        return browser.bookmarks.search({title: title}).then(folders => {
           return Promise.all(folders.map(folder => {
             return browser.bookmarks.update(folder.id, {
               title: `${title} - ${getLocalizedDateTime(moment(), 'date_year')} ${getLocalizedDateTime(moment(), 'confirmation_time')}`
             });
           }));
-        }).catch(reason => {
-          log('init bookmark folder rename rejected', reason);
         });
+      }).catch(reason => {
+        log('init bookmark folder rename rejected', reason);
+      });
     }
   });
   browser.alarms.onAlarm.addListener(handleWake);
@@ -171,12 +173,14 @@ const messageOps = {
 };
 
 function syncBookmarks(items) {
-  const title = browser.i18n.getMessage('bookmarkFolderTitle');
-  browser.bookmarks.search({title: title}).then(folders => {
-    if (folders.length) {
-      return folders[0];
-    }
-    return browser.bookmarks.create({title: title});
+  getMetricsUUID().then(clientUUID => {
+    const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
+    return browser.bookmarks.search({title: title}).then(folders => {
+      if (folders.length) {
+        return folders[0];
+      }
+      return browser.bookmarks.create({title: title});
+    });
   }).then(snoozeTabsFolder => {
     log('Sync Folder!', snoozeTabsFolder, Object.values(items));
     return browser.bookmarks.getChildren(snoozeTabsFolder.id).then((bookmarks) => {
