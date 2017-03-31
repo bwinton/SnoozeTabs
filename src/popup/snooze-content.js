@@ -87,7 +87,7 @@ function queryTabIsSnoozable() {
     if (tabs.length) {
       const url = tabs[0].url;
       if (tabs[0].incognito ||
-          !url.startsWith('http:') && !url.startsWith('https:') && !url.startsWith('file:') &&
+          !url.startsWith('http:') && !url.startsWith('https:') &&
           !url.startsWith('ftp:') && !url.startsWith('app:')) {
         tabIsSnoozable = false;
       }
