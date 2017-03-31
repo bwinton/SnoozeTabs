@@ -14,7 +14,7 @@ export default class SnoozePopup extends React.Component {
       activePanel: 'main',
       tabIsSnoozable: true,
       dontShow: false,
-      entries: []
+      entries: {}
     };
   }
 
@@ -46,7 +46,7 @@ export default class SnoozePopup extends React.Component {
 
   fetchEntries() {
     this.props.getAlarmsAndProperties().then(data => {
-      const dontShow = data.dontShow;
+      const dontShow = !!data.dontShow;
       const entries = data.alarms;
       log('fetched entries', dontShow, entries);
       this.setState({ dontShow, entries });
