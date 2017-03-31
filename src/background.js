@@ -27,7 +27,7 @@ function updateButtonForTab(tabId, changeInfo) {
   }
   browser.tabs.get(tabId).then(tab => {
     const url = changeInfo.url;
-    if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('file:') ||
+    if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') ||
         url.startsWith('ftp:') || url.startsWith('app:'))) {
       browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
     } else {
@@ -296,6 +296,8 @@ function handleWake() {
             'title': item.title,
             'message': item.url
           });
+        }).catch(reason => {
+          log('handleWake create rejected', item.url, reason);
         });
       })).then(() => {
         removeAlarms(due.map(entry => entry[0]));
@@ -333,8 +335,10 @@ if (browser.contextMenus.ContextType.TAB) {
   }
 
   browser.contextMenus.onClicked.addListener(function(info, tab) {
-    if (tab.incognito) {
-      return; // Canʼt snooze private tabs
+    if (tab.incognito ||
+        !tab.url.startsWith('http:') && !tab.url.startsWith('https:') &&
+        !tab.url.startsWith('ftp:') && !tab.url.startsWith('app:')) {
+      return; // Canʼt snooze private or about: or file: tabs
     }
     const title = browser.i18n.getMessage('notificationTitle');
     const [time, ] = timeForId(moment(), info.menuItemId);
