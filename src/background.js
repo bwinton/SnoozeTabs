@@ -15,7 +15,8 @@ import { getLocalizedDateTime } from './lib/time-formats';
 import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
 import { getAlarms, saveAlarms, removeAlarms,
-         getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
+         getMetricsUUID, getDontShow, setDontShow,
+         getNextOpenAlarms } from './lib/storage';
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
 
 let iconData;
@@ -56,6 +57,7 @@ function init() {
       });
     }
   });
+  browser.windows.onCreated.addListener(handleNextOpen);
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
@@ -93,18 +95,33 @@ function init() {
 
   getMetricsUUID().then(clientUUID => {
     Metrics.init(clientUUID);
-    return getAlarms();
-  }).then(items => {
-    const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
+  }).catch(reason => {
+    log('init storage get rejected', reason);
+  });
+}
+
+function handleNextOpen(window) {
+  if (window.incognito) {
+    return;
+  }
+  getNextOpenAlarms().then(items => {
+    browser.windows.onCreated.removeListener(handleNextOpen);
+    if (!items.length) {
+      return null;
+    }
     const updated = {};
-    due.forEach(item => {
+    items.forEach(item => {
       item[1].time = Date.now();
       updated[item[0]] = item[1];
     });
     log('setting next open tabs to now', updated);
-    return saveAlarms(updated).then(updateWakeAndBookmarks);
+    saveAlarms(updated)
+      .then(updateWakeAndBookmarks)
+      .catch(reason => {
+        log('handleNextOpen update rejected', reason);
+      });
   }).catch(reason => {
-    log('init storage get rejected', reason);
+    log('handleNextOpen get rejected', reason);
   });
 }
 
@@ -241,17 +258,19 @@ function handleWake() {
   return getAlarms().then(items => {
     const due = Object.entries(items).filter(entry => entry[1].time <= now);
     log('tabs due to wake', due.length);
-    return browser.windows.getAll({
-      windowTypes: ['normal']
-    }).then(windows => {
-      const windowIds = windows.map(window => window.id);
+    return Promise.all([
+      browser.windows.getAll({windowTypes: ['normal']}),
+      browser.windows.getCurrent()
+    ]).then(([windows, current]) => {
+      const publicWindowIds = windows.filter(window => !window.incognito).map(window => window.id).sort();
+      const currentWindow = current.incognito ? publicWindowIds[0] : current.id;
       return Promise.all(due.map(([, item]) => {
-        log('creating', item);
         const createProps = {
           active: false,
           url: item.url,
-          windowId: windowIds.includes(item.windowId) ? item.windowId : undefined
+          windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
         };
+        log('creating', item, createProps);
         return browser.tabs.create(createProps).then(tab => {
           Metrics.tabWoken(item, tab);
           browser.tabs.executeScript(tab.id, {
@@ -303,7 +322,9 @@ function handleWake() {
         removeAlarms(due.map(entry => entry[0]));
       });
     });
-  }).then(updateWakeAndBookmarks);
+  }).then(updateWakeAndBookmarks).catch(reason => {
+    log('handleWake update rejected', reason);
+  });
 }
 
 function handleNotificationClick(notificationId) {
