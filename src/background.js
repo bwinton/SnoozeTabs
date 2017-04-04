@@ -20,42 +20,16 @@ const WAKE_ALARM_NAME = 'snooze-wake-alarm';
 
 let iconData;
 let closeData;
-
-function updateButtonForTab(tabId, changeInfo) {
-  if (changeInfo.status !== 'loading' || !changeInfo.url) {
-    return;
-  }
-  browser.tabs.get(tabId).then(tab => {
-    const url = changeInfo.url;
-    if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') ||
-        url.startsWith('ftp:') || url.startsWith('app:'))) {
-      browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
-    } else {
-      browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
-    }
-  }).catch(reason => {
-    log('update button get rejected', reason);
-  });
-}
+let wakeTimerPaused = false;
 
 function init() {
   log('init()');
   browser.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
-      getMetricsUUID().then(clientUUID => {
-        const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
-        return browser.bookmarks.search({title: title}).then(folders => {
-          return Promise.all(folders.map(folder => {
-            return browser.bookmarks.update(folder.id, {
-              title: `${title} - ${getLocalizedDateTime(moment(), 'date_year')} ${getLocalizedDateTime(moment(), 'confirmation_time')}`
-            });
-          }));
-        });
-      }).catch(reason => {
-        log('init bookmark folder rename rejected', reason);
-      });
+      setupBookmarksFolder();
     }
   });
+  browser.windows.onCreated.addListener(handleWindowCreated);
   browser.alarms.onAlarm.addListener(handleWake);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
@@ -71,6 +45,16 @@ function init() {
     log('init tabs query rejected', reason);
   });
 
+  prefetchIcons();
+
+  getMetricsUUID()
+    .then(clientUUID => Metrics.init(clientUUID))
+    .then(scheduleNextOpenTabs)
+    .then(updateWakeAndBookmarks)
+    .catch(reason => log('init wake update failed', reason));
+}
+
+function prefetchIcons() {
   if (!iconData) {
     fetch(browser.extension.getURL('icons/color_bell_icon.png')).then(response => {
       return response.arrayBuffer();
@@ -90,11 +74,10 @@ function init() {
       log('init get closeData rejected', reason);
     });
   }
+}
 
-  getMetricsUUID().then(clientUUID => {
-    Metrics.init(clientUUID);
-    return getAlarms();
-  }).then(items => {
+function scheduleNextOpenTabs() {
+  return getAlarms().then(items => {
     const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
     const updated = {};
     due.forEach(item => {
@@ -102,9 +85,24 @@ function init() {
       updated[item[0]] = item[1];
     });
     log('setting next open tabs to now', updated);
-    return saveAlarms(updated).then(updateWakeAndBookmarks);
+    return saveAlarms(updated);
+  }).catch(reason => log('scheduleNextOpenTabs failed', reason));
+}
+
+function updateButtonForTab(tabId, changeInfo) {
+  if (changeInfo.status !== 'loading' || !changeInfo.url) {
+    return;
+  }
+  browser.tabs.get(tabId).then(tab => {
+    const url = changeInfo.url;
+    if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') ||
+        url.startsWith('ftp:') || url.startsWith('app:'))) {
+      browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
+    } else {
+      browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
+    }
   }).catch(reason => {
-    log('init storage get rejected', reason);
+    log('update button get rejected', reason);
   });
 }
 
@@ -182,6 +180,21 @@ const messageOps = {
   }
 };
 
+function setupBookmarksFolder() {
+  getMetricsUUID().then(clientUUID => {
+    const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
+    return browser.bookmarks.search({title: title}).then(folders => {
+      return Promise.all(folders.map(folder => {
+        return browser.bookmarks.update(folder.id, {
+          title: `${title} - ${getLocalizedDateTime(moment(), 'date_year')} ${getLocalizedDateTime(moment(), 'confirmation_time')}`
+        });
+      }));
+    });
+  }).catch(reason => {
+    log('init bookmark folder rename rejected', reason);
+  });
+}
+
 function syncBookmarks(items) {
   getMetricsUUID().then(clientUUID => {
     const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
@@ -221,6 +234,10 @@ function updateWakeAndBookmarks() {
     .then(() => getAlarms())
     .then(items => {
       syncBookmarks(items);
+
+      // Don't set a new wake timer if we're paused.
+      if (wakeTimerPaused) { return; }
+
       const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_OPEN);
       if (!times.length) { return; }
 
@@ -235,75 +252,108 @@ function updateWakeAndBookmarks() {
     });
 }
 
+function handleWindowCreated(window) {
+  if (wakeTimerPaused && !window.incognito) {
+    // Just opened a public window, so let's restart the wake timer
+    log('public window opened, resuming wake timer');
+    wakeTimerPaused = false;
+    handleWake();
+  }
+}
+
 function handleWake() {
   const now = Date.now();
   log('woke at', now);
-  return getAlarms().then(items => {
+
+  return Promise.all([
+    getAlarms(),
+    browser.windows.getAll({windowTypes: ['normal']}),
+    browser.windows.getCurrent()
+  ]).then(([items, windows, current]) => {
     const due = Object.entries(items).filter(entry => entry[1].time <= now);
     log('tabs due to wake', due.length);
-    return browser.windows.getAll({
-      windowTypes: ['normal']
-    }).then(windows => {
-      const windowIds = windows.map(window => window.id);
-      return Promise.all(due.map(([, item]) => {
-        log('creating', item);
-        const createProps = {
-          active: false,
-          url: item.url,
-          windowId: windowIds.includes(item.windowId) ? item.windowId : undefined
-        };
-        return browser.tabs.create(createProps).then(tab => {
-          Metrics.tabWoken(item, tab);
-          browser.tabs.executeScript(tab.id, {
-            'code': `
-              function flip(newUrl) {
-                let link = document.createElement('link');
-                link.rel = 'shortcut icon';
-                link.href = newUrl;
-                document.getElementsByTagName('head')[0].appendChild(link);
-                return link;
-              }
 
-              function reset(link) {
-                link.remove();
-                let prev = document.querySelectorAll('link[rel="shortcut icon"]');
-                if (prev.length) {
-                  document.getElementsByTagName('head')[0].appendChild(prev.item(prev.length - 1));
-                }
-              }
+    const publicWindowIds = windows
+      .filter(window => !window.incognito)
+      .map(window => window.id).sort();
 
-              let link;
-              let flip_interval = window.setInterval(() => {
-                if (link) {
-                  reset(link);
-                  link = undefined;
-                } else {
-                  link = flip('${iconData}');
-                }
-              }, 500);
-              window.setTimeout(() => {
-                window.clearInterval(flip_interval);
-                if (link) {
-                  reset(link);
-                  link = undefined;
-                }
-              }, 10000)
-              `
-          });
-          return browser.notifications.create(`${item.windowId}:${tab.id}`, {
-            'type': 'basic',
-            'iconUrl': 'chrome://branding/content/about-logo@2x.png',
-            'title': item.title,
-            'message': item.url
-          });
-        }).catch(reason => {
-          log('handleWake create rejected', item.url, reason);
+    // If there are no public windows, pause the wake timer and abort
+    if (publicWindowIds.length === 0) {
+      log('no public windows, pausing wake timer');
+      wakeTimerPaused = true;
+      return;
+    }
+
+    const currentWindow = current.incognito ? publicWindowIds[0] : current.id;
+
+    const toRemove = [];
+
+    return Promise.all(due.map(([id, item]) => {
+      log('creating', item);
+      return browser.tabs.create({
+        active: false,
+        url: item.url,
+        windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
+      }).then(tab => {
+        Metrics.tabWoken(item, tab);
+        flashFavicon(tab);
+        return browser.notifications.create(`${item.windowId}:${tab.id}`, {
+          'type': 'basic',
+          'iconUrl': 'chrome://branding/content/about-logo@2x.png',
+          'title': item.title,
+          'message': item.url
         });
-      })).then(() => {
-        removeAlarms(due.map(entry => entry[0]));
+      }).then(() => {
+        // Wake was successful, so queue for removal.
+        toRemove.push(id);
+      }).catch(reason => {
+        // Wake failed, so this entry will not be removed.
+        log('handleWake create rejected', item.url, reason);
       });
+    })).then(() => {
+      // Finally, remove alarms for successfully woken tabs.
+      removeAlarms(toRemove);
     });
   }).then(updateWakeAndBookmarks);
+}
+
+function flashFavicon(tab) {
+  browser.tabs.executeScript(tab.id, {
+    'code': `
+      function flip(newUrl) {
+        let link = document.createElement('link');
+        link.rel = 'shortcut icon';
+        link.href = newUrl;
+        document.getElementsByTagName('head')[0].appendChild(link);
+        return link;
+      }
+
+      function reset(link) {
+        link.remove();
+        let prev = document.querySelectorAll('link[rel="shortcut icon"]');
+        if (prev.length) {
+          document.getElementsByTagName('head')[0].appendChild(prev.item(prev.length - 1));
+        }
+      }
+
+      let link;
+      let flip_interval = window.setInterval(() => {
+        if (link) {
+          reset(link);
+          link = undefined;
+        } else {
+          link = flip('${iconData}');
+        }
+      }, 500);
+      window.setTimeout(() => {
+        window.clearInterval(flip_interval);
+        if (link) {
+          reset(link);
+          link = undefined;
+        }
+      }, 10000)
+      `
+  });
 }
 
 function handleNotificationClick(notificationId) {
