@@ -1,5 +1,4 @@
 import uuidV4 from 'uuid/v4';
-import { NEXT_OPEN } from './times';
 
 export const KEY_METRICS_UUID = 'metricsUUID';
 export const KEY_DONT_SHOW = 'dontShow';
@@ -23,12 +22,6 @@ export function getAlarmsAndProperties() {
 
 export function getAlarms() {
   return getAlarmsAndProperties().then(data => data.alarms);
-}
-
-export function getNextOpenAlarms() {
-  return getAlarms().then(items => {
-    return Object.values(items).filter(item => item.time === NEXT_OPEN);
-  });
 }
 
 export function saveAlarms(update) {
