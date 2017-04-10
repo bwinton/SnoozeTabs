@@ -155,6 +155,14 @@ const messageOps = {
     Metrics.cancelSnoozedTab(message);
     return removeAlarms(idForItem(message)).then(updateWakeAndBookmarks);
   },
+  save: message => {
+    Metrics.scheduleSnoozedTab(message);
+    const toSave = {};
+    toSave[idForItem(message)] = message;
+    return saveAlarms(toSave)
+      .then(updateWakeAndBookmarks)
+      .catch(reason => log('save rejected', reason));
+  },
   update: message => {
     Metrics.updateSnoozedTab(message);
 

@@ -46,7 +46,7 @@ function scheduleSnoozedTab(time, timeType) {
 }
 
 function undeleteSnoozedTab(item) {
-  browser.runtime.sendMessage({ op: 'confirm', message: item });
+  browser.runtime.sendMessage({ op: 'save', message: item });
 }
 
 function openSnoozedTab(item) {
