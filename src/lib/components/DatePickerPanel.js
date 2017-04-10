@@ -18,9 +18,40 @@ import ru_RU from 'rc-calendar/lib/locale/ru_RU';
 import zh_CN from 'rc-calendar/lib/locale/zh_CN';
 
 const uiLanguage = browser.i18n.getUILanguage();
-const allCalendarLocales = { cs_CZ, da_DK, de_DE, en_US, ja_JP, pl_PL, pt_BR, ru_RU, zh_CN };
-const calendarLocale = Object.assign({}, en_US, allCalendarLocales[uiLanguage] || {});
 const momentLocale = uiLanguage.replace('_', '-');
+const rcCalendarLocales = { cs_CZ, da_DK, de_DE, en_US, ja_JP, pl_PL, pt_BR, ru_RU, zh_CN };
+const rcCalendarLocale = (uiLanguage in rcCalendarLocales) ? rcCalendarLocales[uiLanguage] : {};
+const localeKeys = [
+  'today', 'now', 'backToToday', 'ok', 'clear', 'month', 'year', 'timeSelect',
+  'dateSelect', 'monthSelect', 'yearSelect', 'decadeSelect', 'yearFormat',
+  'dateFormat', 'dayFormat', 'dateTimeFormat', 'monthFormat',
+  'monthBeforeYear', 'previousMonth', 'nextMonth', 'previousYear', 'nextYear',
+  'previousDecade', 'nextDecade', 'previousCentury', 'nextCentury'
+];
+
+// Assemble calendarLocale from a combination of strings supplied by
+// rc-calendar and by Pontoon localizers, which ever seems better.
+const calendarLocale = {};
+localeKeys.forEach(key => {
+  const defaultString = rcCalendarLocales.en_US[key];
+  const rcCalendarString = rcCalendarLocale[key];
+  const localString = browser.i18n.getMessage(`calendar_${key}`);
+
+  let val;
+  if (localString === defaultString && rcCalendarString && rcCalendarString !== defaultString) {
+    // If the locally translated string is the same as the default, it's
+    // possibly a fallback. If we have a string from rc-calendar that is not
+    // also the default, let's use it.
+    val = rcCalendarString;
+  } else if (localString) {
+    // Otherwise, use the localString if it's not empty
+    val = localString;
+  } else {
+    // Finally fall back to default.
+    val = defaultString;
+  }
+  calendarLocale[key] = val;
+});
 
 // Arbitrary 0.5s interval for live validation of time selection
 const VALIDATION_INTERVAL = 500;
