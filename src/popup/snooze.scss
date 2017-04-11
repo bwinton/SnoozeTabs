@@ -152,19 +152,24 @@ ul.times {
     margin-left: 58px;
     padding: 1px 20px 1px 0;
     border-bottom: 1px solid rgba(38, 38, 38, .15);
+    display: flex;
 
     .icon {
       padding: 17px 20px 19px 20px;
       width: 18px;
       height: 18px;
       margin-left: -58px;
+      flex-grow: 0;
     }
 
     .title {
       flex: 1 0 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .date {
+      flex-grow: 0;
       min-width: 1em;
       text-align: right;
       font-size: 12px;
