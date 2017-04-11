@@ -134,9 +134,9 @@
     "moment": "2.17.1",
     "rc-calendar": "7.5.1",
     "rc-time-picker": "2.2.1",
+    "react": "15.4.1",
     "react-addons-css-transition-group": "15.4.2",
     "react-dom": "15.4.1",
-    "react": "15.4.1",
     "testpilot-metrics": "2.1.2",
     "uuid": "3.0.1"
   }
