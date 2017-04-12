@@ -3,6 +3,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { storiesOf, action, linkTo } from '@kadira/storybook';
 import { host } from 'storybook-host';
 import moment from 'moment';
+import { getLangDir } from '../utils';
 
 // TODO: Get sass working with storybook
 // import '../src/popup/snooze.scss';
@@ -13,17 +14,18 @@ import MainPanel from '../src/lib/components/MainPanel';
 import ManagePanel from '../src/lib/components/ManagePanel';
 
 // Simplified version of SnoozePopup for rendering canned state
+const langDir = getLangDir(browser.i18n.getUILanguage());
 const SnoozePopup = props => {
   const { activePanel, tabIsSnoozable } = props;
   if (!tabIsSnoozable) {
     return (
-      <div className="panel-wrapper">
+      <div dir={langDir} className="panel-wrapper">
         <ManagePanel {...props} id="manage" key="manage" active={'manage' === activePanel} />
       </div>
     );
   } else {
     return (
-      <ReactCSSTransitionGroup component="div" className="panel-wrapper" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
+      <ReactCSSTransitionGroup component="div" dir={langDir} className="panel-wrapper" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
         <MainPanel {...props} id="main" key="main" active={'main' === activePanel} />
         {('manage' === activePanel) && <ManagePanel {...props} id="manage" key="manage" active={'manage' === activePanel} />}
       </ReactCSSTransitionGroup>
@@ -41,9 +43,7 @@ SnoozePopup.propTypes = SnoozePopupNarrow.propTypes = {
   dontShow:  React.PropTypes.bool.isRequired,
   switchPanel: React.PropTypes.func.isRequired,
   cancelSnoozedTab: React.PropTypes.func.isRequired,
-  getAlarmsAndProperties: React.PropTypes.func.isRequired,
   openSnoozedTab: React.PropTypes.func.isRequired,
-  queryTabIsSnoozable: React.PropTypes.func.isRequired,
   scheduleSnoozedTab: React.PropTypes.func.isRequired,
   undeleteSnoozedTab: React.PropTypes.func.isRequired,
   updateDontShow: React.PropTypes.func.isRequired,
@@ -73,7 +73,9 @@ const commonProps = {
   scheduleSnoozedTab: action('scheduleSnoozedTab'),
   openSnoozedTab: action('openSnoozedTab'),
   cancelSnoozedTab: action('cancelSnoozedTab'),
-  updateSnoozedTab: action('updateSnoozedTab')
+  updateSnoozedTab: action('updateSnoozedTab'),
+  undeleteSnoozedTab: action('undeleteSnoozedTab'),
+  updateDontShow: action('updateDontShow')
 };
 
 storiesOf('SnoozePopup (on toolbar)', module)

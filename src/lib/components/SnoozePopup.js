@@ -3,9 +3,10 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import MainPanel from './MainPanel';
 import ManagePanel from './ManagePanel';
-import { makeLogger } from '../utils';
+import { makeLogger, getLangDir } from '../utils';
 
 const log = makeLogger('FE <SnoozePopup>');
+const langDir = getLangDir(browser.i18n.getUILanguage());
 
 export default class SnoozePopup extends React.Component {
   constructor(props) {
@@ -68,13 +69,13 @@ export default class SnoozePopup extends React.Component {
     };
     if (!tabIsSnoozable) {
       return (
-        <div className="panel-wrapper">
+        <div dir={langDir} className="panel-wrapper">
           <ManagePanel {...passProps} id="manage" key="manage" active={'manage' === activePanel} />
         </div>
       );
     } else {
       return (
-        <ReactCSSTransitionGroup component="div" className="panel-wrapper" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
+        <ReactCSSTransitionGroup component="div" dir={langDir} className="panel-wrapper" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
           <MainPanel {...passProps} id="main" key="main" active={'main' === activePanel} />
           {('manage' === activePanel) && <ManagePanel {...passProps} id="manage" key="manage" active={'manage' === activePanel} />}
         </ReactCSSTransitionGroup>

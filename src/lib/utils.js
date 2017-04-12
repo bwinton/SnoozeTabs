@@ -5,3 +5,6 @@ export function makeLogger(prefix) {
 }
 
 export const idForItem = item => `${item.time}-${item.url}`;
+
+export const getLangDir = lang =>
+  ['ar', 'fa', 'he'].indexOf(lang) === -1  ? 'ltr' : 'rtl';
