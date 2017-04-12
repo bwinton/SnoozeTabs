@@ -132,7 +132,7 @@
   "dependencies": {
     "classnames": "2.2.5",
     "moment": "2.17.1",
-    "rc-calendar": "7.5.1",
+    "rc-calendar": "8.1.0",
     "rc-time-picker": "2.2.1",
     "react": "15.4.1",
     "react-addons-css-transition-group": "15.4.2",
