@@ -3,7 +3,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { storiesOf, action, linkTo } from '@kadira/storybook';
 import { host } from 'storybook-host';
 import moment from 'moment';
-import { getLangDir } from '../utils';
+import { getLangDir } from '../src/lib/utils';
 
 // TODO: Get sass working with storybook
 // import '../src/popup/snooze.scss';

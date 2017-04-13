@@ -31,6 +31,11 @@ const formats = {
     {format: () => ''},
     new Intl.DateTimeFormat(uiLocales, { hour: 'numeric' })
   ],
+  'year': new Intl.DateTimeFormat(uiLocales, { year: 'numeric' }),
+  'date': new Intl.DateTimeFormat(uiLocales, { month: 'numeric', day: 'numeric', year: 'numeric' }),
+  'day': new Intl.DateTimeFormat(uiLocales, { day: 'numeric' }),
+  'month': new Intl.DateTimeFormat(uiLocales, { month: 'short' }),
+  'dateTime': new Intl.DateTimeFormat(uiLocales, { month: 'numeric', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }),
 };
 
 export const getLocalizedDateTime = function (time, format) {
