@@ -9,6 +9,9 @@
 // import moment from 'moment';
 import { confirmationTime } from './times';
 
+import { getLangDir } from './utils';
+const langDir = getLangDir(browser.i18n.getUILanguage());
+
 function sendShowUpdate(showCheckbox) {
   if (showCheckbox.checked) {
     browser.runtime.sendMessage({
@@ -37,7 +40,7 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
     confirmationBar = document.createElement('div');
     document.body.appendChild(confirmationBar);
   }
-  confirmationBar.outerHTML = `<div id="${confirmationId}">
+  confirmationBar.outerHTML = `<div id="${confirmationId}" dir="${langDir}">
     <style scoped>
       * {
         margin: 8px 0 8px 8px;
