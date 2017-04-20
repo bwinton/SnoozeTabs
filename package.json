@@ -60,7 +60,7 @@
   },
   "config": {
     "GA_TRACKING_ID": "UA-90911916-2",
-    "productionLocales": "en-US,cs,de,dsb,es-MX,fr,fy-NL,hsb,hu,id,it,ja,kab,nl,pt-BR,pt-PT,ru,sk,sl,sq,sv-SE,tr,zh-CN,zh-TW"
+    "productionLocales": "en-US,cs,de,dsb,es-ES,es-MX,fr,fy-NL,hsb,hu,id,it,ja,kab,nl,pt-BR,pt-PT,ru,sk,sl,sq,sv-SE,tr,zh-CN,zh-TW"
   },
   "webextensionManifest": {
     "manifest_version": 2,
