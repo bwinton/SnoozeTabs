@@ -5,4 +5,4 @@ machine:
 compile:
   override:
     - ./bin/build-addon.sh
-    - cp *.zip $CIRCLE_ARTIFACTS
+    - cp *.xpi $CIRCLE_ARTIFACTS

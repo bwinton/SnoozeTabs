@@ -3,9 +3,9 @@ set -ex
 npm install
 
 if [[ -z $TESTPILOT_AMO_USER || -z $TESTPILOT_AMO_SECRET ]]; then
-  rm -f ./*.zip
+  rm -f ./*.xpi
   NODE_ENV=development npm run package
-  mv snoozetabs*.zip snoozetabs-dev.zip
+  mv addon.xpi addon-dev.xpi
   NODE_ENV=production npm run package
 else
   NODE_ENV=production npm run build
