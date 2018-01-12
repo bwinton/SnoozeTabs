@@ -2,7 +2,7 @@
   "name": "snoozetabs",
   "description": "An add-on to let you snooze your tabs for a while.",
   "id": "snoozetabs@mozilla.com",
-  "version": "1.0.17",
+  "version": "1.0.21",
   "author": "Blake Winton <bwinton@latte.ca>",
   "contributors": [
     "Les Orchard <me@lmorchard.com> (http://lmorchard.com/)"
@@ -11,40 +11,50 @@
   "bugs": {
     "url": "https://github.com/bwinton/SnoozeTabs/issues"
   },
+  "engines": {
+    "node": ">=8.9.4"
+  },
   "devDependencies": {
-    "@kadira/storybook-addon-knobs": "1.7.1",
     "@kadira/storybook": "2.35.3",
+    "@kadira/storybook-addon-knobs": "1.7.1",
     "babel-cli": "6.23.0",
-    "babel-plugin-external-helpers": "6.18.0",
-    "babel-preset-es2015": "6.18.0",
+    "babel-loader": "7.1.1",
+    "babel-preset-env": "1.6.1",
     "babel-preset-react": "6.16.0",
     "babel-preset-stage-0": "6.16.0",
     "babel-register": "6.18.0",
     "chai": "3.5.0",
+    "cross-env": "5.0.4",
     "cross-spawn": "5.1.0",
+    "eslint": "3.10.2",
     "eslint-plugin-promise": "3.4.0",
     "eslint-plugin-react": "6.8.0",
-    "eslint": "3.10.2",
+    "json-loader": "0.5.7",
     "mocha": "3.2.0",
     "node-sass": "3.13.0",
     "npm-run-all": "3.1.2",
     "onchange": "3.2.0",
     "pontoon-to-webext": "1.0.1",
-    "rollup-analyzer": "1.0.1",
-    "rollup-plugin-babel": "2.6.1",
-    "rollup-plugin-commonjs": "5.0.5",
-    "rollup-plugin-conditional": "1.1.1",
-    "rollup-plugin-json": "2.1.0",
-    "rollup-plugin-node-resolve": "2.0.0",
-    "rollup-plugin-replace": "1.1.1",
-    "rollup-plugin-uglify": "1.0.1",
-    "rollup": "0.36.4",
     "sass-lint": "1.10.2",
     "shx": "0.2.1",
     "sinon": "1.17.6",
     "storybook-host": "1.0.8",
     "svgo": "0.7.1",
-    "web-ext": "1.8.1"
+    "web-ext": "1.8.1",
+    "webpack": "3.10.0"
+  },
+  "dependencies": {
+    "classnames": "2.2.5",
+    "moment": "2.17.1",
+    "rc-animate": "2.3.1",
+    "rc-calendar": "8.1.0",
+    "rc-time-picker": "2.2.1",
+    "rc-trigger": "1.8.1",
+    "react": "15.4.1",
+    "react-addons-css-transition-group": "15.4.2",
+    "react-dom": "15.4.1",
+    "testpilot-metrics": "2.1.2",
+    "uuid": "3.0.1"
   },
   "keywords": [
     "snooze",
@@ -60,7 +70,7 @@
   },
   "config": {
     "GA_TRACKING_ID": "UA-90911916-2",
-    "productionLocales": "en-US,cs,de,dsb,es-MX,fr,fy-NL,hsb,hu,id,it,ja,kab,nl,pt-BR,pt-PT,ru,sk,sl,sq,sv-SE,tr,zh-CN,zh-TW"
+    "productionLocales": "en-US,cs,de,dsb,es-ES,es-MX,fr,fy-NL,hsb,hu,id,it,ja,kab,nl,pt-BR,pt-PT,ru,sk,sl,sq,sv-SE,tr,zh-CN,zh-TW"
   },
   "webextensionManifest": {
     "manifest_version": 2,
@@ -108,18 +118,15 @@
     "copy:assets": "shx cp -r src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
     "copy:js": "shx cp node_modules/testpilot-metrics/testpilot-metrics.js dist/",
     "bundle:manifest": "node ./bin/generate-manifest",
-    "bundle:js": "npm run lint:js && npm-run-all --parallel rollup:*",
-    "rollup:background": "rollup -c --environment entry:background",
-    "rollup:snooze-content": "rollup -c --environment entry:popup/snooze-content",
-    "rollup:snooze-bootstrap": "rollup -c --environment entry:popup/snooze-bootstrap",
-    "rollup:confirm-bar": "rollup -c --environment entry:lib/confirm-bar",
+    "bundle:js": "npm run lint:js && webpack",
     "bundle:css": "npm run lint:sass && shx mkdir -p dist/popup && node-sass src/popup/snooze.scss > dist/popup/snooze.css",
-    "package": "npm run build && web-ext build -s dist -a .",
+    "package": "cross-env NODE_ENV=production npm run build && web-ext build -s dist && mv web-ext-artifacts/*.zip addon.xpi",
+    "package:dev": "cross-env NODE_ENV=development npm run build && web-ext build -s dist && mv web-ext-artifacts/*.zip addon-dev.xpi",
     "lint": "npm-run-all --parallel lint:*",
     "lint:js": "eslint --max-warnings=0 .",
     "lint:sass": "sass-lint --max-warnings 0 --verbose --no-exit",
     "watch:manifest": "onchange -p -v 'bin/generate-manifest.js' 'package.json' -- npm run bundle:manifest",
-    "watch:js": "onchange -p -v 'src/**/*.js' -- npm-run-all --parallel bundle:js test:js",
+    "watch:js": "webpack --watch --progress",
     "watch:test:js": "onchange -p -v 'test/**/*.js' -- npm-run-all --parallel test:js",
     "watch:css": "onchange -p -v 'src/**/*.scss' -- npm run bundle:css",
     "watch:assets": "onchange -p -v 'src/icons/*' 'src/popup/*.html' -- npm run copy:assets",
@@ -128,16 +135,5 @@
     "build-storybook": "build-storybook",
     "test": "npm run lint && npm run test:js",
     "test:js": "mocha --compilers js:babel-register --require test/.setup.js --recursive"
-  },
-  "dependencies": {
-    "classnames": "2.2.5",
-    "moment": "2.17.1",
-    "rc-calendar": "8.1.0",
-    "rc-time-picker": "2.2.1",
-    "react": "15.4.1",
-    "react-addons-css-transition-group": "15.4.2",
-    "react-dom": "15.4.1",
-    "testpilot-metrics": "2.1.2",
-    "uuid": "3.0.1"
   }
 }

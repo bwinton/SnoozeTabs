@@ -1,6 +1,7 @@
 .DS_Store
 profile.testing/
 web-ext-artifacts/
+addon.xpi
 dist/
 node_modules
 *.zip

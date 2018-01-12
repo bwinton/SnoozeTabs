@@ -41,8 +41,8 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
     document.body.appendChild(confirmationBar);
   }
   confirmationBar.outerHTML = `<div id="${confirmationId}" dir="${langDir}">
-    <style scoped>
-      * {
+    <style>
+      #${confirmationId} * {
         margin: 8px 0 8px 8px;
       }
       #${confirmationId} {
@@ -67,11 +67,11 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
       #${confirmationId}.shown {
         top: 0;
       }
-      img {
+      #${confirmationId} img {
         height: 24px;
         width: 24px;
       }
-      button {
+      #${confirmationId} button {
         padding: 0;
         background-color: #fbfbfb;
         border: 1px solid #b1b1b1;
@@ -80,34 +80,34 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         height: 24px;
         width: 6em;
       }
-      button:hover {
+      #${confirmationId} button:hover {
         background-color: #ebebeb;
       }
-      button:active {
+      #${confirmationId} button:active {
         background-color: #d4d4d4;
       }
-      button.ok {
+      #${confirmationId} button.ok {
         border: 1px solid #258ad6;
         background-color: #0ba0f9;
         color: #fff;
       }
-      button.ok:hover {
+      #${confirmationId} button.ok:hover {
         background-color: #0670cc;
       }
-      button.ok:active {
+      #${confirmationId} button.ok:active {
         background-color: #005bab;
       }
-      input, label {
+      #${confirmationId} input, #${confirmationId} label {
         color: #5d5d5d;
         font-size: 10px;
       }
-      label {
+      #${confirmationId} label {
         margin-left: 3px;
       }
-      .spacer {
+      #${confirmationId} .spacer {
         flex: 1;
       }
-      #${closeId} {
+      #${confirmationId} #${closeId} {
         cursor: pointer;
         height: 10px;
         margin-right: 16px;

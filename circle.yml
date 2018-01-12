@@ -1,8 +1,8 @@
 machine:
   node:
-    version: 6.9.1
+    version: 8.9.4
 
 compile:
   override:
     - ./bin/build-addon.sh
-    - cp *.zip $CIRCLE_ARTIFACTS
+    - cp *.xpi $CIRCLE_ARTIFACTS
