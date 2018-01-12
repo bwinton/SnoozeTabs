@@ -22,6 +22,20 @@ let iconData;
 let closeData;
 let wakeTimerPaused = false;
 
+// TODO: Collect & categorize more theme IDs?
+const THEME_IDS_BY_BACKGROUND_TYPE = {
+  light: [
+    // default theme
+    '{972ce4c6-7e08-4474-a285-3208198ce6fd}',
+    'firefox-compact-light@mozilla.org@personas.mozilla.org'
+  ],
+  dark: [
+    'firefox-compact-dark@mozilla.org@personas.mozilla.org'
+  ]
+};
+
+const DEFAULT_BACKGROUND_TYPE = 'light';
+
 function init() {
   log('init()');
   browser.runtime.onInstalled.addListener((details) => {
@@ -34,17 +48,12 @@ function init() {
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
   browser.tabs.onUpdated.addListener(updateButtonForTab);
-  browser.tabs.onCreated.addListener(tab => {
-    updateButtonForTab(tab.id, {'status': 'loading', url: tab.url});
-  });
-  browser.tabs.query({}).then(tabs => {
-    for (const tab of tabs) {
-      updateButtonForTab(tab.id, {'status': 'loading', url: tab.url});
-    }
-  }).catch(reason => {
-    log('init tabs query rejected', reason);
-  });
-
+  browser.tabs.onCreated.addListener(tab => updateButtonForTab(tab.id));
+  browser.tabs.onActivated.addListener(({ tabId }) =>
+    updateButtonForTab(tabId));
+  // HACK: brute-force attempt to update buttons when a theme is enabled.
+  browser.management.onEnabled.addListener(updateButtonsForAllTabs);
+  updateButtonsForAllTabs();
   prefetchIcons();
 
   getMetricsUUID()
@@ -52,6 +61,16 @@ function init() {
     .then(scheduleNextOpenTabs)
     .then(updateWakeAndBookmarks)
     .catch(reason => log('init wake update failed', reason));
+}
+
+function updateButtonsForAllTabs() {
+  browser.tabs.query({}).then(tabs => {
+    for (const tab of tabs) {
+      updateButtonForTab(tab.id);
+    }
+  }).catch(reason => {
+    log('init tabs query rejected', reason);
+  });
 }
 
 function prefetchIcons() {
@@ -89,21 +108,50 @@ function scheduleNextOpenTabs() {
   }).catch(reason => log('scheduleNextOpenTabs failed', reason));
 }
 
-function updateButtonForTab(tabId, changeInfo) {
-  if (changeInfo.status !== 'loading' || !changeInfo.url) {
-    return;
-  }
-  browser.tabs.get(tabId).then(tab => {
-    const url = changeInfo.url;
+function updateButtonForTab(tabId) {
+  Promise.all([
+    detectThemeBackgroundType(),
+    browser.tabs.get(tabId)
+  ]).then(([themeType, tab]) => {
+    const url = tab.url;
     if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') ||
         url.startsWith('ftp:') || url.startsWith('app:'))) {
-      browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
+        browser.browserAction.setIcon({
+          path: (themeType === 'light') ?
+            'icons/bell_icon_dark.svg' :
+            'icons/bell_icon_light.svg',
+          tabId: tabId
+        });
     } else {
-      browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
+      browser.browserAction.setIcon({
+        path: (themeType === 'light') ?
+          'icons/disabled_bell_icon_light.svg' :
+          'icons/disabled_bell_icon_dark.svg',
+        tabId: tabId
+      });
     }
   }).catch(reason => {
     log('update button get rejected', reason);
   });
+}
+
+function detectThemeBackgroundType() {
+  if (!browser.management) {
+    // Just return default if the API is unavailable
+    return DEFAULT_BACKGROUND_TYPE;
+  }
+  return browser.management.getAll().then(extensions => {
+    for (const extension of extensions) {
+      if (extension.type !== 'theme') { continue; }
+      if (!extension.enabled) { continue; }
+      for (const [type, ids] of Object.entries(THEME_IDS_BY_BACKGROUND_TYPE)) {
+        if (ids.includes(extension.id)) {
+          return type;
+        }
+      }
+    }
+    return DEFAULT_BACKGROUND_TYPE;
+  }).catch(() => DEFAULT_BACKGROUND_TYPE);
 }
 
 function handleMessage({op, message}) {
