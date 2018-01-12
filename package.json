@@ -70,7 +70,7 @@
   },
   "config": {
     "GA_TRACKING_ID": "UA-90911916-2",
-    "productionLocales": "en-US,cs,de,dsb,es-ES,es-MX,fr,fy-NL,hsb,hu,id,it,ja,kab,nl,pt-BR,pt-PT,ru,sk,sl,sq,sv-SE,tr,zh-CN,zh-TW"
+    "productionLocales": "en-US,ar,bn-BD,bs,cak,cs,de,dsb,el,es-AR,es-CL,es-ES,es-MX,fa,fr,fy-NL,he,hsb,hu,id,it,ja,ka,kab,ms,nb-NO,nl,nn-NO,pt-BR,pt-PT,ro,ru,sk,sl,sq,sr,sv-SE,te,tr,uk,zh-CN,zh-TW"
   },
   "webextensionManifest": {
     "manifest_version": 2,
