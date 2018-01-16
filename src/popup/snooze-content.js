@@ -13,6 +13,9 @@ import SnoozePopup from '../lib/components/SnoozePopup';
 import { makeLogger } from '../lib/utils';
 
 const log = makeLogger('FE');
+log('loaded');
+
+const NARROW_MIN_WIDTH = 320;
 
 import moment from 'moment';
 
@@ -96,8 +99,41 @@ function queryTabIsSnoozable() {
   });
 }
 
+// HACK: debounce resize event handling with a flag & requestAnimationFrame
+// https://developer.mozilla.org/en-US/docs/Web/Events/resize
+let resizePending = false;
+const resizeHandler = () => {
+  const width = document.body.clientWidth;
+
+  if (width === 0) {
+    log('resize (zero - ignored)', width);
+    return;
+  }
+
+  if (resizePending) {
+    log('resize (ignored)', width);
+    return;
+  }
+
+  log('resize (pending)', width);
+  resizePending = true;
+
+  window.requestAnimationFrame(() => {
+    log('resize (handled)', width, width < NARROW_MIN_WIDTH ? 'menu' : 'toolbar');
+    document.body.classList[width < NARROW_MIN_WIDTH ? 'add' : 'remove']('narrow');
+    resizePending = false;
+    window.removeEventListener('resize', resizeHandler);
+  });
+};
+
 function init() {
   log('init');
+
+  if (process.env.NODE_ENV !== 'production') {
+    document.body.classList.add('development');
+  }
+
+  window.addEventListener('resize', resizeHandler);
 
   ReactDOM.render(
     <SnoozePopup {...{

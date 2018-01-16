@@ -11,7 +11,6 @@ module.exports = {
   entry: {
     background: './src/background.js',
     'popup/snooze-content': './src/popup/snooze-content.js',
-    'popup/snooze-bootstrap': './src/popup/snooze-bootstrap.js',
     'lib/confirm-bar': './src/lib/confirm-bar.js'
   },
   plugins: [
