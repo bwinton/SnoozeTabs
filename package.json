@@ -112,7 +112,7 @@
     "start": "npm run build && npm-run-all --parallel test watch",
     "build": "npm run clean && npm-run-all --parallel copy:* bundle:*",
     "run": "web-ext run -s dist --firefox=nightly",
-    "clean": "rm -rf dist && shx mkdir -p dist/popup",
+    "clean": "shx rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:locales": "node ./bin/build-locales.js",
     "copy:assets": "shx cp -r src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
