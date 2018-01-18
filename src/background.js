@@ -17,6 +17,7 @@ import Metrics from './lib/metrics';
 import { getAlarms, saveAlarms, removeAlarms,
          getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
+const PERIODIC_ALARM_NAME = 'snooze-periodic-alarm';
 
 let iconData;
 let closeData;
@@ -60,6 +61,7 @@ function init() {
     .then(clientUUID => Metrics.init(clientUUID))
     .then(scheduleNextOpenTabs)
     .then(updateWakeAndBookmarks)
+    .then(startPeriodicAlarm)
     .catch(reason => log('init wake update failed', reason));
 }
 
@@ -286,7 +288,7 @@ function syncBookmarks(items) {
 }
 
 function updateWakeAndBookmarks() {
-  return browser.alarms.clearAll()
+  return browser.alarms.clear(WAKE_ALARM_NAME)
     .then(() => getAlarms())
     .then(items => {
       syncBookmarks(items);
@@ -308,6 +310,11 @@ function updateWakeAndBookmarks() {
     });
 }
 
+function startPeriodicAlarm() {
+  log('starting periodic alarm');
+  return browser.alarms.create(PERIODIC_ALARM_NAME, { periodInMinutes: 1 });
+}
+
 function handleWindowCreated(window) {
   if (wakeTimerPaused && !window.incognito) {
     // Just opened a public window, so let's restart the wake timer
@@ -317,9 +324,9 @@ function handleWindowCreated(window) {
   }
 }
 
-function handleWake() {
+function handleWake(alarm) {
   const now = Date.now();
-  log('woke at', now);
+  log('woke at', now, 'with alarm', alarm ? alarm.name : 'none');
 
   return Promise.all([
     getAlarms(),
