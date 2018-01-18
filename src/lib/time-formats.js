@@ -29,7 +29,7 @@ const formats = {
   ],
   'short_time-en': [
     {format: () => ''},
-    new Intl.DateTimeFormat(uiLocales, { hour: 'numeric' })
+    new Intl.DateTimeFormat(uiLocales, { hour: 'numeric', minute: 'numeric' })
   ],
   'year': new Intl.DateTimeFormat(uiLocales, { year: 'numeric' }),
   'date': new Intl.DateTimeFormat(uiLocales, { month: 'numeric', day: 'numeric', year: 'numeric' }),
