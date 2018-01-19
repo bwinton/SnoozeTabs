@@ -82,12 +82,13 @@
     "default_locale": "en_US",
     "description": "__MSG_extDesc__",
     "icons": {
-      "48": "icons/bell_icon.svg"
+      "48": "icons/bell_icon_dark.svg"
     },
     "permissions": [
       "alarms",
       "bookmarks",
       "contextMenus",
+      "management",
       "notifications",
       "storage",
       "tabs",
@@ -104,8 +105,15 @@
       "default_title": "__MSG_popupTitle__",
       "default_popup": "popup/snooze.html",
       "default_icon": {
-        "32": "icons/bell_icon.svg"
-      }
+        "32": "icons/bell_icon_dark.svg"
+      },
+      "theme_icons": [
+        {
+          "size": 32,
+          "light": "icons/bell_icon_dark.svg",
+          "dark": "icons/bell_icon_light.svg"
+        }
+      ]
     }
   },
   "scripts": {
