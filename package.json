@@ -77,7 +77,7 @@
     "manifest_version": 2,
     "applications": {
       "gecko": {
-        "update_url": "https://testpilot.firefox.com/files/snoozetabs@mozilla/updates.json"
+        "update_url": "https://testpilot.firefox.com/files/snoozetabs@mozilla.com/updates.json"
       }
     },
     "default_locale": "en_US",
