@@ -13,3 +13,4 @@ rules:
   no-qualifying-elements: 0
   nesting-depth: 5
   no-css-comments: 0
+  clean-import-paths: 0
