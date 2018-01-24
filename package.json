@@ -75,6 +75,7 @@
   },
   "webextensionManifest": {
     "manifest_version": 2,
+    "name": "Snooze Tabs",
     "applications": {
       "gecko": {
         "update_url": "https://testpilot.firefox.com/files/snoozetabs@mozilla.com/updates.json"
