@@ -415,7 +415,8 @@ if (browser.contextMenus.ContextType.TAB) {
         'title': tab.title || title,
         'url': tab.url,
         'tabId': tab.id,
-        'windowId': tab.windowId
+        'windowId': tab.windowId,
+        'icon': tab.favIconUrl
       }
     });
   });
