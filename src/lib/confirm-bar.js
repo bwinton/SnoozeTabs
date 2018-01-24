@@ -24,8 +24,6 @@ function sendShowUpdate(showCheckbox) {
 function removeConfirmBar() {
   const el1 = document.getElementById('snoozetabs-confirm-bar');
   if (el1) { el1.remove(); }
-  const el2 = document.getElementById('snoozetabs-confirm-bar-spacer');
-  if (el2) { el2.remove(); }
 }
 
 chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
@@ -53,11 +51,6 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
   frameDiv.style.cssText = 'height: 45px; width: 100%; top: 0; left: 0; padding: 0; position: fixed; z-index: 2147483647; visibility: visible;';
   frameDiv.appendChild(iframe);
   document.body.appendChild(frameDiv);
-
-  const spacer = document.createElement('div');
-  spacer.id = 'snoozetabs-confirm-bar-spacer';
-  spacer.style.cssText = 'height: 45px;';
-  document.body.insertBefore(spacer, document.body.firstChild);
 
   iframe.onload = () => {
     const iframeDocument = iframe.contentDocument;
