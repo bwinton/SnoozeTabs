@@ -8,12 +8,9 @@ const manifest = Object.assign({
   'author': packageMeta.author,
   'version': packageMeta.version,
   'homepage_url': packageMeta.homepage,
-  'applications': {
-    'gecko': Object.assign({
-      'id': packageMeta.id
-    }, packageMeta.webextensionManifest.applications.gecko)
-  }
 }, packageMeta.webextensionManifest);
+
+manifest.applications.gecko.id = packageMeta.id;
 
 const outPath = path.join(path.dirname(__dirname), 'dist', 'manifest.json');
 fs.writeFileSync(outPath, JSON.stringify(manifest, null, '  '));
