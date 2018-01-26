@@ -36,7 +36,7 @@ body {
 
 #app {
   background: $grey-20;
-  height: 392px;
+  height: 393px;
   width: 320px;
 }
 
@@ -230,7 +230,7 @@ ul.times {
 
     &#pick .date {
       &::after {
-        content: '\25ba';
+        content: '\25b6';
         line-height: 16px;
         color: $grey-60;
       }
@@ -512,7 +512,7 @@ li.entry {
     left: 50px;
 
     &::after {
-      content: '\25c4';
+      content: '\25C0';
     }
   }
 
@@ -520,7 +520,7 @@ li.entry {
     right: 50px;
 
     &::after {
-      content: '\25ba';
+      content: '\25b6';
     }
   }
 
