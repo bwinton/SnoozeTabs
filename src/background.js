@@ -21,6 +21,7 @@ const PERIODIC_ALARM_NAME = 'snooze-periodic-alarm';
 
 let iconData;
 let closeData;
+let confirmIconData;
 let wakeTimerPaused = false;
 
 function init() {
@@ -64,6 +65,16 @@ function prefetchIcons() {
       iconData = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
     }).catch(reason => {
       log('init get iconData rejected', reason);
+    });
+  }
+
+  if (!confirmIconData) {
+    fetch(browser.extension.getURL('icons/confirm_bell_icon.svg')).then(response => {
+      return response.arrayBuffer();
+    }).then(function(response) {
+      confirmIconData = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
+    }).catch(reason => {
+      log('init get confirmIconData rejected', reason);
     });
   }
 
@@ -121,7 +132,7 @@ const messageOps = {
       }
 
       browser.tabs.executeScript(message.tabId, {file: './lib/confirm-bar.js'}).then(() => {
-        return chrome.tabs.sendMessage(message.tabId, {message, iconData, closeData});
+        return chrome.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData});
       }).catch(reason => {
         log('schedule inject rejected', reason);
         return messageOps.confirm(message);

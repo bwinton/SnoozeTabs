@@ -26,7 +26,7 @@ function removeConfirmBar() {
   if (el1) { el1.remove(); }
 }
 
-chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
+chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeData}) {
   const atTime = confirmationTime(message.time, message.timeType);
   const confirmationId = 'snoozetabs-confirmation-bar';
   const okId = 'snoozetabs-ok';
@@ -43,12 +43,12 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
   removeConfirmBar();
 
   const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'height: 45px; width: 100%; border: 0;';
+  iframe.style.cssText = 'height: 55px; width: 100%; border: 0;';
   iframe.id = 'snoozetabs-confirm-bar-iframe';
 
   const frameDiv = document.createElement('div');
   frameDiv.id = 'snoozetabs-confirm-bar';
-  frameDiv.style.cssText = 'height: 45px; width: 100%; top: 0; left: 0; padding: 0; position: fixed; z-index: 2147483647; visibility: visible;';
+  frameDiv.style.cssText = 'height: 55px; width: 100%; top: 0; left: 0; padding: 0; position: fixed; z-index: 2147483647; visibility: visible;';
   frameDiv.appendChild(iframe);
   document.body.appendChild(frameDiv);
 
@@ -67,12 +67,13 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
           -moz-user-select: none;
           align-items: center;
           background-color: #eee;
-          box-shadow: 0 1px 0 0 rgba(0,0,0,0.35);
-          color: #6a6a6a;
+          box-shadow: 0 0 4px rgba(0,0,0,0.35);
+          color: #0c0c0d;
           display: flex;
           flex-direction: row;
+          font: message-box;
           font-family: Lucida Grande, Tahoma, sans-serif;
-          font-size: 14px;
+          font-size: 13px;
           text-shadow: none;
           min-height: 40px;
           margin: 0;
@@ -91,23 +92,23 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
           width: 24px;
         }
         #${confirmationId} button {
+          border: none;
           padding: 0;
-          background-color: #fbfbfb;
-          border: 1px solid #b1b1b1;
+          cursor: pointer;
+          background-color: rgba(12,12,13,0.10);
           font-family: Lucida Grande, Tahoma, sans-serif;
-          font-size: 12px;
-          height: 24px;
+          font-size: 13px;
+          height: 32px;
           width: 6em;
         }
         #${confirmationId} button:hover {
-          background-color: #ebebeb;
+          background-color: rgba(12,12,13,0.15);
         }
         #${confirmationId} button:active {
-          background-color: #d4d4d4;
+          background-color: rgba(12,12,13,0.15);
         }
         #${confirmationId} button.ok {
-          border: 1px solid #258ad6;
-          background-color: #0ba0f9;
+          background-color: #0060df;
           color: #fff;
         }
         #${confirmationId} button.ok:hover {
@@ -117,8 +118,7 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
           background-color: #005bab;
         }
         #${confirmationId} input, #${confirmationId} label {
-          color: #5d5d5d;
-          font-size: 10px;
+          font-size: 11px;
         }
         #${confirmationId} label {
           margin-left: 3px;
@@ -128,12 +128,12 @@ chrome.runtime.onMessage.addListener(function({message, iconData, closeData}) {
         }
         #${confirmationId} #${closeId} {
           cursor: pointer;
-          height: 10px;
+          height: 16px;
           margin-right: 16px;
-          width: 10px;
+          width: 16px;
         }
       </style>
-      <img src="${iconData}" alt="${iconAltText}">
+      <img src="${confirmIconData}" alt="${iconAltText}">
       <span>${timeTitle}</span>
       <button class="ok" id="${okId}">${okTitle}</button>
       <button id="${cancelId}">${cancelTitle}</button>
