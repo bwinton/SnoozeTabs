@@ -27,11 +27,11 @@ export function timeForId(time, id) {
   switch (id) {
     case 'debug':
       rv = rv.add(5, 'seconds');
-      text = getLocalizedDateTime(rv, 'short_time');
+      text = getLocalizedDateTime(rv, 'short_time_no_minutes');
       break;
     case 'later':
       rv = rv.add(3, 'hours').minute(0);
-      text = getLocalizedDateTime(rv, 'short_time');
+      text = getLocalizedDateTime(rv, 'short_time_no_minutes');
       break;
     case 'tomorrow':
       rv = rv.add(1, 'day').hour(9).minute(0);

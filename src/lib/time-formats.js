@@ -6,12 +6,16 @@ const uiLocales = [browser.i18n.getUILanguage().replace('_', '-'), 'en-US'];
 const dtf = new Intl.DateTimeFormat(uiLocales[0], {hour: 'numeric'});
 export const use12hFormat = dtf.resolvedOptions().hour12;
 
+// Turn "2 PM" into "2pm" for en-* locales
+const tweakShortTimeForEn = str => str.replace(/ /g, '').toLowerCase();
+
 const formats = {
   'date_day': new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric' }),
   'date_year': new Intl.DateTimeFormat(uiLocales, { month: 'short', day: 'numeric', year: 'numeric' }),
   'long_date_time': new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }),
   'short_date_time': new Intl.DateTimeFormat(uiLocales, { weekday: 'short', hour: 'numeric', minute: 'numeric' }),
   'short_time': new Intl.DateTimeFormat(uiLocales, { hour: 'numeric', minute: 'numeric' }),
+  'short_time_no_minutes': new Intl.DateTimeFormat(uiLocales, { hour: 'numeric' }),
 
   'confirmation_time': new Intl.DateTimeFormat(uiLocales, { hour: 'numeric', minute: 'numeric' }),
   'confirmation_time_no_minutes': new Intl.DateTimeFormat(uiLocales, { hour: 'numeric', minute: 'numeric' }),
@@ -21,15 +25,19 @@ const formats = {
 
   'long_date_time-en': [
     new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric' }),
-    new Intl.DateTimeFormat(uiLocales, { hour: 'numeric' })
+    { format: (date) => tweakShortTimeForEn(formats.short_time_no_minutes.format(date)) }
   ],
   'short_date_time-en': [
     new Intl.DateTimeFormat(uiLocales, { weekday: 'short' }),
-    new Intl.DateTimeFormat(uiLocales, { hour: 'numeric' })
+    { format: (date) => tweakShortTimeForEn(formats.short_time_no_minutes.format(date)) }
   ],
   'short_time-en': [
     {format: () => ''},
-    new Intl.DateTimeFormat(uiLocales, { hour: 'numeric', minute: 'numeric' })
+    {format: (date) => tweakShortTimeForEn(formats.short_time.format(date)) }
+  ],
+  'short_time_no_minutes-en': [
+    {format: () => ''},
+    {format: (date) => tweakShortTimeForEn(formats.short_time_no_minutes.format(date)) }
   ],
   'year': new Intl.DateTimeFormat(uiLocales, { year: 'numeric' }),
   'date': new Intl.DateTimeFormat(uiLocales, { month: 'numeric', day: 'numeric', year: 'numeric' }),
