@@ -95,27 +95,27 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
           border: none;
           padding: 0;
           cursor: pointer;
-          background-color: rgba(12,12,13,0.10);
+          background-color: rgba(12,12,13,0.1);
           font-family: Lucida Grande, Tahoma, sans-serif;
           font-size: 13px;
           height: 32px;
           width: 6em;
         }
         #${confirmationId} button:hover {
-          background-color: rgba(12,12,13,0.15);
+          background-color: rgba(12,12,13,0.2);
         }
         #${confirmationId} button:active {
-          background-color: rgba(12,12,13,0.15);
+          background-color: rgba(12,12,13,0.3);
         }
         #${confirmationId} button.ok {
           background-color: #0060df;
           color: #fff;
         }
         #${confirmationId} button.ok:hover {
-          background-color: #0670cc;
+          background-color: #003eaa;
         }
         #${confirmationId} button.ok:active {
-          background-color: #005bab;
+          background-color: #002275;
         }
         #${confirmationId} input, #${confirmationId} label {
           font-size: 11px;
