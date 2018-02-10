@@ -10,7 +10,8 @@ export {NEXT_OPEN, PICK_TIME};
 export const times = [
   {id: 'later', icon: 'later_today.svg', title: browser.i18n.getMessage('timeLaterToday')},
   {id: 'tomorrow', icon: 'tomorrow.svg', title: browser.i18n.getMessage('timeTomorrow')},
-  {id: 'weekend', icon: 'weekends.svg', title: browser.i18n.getMessage('timeThisWeekend')},
+  {id: 'weekend', icon: 'weekends.svg', title: browser.i18n.getMessage('timeThisWeekend'), hideif: (time) => time.isoWeekday() > 5 },
+  {id: 'weekday', icon: 'weekday.svg', title: browser.i18n.getMessage('timeNextWeekday'), hideif: (time) => time.isoWeekday() < 6 },
   {id: 'week', icon: 'next_week.svg', title: browser.i18n.getMessage('timeNextWeek')},
   {id: 'month', icon: 'next_month.svg', title: browser.i18n.getMessage('timeNextMonth')},
   {id: NEXT_OPEN, icon: 'next_open.svg', title: browser.i18n.getMessage('timeNextOpen')},
@@ -39,6 +40,10 @@ export function timeForId(time, id) {
       break;
     case 'weekend':
       rv = rv.day(6).hour(9).minute(0);
+      text = getLocalizedDateTime(rv, 'short_date_time');
+      break;
+    case 'weekday':
+      rv = rv.isoWeekday(8).hour(9).minute(0);
       text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'week':

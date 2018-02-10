@@ -56,12 +56,14 @@ Many of our icons came from [the Noun Project][nouns]:
 * Later Today: "[Stopwatch][stopwatch]" By Marvin Wilhelm, from the Noun Project.
 * Tomorrow:  "[Future][future]" By Arthur Shlain, from the Noun Project.
 * Weekend: "[Sunglasses][sunglasses]" By NAS, from the Noun Project.
+* Weekday: "[Briefcase][briefcase]" By Patrizia Daidone from the Noun Project. (Modified)
 * Next Month: "[Calendar][calendar]" By artworkbean, from the Noun Project. (Modified)
 * Pick a Date: "[Calendar][calendar]" By artworkbean, from the Noun Project.
 * Undo: "[Undo][]" By H Alberto Gongora, from the Noun Project.
 
 
 [bell]: https://thenounproject.com/term/bell/242717/
+[briefcase]: https://thenounproject.com/term/briefcase/245167/
 [calendar]: https://thenounproject.com/term/calendar/124931/
 [flow]: https://flowtype.org/
 [future]: https://thenounproject.com/term/future/101713/

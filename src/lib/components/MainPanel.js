@@ -26,7 +26,7 @@ export default class MainPanel extends React.Component {
         <div id={id} className={classnames('static', 'panel', { active, obscured: datepickerActive })}>
           <div className="content">
             <ul className="times">
-              { times.map(item => this.renderTime(item)) }
+              { this.mapTimes(times) }
             </ul>
           </div>
           <div className="footer">
@@ -44,6 +44,12 @@ export default class MainPanel extends React.Component {
                          moment={ moment } />}
       </ReactCSSTransitionGroup>
     );
+  }
+
+  mapTimes(times) {
+    const now = this.props.moment();
+    return times.filter(item => !item.hideif || !item.hideif(now))
+                .map(item => this.renderTime(item));
   }
 
   renderTime(item) {
