@@ -1,4 +1,3 @@
-/* global Metrics */
 import { makeLogger } from './utils';
 
 const log = makeLogger('Metrics');
@@ -9,24 +8,21 @@ import packageMeta from '../../package.json';
 // Track recent tabs woken to see whether they're later closed or focused
 let unseenWakeHistory = {};
 let seenWakeHistory = {};
-
-// Channel for sending metrics pings to Test Pilot add-on
 let clientUUID = null;
-let testpilotMetrics = null;
+let id = null;
+let version = null;
+let tid = null;
+
+const GA_URL = 'https://ssl.google-analytics.com/collect';
 
 export default {
   init(uuid) {
     clientUUID = uuid;
     unseenWakeHistory = {};
     seenWakeHistory = {};
-
-    testpilotMetrics = new Metrics({
-      id: packageMeta.id,
-      version: packageMeta.version,
-      tid: packageMeta.config.GA_TRACKING_ID,
-      type: 'webextension',
-      uid: clientUUID
-    });
+    id = packageMeta.id;
+    version = packageMeta.version;
+    tid = packageMeta.config.GA_TRACKING_ID;
 
     browser.tabs.onActivated.addListener(this.handleTabActivated.bind(this));
     browser.tabs.onRemoved.addListener(this.handleTabRemoved.bind(this));
@@ -34,15 +30,46 @@ export default {
   },
 
   sendEvent(message) {
+    if (!tid || !clientUUID) {
+      // Skip sending metric event if we don't have tracking ID and client ID
+      return;
+    }
+
     log('sendEvent', clientUUID, message);
-    if (testpilotMetrics) {
-      testpilotMetrics.sendEvent(message, (input, output) => ({
-        ...output,
-        ec: 'interactions',
-        ea: message.event,
-        cd2: message.snooze_time_type,
-        cm1: message.snooze_time
-      }));
+
+    // Assemble event parameters for GA
+    const event = {
+      v: 1,
+      aip: 1, // anonymize user IP addresses
+      an: id,
+      av: version,
+      tid: tid,
+      cid: clientUUID,
+      t: 'event',
+      ec: 'interactions',
+      ea: message.event,
+      cd2: message.snooze_time_type,
+      cm1: message.snooze_time
+    };
+
+    // Form-encode the event
+    const encoded = Object.entries(event)
+      .map(([key, value]) =>
+        encodeURIComponent(key) + '=' + encodeURIComponent(value))
+      .join('&');
+
+    // Send using background beacon, if available. Otherwise use fetch()
+    if (typeof navigator !== 'undefined' && 'sendBeacon' in navigator) {
+      navigator.sendBeacon(GA_URL, encoded);
+    } else if (typeof fetch !== 'undefined') {
+      fetch(GA_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' },
+        body: encoded
+      })
+      .then(() => log(`Sent GA message via fetch: ${encoded}`))
+      .catch((err) => log(`GA sending via fetch failed: ${err}`));
     }
   },
 
