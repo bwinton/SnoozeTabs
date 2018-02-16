@@ -25,7 +25,6 @@ export default class ManagePanel extends React.Component {
   render() {
     const { id, entries, active, tabIsSnoozable, dontShow, updateDontShow, moment } = this.props;
     const { undoEntries, datepickerActive } = this.state;
-
     const sortedEntries = Object.values({...entries, ...undoEntries});
     sortedEntries.sort((a, b) => {
       if (a.time === NEXT_OPEN) {
@@ -44,10 +43,10 @@ export default class ManagePanel extends React.Component {
     return (
       <ReactCSSTransitionGroup component="div" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
         <div id={id} className={classnames('panel', { active, obscured: datepickerActive, static: !tabIsSnoozable })}>
-          <div className="header">{browser.i18n.getMessage('manageHeader')}</div>
+          <h1 className="header">{browser.i18n.getMessage('manageHeader')}</h1>
           <div className="content">
             { (sortedEntries.length > 0) ? (
-              <ReactCSSTransitionGroup component="ul" className="entries" transitionName="entry" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
+              <ReactCSSTransitionGroup component="ul" className="entries" transitionName="entry" transitionEnterTimeout={250} transitionLeaveTimeout={250} role="listbox">
                 { sortedEntries.map(item => this.renderEntry(item)) }
               </ReactCSSTransitionGroup>
             ) : (
@@ -64,10 +63,14 @@ export default class ManagePanel extends React.Component {
               <label htmlFor="confirm-checkbox">{browser.i18n.getMessage('manageConfirmLabel')}</label>
             </div>
           </div>
-          <div className={classnames('footer', { 'hide': !tabIsSnoozable })}>
-            <div className="back" onClick={() => this.handleBack()}><span>{
-              browser.i18n.getMessage('manageBack')
-            }</span></div>
+          <div role="menu" className={classnames('footer', { 'hide': !tabIsSnoozable })}>
+            <div
+              className="back"
+              onClick={ev =>this.handleBack(ev)}
+              onKeyPress={ev =>this.handleBack(ev)}
+              tabIndex={this.shouldFocus()}>
+                <span>{ browser.i18n.getMessage('manageBack') }</span>
+            </div>
           </div>
         </div>
         {datepickerActive && <DatePickerPanel id="manageCalendar" key="manageCalendar"
@@ -113,8 +116,8 @@ export default class ManagePanel extends React.Component {
     return getLocalizedDateTime(this.props.moment(time), 'short_time') || '';
   }
 
-  getEditable(time) {
-    if (time === NEXT_OPEN) {
+  getEditable(time, isUndo) {
+    if (time === NEXT_OPEN || isUndo) {
       return false;
     }
     return true;
@@ -124,25 +127,38 @@ export default class ManagePanel extends React.Component {
     const url = this.getDisplayUrl(item.url);
     const key = idForItem(item);
     return (
-      <li className={classnames('entry', { undo: item.isUndo })} key={key}>
-        <div className="icon">
+      <li className={classnames('entry', { undo: item.isUndo })} key={key} tabIndex={this.shouldFocus(item.isUndo)}>
+        <div className="icon" role="option">
           <img src={item.icon || '../icons/nightly.svg'} />
         </div>
-        <div className="content" onClick={() => this.handleItemClick(item)}>
+        <div className="content" onClick={ev => this.handleItemClick(ev, item)} onKeyPress={ev => this.handleItemClick(ev, item)}>
           <div className="title" title={item.title}>{item.title || '&nbsp;'}</div>
           <div className="url" title={item.url}>{url}</div>
         </div>
-        <div className={classnames('date', {'editable': this.getEditable(item.time) })} onClick={() => this.handleEntryEdit(item)}>
-          <span>{this.getDate(item.time)}</span>
-          <span>{this.getTime(item.time)}</span>
+        <div
+          className={classnames('date', {'editable': this.getEditable(item.time, item.isUndo) })} 
+          onClick={ev => this.handleEntryEdit(ev, item)}
+          onKeyPress={ev => this.handleEntryEdit(ev, item)}
+          tabIndex={this.shouldFocus(item.isUndo)}>
+            <span>{this.getDate(item.time)}</span>
+            <span>{this.getTime(item.time)}</span>
         </div>
         {item.isUndo ? (
-          <div className="undo" onClick={() => this.handleItemUndo(item)}>
-            <img title={browser.i18n.getMessage('manageUndo')} src="../icons/undo.svg" width="16" height="16" />
+          <div
+            className="undo"
+            tabIndex = {1}
+            onClick={ev => this.handleItemUndo(ev,item)}
+            onKeyPress={ev => this.handleItemUndo(ev,item)}
+            autoFocus>
+              <img title={browser.i18n.getMessage('manageUndo')} src="../icons/undo.svg" width="16" height="16" />
           </div>
         ) : (
-          <div className="delete" onClick={() => this.handleItemDelete(item)}>
-            <img title={browser.i18n.getMessage('manageDelete')} src="../icons/trash.svg" width="16" height="16" />
+          <div
+            className="delete"
+            onClick={ev => this.handleItemDelete(ev, item)}
+            onKeyPress={ev => this.handleItemDelete(ev, item)}
+            tabIndex={this.shouldFocus(item.isUndo)}>
+              <img title={browser.i18n.getMessage('manageDelete')} src="../icons/trash.svg" width="16" height="16" />
           </div>
         )}
       </li>
@@ -155,19 +171,34 @@ export default class ManagePanel extends React.Component {
     return !active || datepickerActive;
   }
 
-  handleBack() {
+  shouldFocus(undo = false) {
+    return (undo || this.shouldIgnoreClicks()) ? -1 : 1;
+  }
+
+  shouldIgnoreKeyEvents(ev) {
+    return ev.key && ev.key !== 'Enter';
+  }
+
+  handleBack(ev) {
+    ev.stopPropagation();
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
     const { switchPanel } = this.props;
     switchPanel('main');
   }
 
-  handleItemClick(item) {
+  handleItemClick(ev, item) {
+    ev.stopPropagation();
+    if (item.isUndo) { return; }
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
     const { openSnoozedTab } = this.props;
     openSnoozedTab(item);
   }
 
-  handleItemDelete(item) {
+  handleItemDelete(ev, item) {
+    ev.stopPropagation();
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
 
     const { cancelSnoozedTab } = this.props;
@@ -178,6 +209,7 @@ export default class ManagePanel extends React.Component {
     this.setState({ undoEntries: newUndoEntries });
 
     this.startClearUndoTimer();
+    return;
   }
 
   startClearUndoTimer() {
@@ -189,7 +221,9 @@ export default class ManagePanel extends React.Component {
     }, CLEAR_UNDO_DELAY);
   }
 
-  handleItemUndo(item) {
+  handleItemUndo(ev, item) {
+    ev.stopPropagation();
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
 
     const newUndoEntries = {...this.state.undoEntries};
@@ -201,7 +235,10 @@ export default class ManagePanel extends React.Component {
     undeleteSnoozedTab(item);
   }
 
-  handleEntryEdit(item) {
+  handleEntryEdit(ev, item) {
+    ev.stopPropagation();
+    if (item.isUndo) { return; }
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
     if (!this.getEditable(item.time)) {
       // Just open the tab if we can't edit it.

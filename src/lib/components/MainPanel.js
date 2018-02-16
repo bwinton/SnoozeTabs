@@ -25,14 +25,14 @@ export default class MainPanel extends React.Component {
       <ReactCSSTransitionGroup component="div" transitionName="panel" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
         <div id={id} className={classnames('static', 'panel', { active, obscured: datepickerActive })}>
           <div className="content">
-            <ul className="times">
+            <ul className="times" role="listbox">
               { times.map(item => this.renderTime(item)) }
             </ul>
           </div>
-          <div className="footer">
-            <div className="manage" onClick={ () => this.handleManageClick() }><span>{
-              browser.i18n.getMessage('mainManageButton')
-            }</span></div>
+          <div className="footer" role="menu">
+            <div className="manage" onClick={ ev => this.handleManageClick(ev) } onKeyPress={ ev => this.handleManageClick(ev) } tabIndex={ this.shouldFocus() }>
+              <span>{ browser.i18n.getMessage('mainManageButton') }</span>
+            </div>
           </div>
         </div>
         {datepickerActive && <DatePickerPanel id="calendar" key="calendar"
@@ -49,10 +49,11 @@ export default class MainPanel extends React.Component {
   renderTime(item) {
     const [, date] = timeForId(this.props.moment(), item.id);
     return (
-      <li className="option" key={item.id} id={item.id} onClick={ ev => this.handleOptionClick(ev, item) }>
+      <li role="option" className="option" key={item.id} id={item.id} tabIndex={this.shouldFocus()} onClick={ ev => this.handleOptionClick(ev, item) }
+        onKeyPress={ ev => this.handleOptionClick(ev, item) }>
         <img src={ `../icons/${item.icon || 'nightly.svg'}` } className="icon" />
         <div className="title">{item.title || '&nbsp;'}</div>
-        <div className="date" onClick={ev => this.handleOptionDateClick(ev, item)}>{date}</div>
+        <div className="date" tabIndex={this.setDateTabIndex(item.id)} onClick={ev => this.handleOptionDateClick(ev, item)}>{date}</div>
       </li>
     );
   }
@@ -63,7 +64,17 @@ export default class MainPanel extends React.Component {
     return !active || datepickerActive;
   }
 
+  shouldFocus() {
+    return this.shouldIgnoreClicks() ? -1 : 1;
+  }
+
+  shouldIgnoreKeyEvents(ev) {
+    return ev.key && ev.key !== 'Enter';
+  }
+
   handleOptionClick(ev, item) {
+    ev.stopPropagation();
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
     const { scheduleSnoozedTab } = this.props;
     if (item.id === PICK_TIME) {
@@ -77,7 +88,13 @@ export default class MainPanel extends React.Component {
     scheduleSnoozedTab(time, item.id);
   }
 
+  setDateTabIndex(id) {
+    return this.shouldIgnoreClicks() || (id === 'next') ? -1: 1;
+  }
+
   handleOptionDateClick(ev, item) {
+    if (item.id === 'next') {return ;}
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
     ev.stopPropagation();
     const [time, ] = timeForId(this.props.moment(), item.id);
@@ -87,7 +104,8 @@ export default class MainPanel extends React.Component {
     });
   }
 
-  handleManageClick() {
+  handleManageClick(ev) {
+    if (this.shouldIgnoreKeyEvents(ev)) { return; }
     if (this.shouldIgnoreClicks()) { return; }
     const { switchPanel } = this.props;
     switchPanel('manage');

@@ -83,7 +83,7 @@ export default class DatePickerPanel extends React.Component {
 
     return (
       <div id={id} className={classnames('panel', { active })}>
-        <div className="header">{header}</div>
+        <h1 className="header">{header}</h1>
         <Calendar locale={calendarLocale}
                   showOk={false}
                   showDateInput={false}
@@ -103,12 +103,14 @@ export default class DatePickerPanel extends React.Component {
                       onChange={value => this.handleChange(value)}
                       {...disabledTimeFns} />
         </div>
-        <div className="footer">
-          <div className="back"
-            onClick={onClose}><span>{browser.i18n.getMessage('datePickerBack')}</span></div>
+        <div className="footer" role="menu">
+          <div className="back" tabIndex={1}
+            onClick={onClose} onKeyPress={onClose}><span>{browser.i18n.getMessage('datePickerBack')}</span></div>
           <div className={classnames('confirm', 'snooze', { disabled: confirmDisabled })}
                title={confirmDisabled ? browser.i18n.getMessage('datePickerDisabled') : ''}
-               onClick={() => this.handleConfirm()}><span>{
+               tabIndex={confirmDisabled? -1: 1}
+               onClick={ev => this.handleConfirm(ev)}
+               onKeyPress={ev => this.handleConfirm(ev)}><span>{
                  browser.i18n.getMessage('datePickerSnooze')
                }</span></div>
         </div>
@@ -178,13 +180,18 @@ export default class DatePickerPanel extends React.Component {
     }
   }
 
-  handleConfirm() {
+  handleConfirm(ev) {
     const { onSelect } = this.props;
     const { currentValue } = this.state;
-
+    if (ev.key && ev.key !== 'Enter') { return; }
     if (currentValue.valueOf() > Date.now()) {
       onSelect(currentValue);
     }
+  }
+
+  handleKeyClose(ev) {
+    if (ev.key !== 'Enter') { return; }
+    this.props.onClose();
   }
 }
 

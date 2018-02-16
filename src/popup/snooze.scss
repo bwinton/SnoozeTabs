@@ -60,12 +60,13 @@ body {
   opacity: .3;
   position: absolute;
   top: 0;
-  transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
+  transition: left 250ms ease-in-out, opacity 250ms ease-in-out, visibility 250 ease-in-out;
   width: calc(100% - 13px);
 
   &.active {
     left: $panel-shadow-width;
     opacity: 1;
+    visibility: visible;
   }
 
   &.obscured {
@@ -125,6 +126,7 @@ body {
   font-size: 15px;
   height: 50px;
   justify-content: center;
+  margin: 0;
 }
 
 .header > .icon {
@@ -152,12 +154,33 @@ li,
   align-items: center;
 }
 
+
+.active li.option {
+  &:hover,
+  &:focus {
+    background: $black-a05;
+
+    .title,
+    .date {
+      border-top-color: transparent;
+    }
+
+    + .option {
+      .date,
+      .title {
+        border-top-color: transparent;
+      }
+    }
+  }
+}
+
 ul.times {
   li.option {
     align-items: stretch;
     box-sizing: border-box;
     display: flex;
     height: 50px;
+    outline: 0;
     padding: 0 5px 0 20px;
 
     .title,
@@ -170,22 +193,6 @@ ul.times {
       .title,
       .date {
         border-top: 0;
-      }
-    }
-
-    &:hover {
-      background: $black-a05;
-
-      .title,
-      .date {
-        border-top-color: transparent;
-      }
-
-      + .option {
-        .date,
-        .title {
-          border-top-color: transparent;
-        }
       }
     }
 
@@ -211,6 +218,7 @@ ul.times {
       align-items: center;
       border-top: 1px solid $grey-30;
       color: $grey-50;
+      cursor: pointer;
       display: flex;
       flex-grow: 0;
       flex: 0 0 72px;
@@ -222,9 +230,18 @@ ul.times {
       text-align: right;
       padding-right: 20px;
 
-      &:hover {
+
+      &#next {
+        cursor: default;
+      }
+
+      &:hover,
+      &:focus {
         color: $blue-60;
-        cursor: pointer;
+      }
+
+      &:active {
+        outline: 0;
       }
     }
 
@@ -270,12 +287,21 @@ li.entry {
   min-height: 50px;
   opacity: 1;
   padding: 0;
-  transition: margin-left 150ms ease-in-out, opacity 250ms ease-in-out;
+  transition: margin-left 150ms ease-in-out, opacity 150ms ease-in-out;
   width: calc(100% + 50px);
 
   &:hover {
     background-color: $black-a05;
     margin-left: -50px;
+  }
+
+  &:focus {
+    background-color: $black-a05;
+    margin-left: 0;
+  }
+
+  &:active {
+    outline: 0;
   }
 
   .icon {
@@ -312,7 +338,8 @@ li.entry {
     text-align: right;
 
     &.editable {
-      &:hover {
+      &:hover,
+      &:focus {
         color: $blue-50;
       }
     }
@@ -343,13 +370,18 @@ li.entry {
       text-overflow: ellipsis;
       white-space: nowrap;
 
-      &:hover {
+      &:hover
+      &:focus {
         color: $black;
+      }
+
+      &:active {
+        outline: 0;
       }
     }
 
     .url {
-      color: $grey-40;
+      color: $grey-50;
       font-size: 11px;
       line-height: 13px;
       overflow: hidden;
@@ -358,7 +390,10 @@ li.entry {
   }
 
   &.undo {
-    opacity: .3;
+    .date,
+    .content {
+      opacity: .4;
+    }
   }
 
   .delete,
@@ -375,7 +410,8 @@ li.entry {
     text-align: center;
     width: 50px;
 
-    &:hover {
+    &:hover,
+    &:focus {
       background: $red-70;
     }
 
@@ -383,28 +419,6 @@ li.entry {
       height: 16px;
       width: 16px;
     }
-  }
-
-  &.entry-enter {
-    height: 0;
-    opacity: 0;
-    transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
-  }
-
-  &.entry-enter-active {
-    height: 1.5em;
-    opacity: 1;
-  }
-
-  &.entry-leave {
-    height: 1.5em;
-    opacity: 1;
-    transition: height 250ms ease-in-out, opacity 250ms ease-in-out;
-  }
-
-  &.entry-leave-active {
-    height: 0;
-    opacity: 0;
   }
 }
 
@@ -424,20 +438,26 @@ li.entry {
     justify-content: flex-start;
   }
 
-  & > div {
-    align-items: center;
+  .active & > div {
     cursor: pointer;
-    display: flex;
-    flex-grow: 1;
-    justify-content: center;
 
-    &:hover {
+    &:hover,
+    &:focus {
       background: $grey-30;
     }
 
     &:active {
       background: $grey-30;
+      outline: 0;
     }
+  }
+
+  & > div {
+    align-items: center;
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    outline: 0;
 
     & > span {
       display: block;
@@ -450,12 +470,14 @@ li.entry {
     background: $blue-50;
     color: $white;
 
-    &:hover {
+    &:hover,
+    &:focus {
       background: $blue-60;
     }
 
     &:active {
       background: $blue-70;
+      outline: 0;
     }
 
   }
@@ -472,13 +494,6 @@ li.entry {
   &.hide {
     display: none;
   }
-}
-
-.date {
-  color: $grey-50;
-  font-size: 12px;
-  line-height: 13px;
-  text-align: right;
 }
 
 .rc-calendar {
@@ -735,7 +750,8 @@ div {
     li.entry {
       transition: margin-right 150ms ease-in-out, opacity 250ms ease-in-out;
 
-      &:hover {
+      &:hover,
+      &:focus {
         background-color: $grey-10;
         margin-left: 0;
         margin-right: -50px;

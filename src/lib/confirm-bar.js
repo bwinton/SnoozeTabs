@@ -80,7 +80,7 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
           position: fixed;
           left: 0px;
           top: -45px;
-          transition: top 300ms ease-in-out;
+          transition: top 150ms ease-out;
           width: 100%;
           z-index: ${Number.MAX_SAFE_INTEGER};
         }
@@ -101,7 +101,8 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
           height: 32px;
           width: 6em;
         }
-        #${confirmationId} button:hover {
+        #${confirmationId} button:hover,
+        #${confirmationId} button:focus {
           background-color: rgba(12,12,13,0.2);
         }
         #${confirmationId} button:active {
@@ -111,7 +112,8 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
           background-color: #0060df;
           color: #fff;
         }
-        #${confirmationId} button.ok:hover {
+        #${confirmationId} button.ok:hover,
+        #${confirmationId} button.ok:focus {
           background-color: #003eaa;
         }
         #${confirmationId} button.ok:active {
@@ -132,6 +134,7 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
           margin-right: 16px;
           width: 16px;
         }
+
       </style>
       <img src="${confirmIconData}" alt="${iconAltText}">
       <span>${timeTitle}</span>
