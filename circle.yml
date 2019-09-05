@@ -1,8 +1,0 @@
-machine:
-  node:
-    version: 8.9.4
-
-compile:
-  override:
-    - ./bin/build-addon.sh
-    - cp *.xpi $CIRCLE_ARTIFACTS
