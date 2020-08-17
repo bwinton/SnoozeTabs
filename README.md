@@ -1,6 +1,7 @@
+**The testpilot experiment has been discontinued, and this is now availavble on https://addons.mozilla.org/firefox/addon/snoozetabs/!**
+
 # SnoozeTabs
 
-[![Available on Test Pilot](https://img.shields.io/badge/available_on-Test_Pilot-0996F8.svg)](https://testpilot.firefox.com/experiments/snooze-tabs)
 [![CircleCI](https://circleci.com/gh/bwinton/SnoozeTabs.svg?style=svg)](https://circleci.com/gh/bwinton/SnoozeTabs)
 
 An add-on to let you snooze your tabs for a while.
