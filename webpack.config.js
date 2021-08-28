@@ -4,6 +4,8 @@ const webpack = require('webpack');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
+  mode: NODE_ENV,
+  devtool: false,
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js'
@@ -19,7 +21,7 @@ module.exports = {
     })
   ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(js|jsx)/,
         exclude: /node_modules/,
@@ -31,7 +33,8 @@ module.exports = {
       },
       {
         test: /\.json$/,
-        loader: 'json-loader'
+        loader: 'json-loader',
+        type: 'javascript/auto'
       }
     ]
   }
