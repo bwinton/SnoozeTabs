@@ -27,26 +27,26 @@ export function timeForId(time, id) {
   switch (id) {
     case 'debug':
       rv = rv.add(5, 'seconds');
-      text = getLocalizedDateTime(rv, 'short_time_no_minutes');
+      text = getLocalizedDateTime(rv, 'short_time');
       break;
     case 'later':
       rv = rv.add(3, 'hours').minute(0);
       text = getLocalizedDateTime(rv, 'short_time_no_minutes');
       break;
     case 'tomorrow':
-      rv = rv.add(1, 'day').hour(9).minute(0);
+      rv = rv.add(1, 'day').hour(8).minute(30);
       text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'weekend':
-      rv = rv.day(6).hour(9).minute(0);
+      rv = rv.day(6).hour(8).minute(30);
       text = getLocalizedDateTime(rv, 'short_date_time');
       break;
     case 'week':
-      rv = rv.add(1, 'week').hour(9).minute(0);
+      rv = rv.add(1, 'week').hour(8).minute(30);
       text = getLocalizedDateTime(rv, 'long_date_time');
       break;
     case 'month':
-      rv = rv.add(1, 'month').hour(9).minute(0);
+      rv = rv.add(1, 'month').hour(8).minute(30);
       text = getLocalizedDateTime(rv, 'long_date_time');
       break;
     case NEXT_OPEN:
