@@ -145,24 +145,6 @@ export default class DatePickerPanel extends React.Component {
         disabledSeconds: () => this.makeRangeArray(0, 60)
       };
     }
-
-    // Disable past times for today as appropriate
-    const now = this.props.moment();
-    if (now.date() === currentValue.date() &&
-        now.month() === currentValue.month() &&
-        now.year() === currentValue.year()) {
-      return {
-        disabledHours: () =>
-          this.makeRangeArray(0, now.hour()),
-        disabledMinutes: () =>
-          now.hour() === currentValue.hour() ?
-            this.makeRangeArray(0, now.minute()) : [],
-        disabledSeconds: () =>
-          now.hour() === currentValue.hour() &&
-          now.minute() === currentValue.minute() ?
-            this.makeRangeArray(0, now.second()) : []
-      };
-    }
   }
 
   handleChange(value) {
