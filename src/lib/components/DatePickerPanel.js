@@ -95,6 +95,7 @@ export default class DatePickerPanel extends React.Component {
                   onSelect={value => this.handleChange(value)} />
         <div className="time-wrapper">
           <TimePicker locale={calendarLocale}
+                      minuteStep={5}
                       showSecond={false}
                       hideDisabledOptions={true}
                       allowEmpty={false}
