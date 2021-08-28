@@ -25,7 +25,7 @@ const formats = {
 
   'long_date_time-en': [
     new Intl.DateTimeFormat(uiLocales, { weekday: 'short', month: 'short', day: 'numeric' }),
-    { format: (date) => tweakShortTimeForEn(formats.short_time_no_minutes.format(date)) }
+    { format: (date) => tweakShortTimeForEn(formats.short_time.format(date)) }
   ],
   'short_date_time-en': [
     new Intl.DateTimeFormat(uiLocales, { weekday: 'short' }),
