@@ -6,7 +6,7 @@
 
 'use strict';
 
-import { idForItem, makeLogger } from './lib/utils';
+import { idForItem, makeLogger, getUrl } from './lib/utils';
 const log = makeLogger('BE');
 
 import moment from 'moment';
@@ -59,7 +59,7 @@ function init() {
 
 function prefetchIcons() {
   if (!iconData) {
-    fetch(browser.extension.getURL('icons/color_bell_icon.png')).then(response => {
+    fetch(browser.runtime.getURL('icons/color_bell_icon.png')).then(response => {
       return response.arrayBuffer();
     }).then(function(response) {
       iconData = 'data:image/png;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
@@ -69,7 +69,7 @@ function prefetchIcons() {
   }
 
   if (!confirmIconData) {
-    fetch(browser.extension.getURL('icons/confirm_bell_icon.svg')).then(response => {
+    fetch(browser.runtime.getURL('icons/confirm_bell_icon.svg')).then(response => {
       return response.arrayBuffer();
     }).then(function(response) {
       confirmIconData = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
@@ -79,7 +79,7 @@ function prefetchIcons() {
   }
 
   if (!closeData) {
-    fetch(browser.extension.getURL('icons/stop.svg')).then(response => {
+    fetch(browser.runtime.getURL('icons/stop.svg')).then(response => {
       return response.arrayBuffer();
     }).then(function(response) {
       closeData = 'data:image/svg+xml;base64,' + btoa(String.fromCharCode(...new Uint8Array(response)));
@@ -109,7 +109,8 @@ function updateButtonForTab(tabId, changeInfo) {
   browser.tabs.get(tabId).then(tab => {
     const url = changeInfo.url;
     if (!tab.incognito && (url.startsWith('http:') || url.startsWith('https:') ||
-        url.startsWith('ftp:') || url.startsWith('app:'))) {
+        url.startsWith('ftp:') || url.startsWith('app:') ||
+        url.startsWith('about:reader?url='))) {
       browser.browserAction.setIcon({path: 'icons/bell_icon.svg', tabId: tabId});
     } else {
       browser.browserAction.setIcon({path: 'icons/disabled_bell_icon.svg', tabId: tabId});
@@ -127,7 +128,7 @@ function handleMessage({op, message}) {
 const messageOps = {
   schedule: message => {
     return getDontShow().then(dontShow => {
-      if (dontShow) {
+      if (dontShow || message.readerMode) {
         return messageOps.confirm(message);
       }
 
@@ -319,6 +320,7 @@ function handleWake(alarm) {
       return browser.tabs.create({
         active: false,
         url: item.url,
+        openInReaderMode: item.readerMode,
         windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
       }).then(tab => {
         Metrics.tabWoken(item, tab);
@@ -413,7 +415,8 @@ if (browser.contextMenus.ContextType.TAB) {
   browser.contextMenus.onClicked.addListener(function(info, tab) {
     if (tab.incognito ||
         !tab.url.startsWith('http:') && !tab.url.startsWith('https:') &&
-        !tab.url.startsWith('ftp:') && !tab.url.startsWith('app:')) {
+        !tab.url.startsWith('ftp:') && !tab.url.startsWith('app:') &&
+        !tab.url.startsWith('about:reader?url=')) {
       return; // Canʼt snooze private or about: or file: tabs
     }
     const title = browser.i18n.getMessage('notificationTitle');
@@ -424,10 +427,11 @@ if (browser.contextMenus.ContextType.TAB) {
         'time': time.valueOf(),
         'timeType': info.menuItemId,
         'title': tab.title || title,
-        'url': tab.url,
+        'url': getUrl(tab),
         'tabId': tab.id,
         'windowId': tab.windowId,
-        'icon': tab.favIconUrl
+        'icon': tab.favIconUrl,
+        'readerMode': tab.isInReaderMode
       }
     });
   });
