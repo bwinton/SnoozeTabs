@@ -10,7 +10,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { getAlarmsAndProperties } from '../lib/storage';
 import SnoozePopup from '../lib/components/SnoozePopup';
-import { makeLogger } from '../lib/utils';
+import { makeLogger, getUrl } from '../lib/utils';
 
 const log = makeLogger('FE');
 log('loaded');
@@ -32,10 +32,11 @@ function scheduleSnoozedTab(time, timeType) {
           'time': time.valueOf(),
           'timeType': timeType,
           'title': tab.title || title,
-          'url': tab.url,
+          'url': getUrl(tab),
           'tabId': tab.id,
           'windowId': tab.windowId,
-          'icon': tab.favIconUrl
+          'icon': tab.favIconUrl,
+          'readerMode': tab.isInReaderMode
         }
       });
     }
@@ -53,9 +54,11 @@ function undeleteSnoozedTab(item) {
 }
 
 function openSnoozedTab(item) {
+  log('openSnoozedTab', item);
   browser.tabs.create({
     active: true,
-    url: item.url
+    url: item.url,
+    openInReaderMode: item.readerMode,
   });
   browser.runtime.sendMessage({
     op: 'click',
@@ -91,7 +94,8 @@ function queryTabIsSnoozable() {
       const url = tabs[0].url;
       if (tabs[0].incognito ||
           !url.startsWith('http:') && !url.startsWith('https:') &&
-          !url.startsWith('ftp:') && !url.startsWith('app:')) {
+          !url.startsWith('ftp:') && !url.startsWith('app:') &&
+          !url.startsWith('about:reader?url=')) {
         tabIsSnoozable = false;
       }
     }
