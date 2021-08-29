@@ -54,7 +54,6 @@ function undeleteSnoozedTab(item) {
 }
 
 function openSnoozedTab(item) {
-  log('openSnoozedTab', item);
   browser.tabs.create({
     active: true,
     url: item.url,
