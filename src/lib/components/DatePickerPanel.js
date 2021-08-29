@@ -51,7 +51,8 @@ export default class DatePickerPanel extends React.Component {
     this.validationTimer = null;
     this.state = {
       currentValue: props.defaultValue || props.moment(),
-      confirmDisabled: false
+      confirmDisabled: false,
+      timeDisabled: false
     };
   }
 
@@ -70,8 +71,7 @@ export default class DatePickerPanel extends React.Component {
 
   render() {
     const { id, header, active, onClose } = this.props;
-    const { currentValue, confirmDisabled } = this.state;
-    const disabledTimeFns = this.disabledTime();
+    const { currentValue, confirmDisabled, timeDisabled } = this.state;
 
     // Clone & patch the moment value to accept functions as formats
     const currentValueLocalized = currentValue.clone().locale(momentLocale);
@@ -90,18 +90,18 @@ export default class DatePickerPanel extends React.Component {
                   showToday={false}
                   value={currentValueLocalized}
                   disabledDate={this.disabledDate.bind(this)}
-                  disabledTime={this.disabledTime.bind(this)}
                   onChange={value => this.handleChange(value)}
                   onSelect={value => this.handleChange(value)} />
         <div className="time-wrapper">
           <TimePicker locale={calendarLocale}
+                      minuteStep={5}
                       showSecond={false}
+                      disabled={timeDisabled}
                       hideDisabledOptions={true}
                       allowEmpty={false}
                       value={currentValueLocalized}
                       format={timeFormat}
-                      onChange={value => this.handleChange(value)}
-                      {...disabledTimeFns} />
+                      onChange={value => this.handleChange(value)} />
         </div>
         <div className="footer" role="menu">
           <div className="back" tabIndex={1}
@@ -132,43 +132,17 @@ export default class DatePickerPanel extends React.Component {
     return out;
   }
 
-  disabledTime() {
-    const { currentValue } = this.state;
-    if (!currentValue) { return; }
-
+  disabledTime(currentValue) {
     // All time selection disabled for past dates
     const today = this.props.moment().hour(0).minute(0).second(0);
-    if (currentValue.valueOf() < today.valueOf()) {
-      return {
-        disabledHours: () => this.makeRangeArray(0, 24),
-        disabledMinutes: () => this.makeRangeArray(0, 60),
-        disabledSeconds: () => this.makeRangeArray(0, 60)
-      };
-    }
-
-    // Disable past times for today as appropriate
-    const now = this.props.moment();
-    if (now.date() === currentValue.date() &&
-        now.month() === currentValue.month() &&
-        now.year() === currentValue.year()) {
-      return {
-        disabledHours: () =>
-          this.makeRangeArray(0, now.hour()),
-        disabledMinutes: () =>
-          now.hour() === currentValue.hour() ?
-            this.makeRangeArray(0, now.minute()) : [],
-        disabledSeconds: () =>
-          now.hour() === currentValue.hour() &&
-          now.minute() === currentValue.minute() ?
-            this.makeRangeArray(0, now.second()) : []
-      };
-    }
+    return currentValue.valueOf() < today.valueOf();
   }
 
   handleChange(value) {
     this.setState({
       currentValue: value,
-      confirmDisabled: (value.valueOf() <= Date.now())
+      confirmDisabled: (value.valueOf() <= Date.now()),
+      timeDisabled: this.disabledTime(value)
     });
   }
 
