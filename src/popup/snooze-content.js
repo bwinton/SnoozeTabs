@@ -126,6 +126,37 @@ const resizeHandler = () => {
   });
 };
 
+const keyboardHandler = (e) => {
+  const selectables = [...document.querySelectorAll('.option')];
+  const element = document.activeElement;
+  const index = selectables.indexOf(element) || 0;
+
+  switch (e.keyCode) {
+  case 40: { // down
+    const nextElement = selectables[(index + 1) % selectables.length];
+    if (nextElement) {
+      nextElement.focus();
+    }
+    break;
+  }
+  case 38: { // up
+    const previousElement = selectables[(index + selectables.length - 1) % selectables.length];
+    if (previousElement) {
+      previousElement.focus();
+    }
+    break;
+  }
+  case 39: { // enter
+    if (element) {
+      element.click();
+    }
+    break;
+  }
+  default:
+    break;
+  }
+};
+
 function init() {
   log('init');
 
@@ -133,6 +164,7 @@ function init() {
     document.body.classList.add('development');
   }
 
+  document.addEventListener('keydown', keyboardHandler);
   window.addEventListener('resize', resizeHandler);
 
   ReactDOM.render(
