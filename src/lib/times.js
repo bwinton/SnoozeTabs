@@ -30,7 +30,13 @@ export function timeForId(time, id) {
       text = getLocalizedDateTime(rv, 'short_time');
       break;
     case 'later':
-      rv = rv.add(3, 'hours').minute(0);
+      // If we're in the middle of a work day, delay until 6pm.
+      if (rv.isoWeekday() <= 5 && rv.hour() >= 9 && rv.hour() <= 17) {
+        rv = rv.hour(18).minute(0);
+      } else {
+        // Otherwise, add three hours.
+        rv = rv.add(3, 'hours').minute(0);
+      }
       text = getLocalizedDateTime(rv, 'short_time_no_minutes');
       break;
     case 'tomorrow':
