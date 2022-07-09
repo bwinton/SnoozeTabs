@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "classnames": "2.2.5",
-    "moment": "2.19.3",
+    "moment": "2.29.4",
     "rc-animate": "2.3.1",
     "rc-calendar": "8.4.1",
     "rc-time-picker": "3.7.3",
