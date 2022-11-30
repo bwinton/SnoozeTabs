@@ -12,7 +12,7 @@ const log = makeLogger('BE');
 import moment from 'moment';
 import { getLocalizedDateTime } from './lib/time-formats';
 
-import { NEXT_OPEN, PICK_TIME, times, timeForId } from './lib/times';
+import { NEXT_BROWSER_LAUNCH, PICK_TIME, times, timeForId } from './lib/times';
 import Metrics from './lib/metrics';
 import { getAlarms, saveAlarms, removeAlarms,
          getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
@@ -51,7 +51,7 @@ function init() {
 
   getMetricsUUID()
     .then(clientUUID => Metrics.init(clientUUID))
-    .then(scheduleNextOpenTabs)
+    .then(scheduleNextBrowserLaunchTabs)
     .then(updateWakeAndBookmarks)
     .then(startPeriodicAlarm)
     .catch(reason => log('init wake update failed', reason));
@@ -89,17 +89,17 @@ function prefetchIcons() {
   }
 }
 
-function scheduleNextOpenTabs() {
+function scheduleNextBrowserLaunchTabs() {
   return getAlarms().then(items => {
-    const due = Object.entries(items).filter(item => item[1].time === NEXT_OPEN);
+    const due = Object.entries(items).filter(item => item[1].time === NEXT_BROWSER_LAUNCH);
     const updated = {};
     due.forEach(item => {
       item[1].time = Date.now();
       updated[item[0]] = item[1];
     });
-    log('setting next open tabs to now', updated);
+    log('setting next browser launch tabs to now', updated);
     return saveAlarms(updated);
-  }).catch(reason => log('scheduleNextOpenTabs failed', reason));
+  }).catch(reason => log('scheduleNextBrowserLaunchTabs failed', reason));
 }
 
 function updateButtonForTab(tabId, changeInfo) {
@@ -260,7 +260,7 @@ function updateWakeAndBookmarks() {
       // Don't set a new wake timer if we're paused.
       if (wakeTimerPaused) { return; }
 
-      const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_OPEN);
+      const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_BROWSER_LAUNCH);
       if (!times.length) { return; }
 
       times.sort();

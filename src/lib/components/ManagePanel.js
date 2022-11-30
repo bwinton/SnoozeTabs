@@ -2,7 +2,7 @@ import React from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import classnames from 'classnames';
-import { NEXT_OPEN } from '../times';
+import { NEXT_BROWSER_LAUNCH } from '../times';
 import { getLocalizedDateTime } from '../time-formats';
 import DatePickerPanel from './DatePickerPanel';
 import { idForItem } from '../utils';
@@ -27,13 +27,13 @@ export default class ManagePanel extends React.Component {
     const { undoEntries, datepickerActive } = this.state;
     const sortedEntries = Object.values({...entries, ...undoEntries});
     sortedEntries.sort((a, b) => {
-      if (a.time === NEXT_OPEN) {
-        if (b.time === NEXT_OPEN) {
+      if (a.time === NEXT_BROWSER_LAUNCH) {
+        if (b.time === NEXT_BROWSER_LAUNCH) {
           return a.title.localeCompare(b.title);
         } else {
           return -1;
         }
-      } else if (b.time === NEXT_OPEN) {
+      } else if (b.time === NEXT_BROWSER_LAUNCH) {
         return 1;
       } else {
         return a.time - b.time;
@@ -97,9 +97,9 @@ export default class ManagePanel extends React.Component {
   }
 
   getDate(time) {
-    if (time === NEXT_OPEN) {
-      const message = browser.i18n.getMessage('manageDateNextOpen');
-      return message.split('<br>', '2')[0] || message;
+    if (time === NEXT_BROWSER_LAUNCH) {
+      const message = browser.i18n.getMessage('manageDateNextBrowserLaunch');
+      return message.split('<br/>', '2')[0] || message;
     }
     const moment = this.props.moment;
     if (moment(time).year() !== moment().year()) {
@@ -109,15 +109,15 @@ export default class ManagePanel extends React.Component {
   }
 
   getTime(time) {
-    if (time === NEXT_OPEN) {
-      const message = browser.i18n.getMessage('manageDateNextOpen');
-      return message.split('<br>', '2')[1] || '';
+    if (time === NEXT_BROWSER_LAUNCH) {
+      const message = browser.i18n.getMessage('manageDateNextBrowserLaunch');
+      return message.split('<br/>', '2')[1] || '';
     }
     return getLocalizedDateTime(this.props.moment(time), 'short_time') || '';
   }
 
   getEditable(time, isUndo) {
-    if (time === NEXT_OPEN || isUndo) {
+    if (time === NEXT_BROWSER_LAUNCH || isUndo) {
       return false;
     }
     return true;
@@ -136,7 +136,7 @@ export default class ManagePanel extends React.Component {
           <div className="url" title={item.url}>{url}</div>
         </div>
         <div
-          className={classnames('date', {'editable': this.getEditable(item.time, item.isUndo) })} 
+          className={classnames('date', {'editable': this.getEditable(item.time, item.isUndo) })}
           onClick={ev => this.handleEntryEdit(ev, item)}
           onKeyPress={ev => this.handleEntryEdit(ev, item)}
           tabIndex={this.shouldFocus(item.isUndo)}>
