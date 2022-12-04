@@ -3,9 +3,9 @@
 import moment from 'moment';
 import { getLocalizedDateTime } from './time-formats';
 
-const NEXT_OPEN = 'next';
+const NEXT_BROWSER_LAUNCH = 'next';
 const PICK_TIME = 'pick';
-export {NEXT_OPEN, PICK_TIME};
+export {NEXT_BROWSER_LAUNCH, PICK_TIME};
 
 export const times = [
   {id: 'later', icon: 'later_today.svg', title: browser.i18n.getMessage('timeLaterToday')},
@@ -13,7 +13,7 @@ export const times = [
   {id: 'weekend', icon: 'weekends.svg', title: browser.i18n.getMessage('timeThisWeekend')},
   {id: 'week', icon: 'next_week.svg', title: browser.i18n.getMessage('timeNextWeek')},
   {id: 'month', icon: 'next_month.svg', title: browser.i18n.getMessage('timeNextMonth')},
-  {id: NEXT_OPEN, icon: 'next_open.svg', title: browser.i18n.getMessage('timeNextOpen')},
+  {id: NEXT_BROWSER_LAUNCH, icon: 'next_browser_launch.svg', title: browser.i18n.getMessage('timeNextBrowserLaunch')},
   {id: PICK_TIME, icon: 'pick_date.svg', title: browser.i18n.getMessage('timePickADate')},
 ];
 
@@ -55,8 +55,8 @@ export function timeForId(time, id) {
       rv = rv.add(1, 'month').hour(8).minute(30);
       text = getLocalizedDateTime(rv, 'long_date_time');
       break;
-    case NEXT_OPEN:
-      rv = NEXT_OPEN;
+    case NEXT_BROWSER_LAUNCH:
+      rv = NEXT_BROWSER_LAUNCH;
       text = '';
       break;
     case PICK_TIME:
@@ -70,8 +70,8 @@ export function timeForId(time, id) {
 }
 
 export function confirmationTime(time, timeType) {
-  if (timeType === NEXT_OPEN) {
-    return browser.i18n.getMessage('timeUpcomingNextOpen');
+  if (timeType === NEXT_BROWSER_LAUNCH) {
+    return browser.i18n.getMessage('timeUpcomingNextBrowserLaunch');
   }
 
   let rv;
