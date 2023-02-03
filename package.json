@@ -30,7 +30,7 @@
     "eslint-plugin-promise": "3.4.0",
     "eslint-plugin-react": "6.8.0",
     "json-loader": "0.5.7",
-    "mocha": "8.4.0",
+    "mocha": "10.2.0",
     "node-sass": "7.0.3",
     "npm-run-all": "3.1.2",
     "onchange": "7.0.2",
