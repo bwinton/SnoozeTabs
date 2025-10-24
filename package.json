@@ -129,6 +129,6 @@
     "storybook": "start-storybook -s ./dist -p 6006",
     "build-storybook": "build-storybook",
     "test": "npm run lint && npm run test:js",
-    "test:js": "mocha --compilers js:babel-register --require test/.setup.js --recursive"
+    "test:js": "mocha --require babel-core/register --require test/.setup.js --recursive"
   }
 }
