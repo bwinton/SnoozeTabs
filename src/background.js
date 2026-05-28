@@ -132,8 +132,14 @@ const messageOps = {
         return messageOps.confirm(message);
       }
 
+      // FIX 1: Use browser.tabs.sendMessage (not chrome.tabs.sendMessage).
+      // FIX 2: Catch the "Actor 'Conduits' destroyed / context unloaded" error
+      //        that Firefox throws when the tab navigates away before the
+      //        injected script's message port is ready.  This is the direct
+      //        cause of the "Promise rejected after context unloaded" console
+      //        spam.  We fall back to confirm() so the snooze still works.
       browser.tabs.executeScript(message.tabId, {file: './lib/confirm-bar.js'}).then(() => {
-        return chrome.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData});
+        return browser.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData});
       }).catch(reason => {
         log('schedule inject rejected', reason);
         return messageOps.confirm(message);
@@ -324,6 +330,9 @@ function handleWake(alarm) {
         windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
       }).then(tab => {
         Metrics.tabWoken(item, tab);
+        // FIX 3: Wrap flashFavicon's executeScript in a try/catch so that
+        //        tabs which haven't finished loading (or have a CSP that
+        //        blocks scripts) don't produce unhandled rejections.
         flashFavicon(tab);
         return browser.notifications.create(`${item.windowId}:${tab.id}`, {
           'type': 'basic',
@@ -346,6 +355,9 @@ function handleWake(alarm) {
 }
 
 function flashFavicon(tab) {
+  // FIX 3: executeScript on a freshly-created tab can fire before the page is
+  //        ready, producing "Actor 'Conduits' destroyed" rejections.  We catch
+  //        and log rather than letting them become unhandled.
   browser.tabs.executeScript(tab.id, {
     'code': `
       function flip(newUrl) {
@@ -381,6 +393,8 @@ function flashFavicon(tab) {
         }
       }, 10000)
       `
+  }).catch(reason => {
+    log('flashFavicon executeScript rejected', reason);
   });
 }
 
@@ -394,7 +408,11 @@ let parent;
 
 if (browser.contextMenus.ContextType.TAB) {
   const title = browser.i18n.getMessage('contextMenuTitle');
-    parent = chrome.contextMenus.create({
+  // FIX 4: Use browser.contextMenus.create (not chrome.contextMenus.create).
+  //        Mixing chrome.* and browser.* APIs means the chrome.* calls return
+  //        a callback-based API without Promises, and in Firefox specifically
+  //        chrome.contextMenus can be undefined in some configurations.
+  parent = browser.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
     title: title,
     documentUrlPatterns: ['<all_urls>']
@@ -404,7 +422,7 @@ if (browser.contextMenus.ContextType.TAB) {
     if (time.id === PICK_TIME) {
       continue;
     }
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
       parentId: parent,
       id: time.id,
       contexts: [browser.contextMenus.ContextType.TAB],

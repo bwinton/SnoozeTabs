@@ -1,6 +1,6 @@
-@import 'node_modules/rc-calendar/assets/index';
-@import 'node_modules/rc-time-picker/assets/index';
-@import 'node_modules/photon-colors/colors.scss';
+@import '../../node_modules/rc-calendar/assets/index';
+@import '../../node_modules/rc-time-picker/assets/index';
+@import '../../node_modules/photon-colors/colors.scss';
 
 $panel-width: 320px;
 $panel-shadow-width: 13px;
@@ -705,7 +705,7 @@ li.entry {
 div {
   &[dir='rtl'] {
     .panel {
-      left: calc(0 - 100%);
+      left: calc(0% - 100%);
       transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
     }
 

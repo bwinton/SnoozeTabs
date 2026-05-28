@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ex
-npm install
+npm install --legacy-peer-deps
 
 NODE_ENV=production npm run package
 # rm -f ./web-ext-artifacts/*.xpi
