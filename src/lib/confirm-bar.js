@@ -52,8 +52,9 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
   frameDiv.appendChild(iframe);
   document.body.appendChild(frameDiv);
 
-  iframe.onload = () => {
+  const buildConfirmBar = () => {
     const iframeDocument = iframe.contentDocument;
+    if (iframeDocument.getElementById(confirmationId)) { return; }
     let confirmationBar = iframeDocument.createElement('div');
     confirmationBar.id = 'snoozetabs-confirmation-bar';
     iframeDocument.body.appendChild(confirmationBar);
@@ -174,5 +175,14 @@ chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeDa
     closeButton.addEventListener('click', hideBar);
 
   };
+
+  // Older Firefox loads the iframe's initial about:blank document
+  // asynchronously, so wait for the load event; since Firefox ~149 the
+  // document is already complete when the iframe is inserted and no load
+  // event is fired, so build immediately.
+  iframe.onload = buildConfirmBar;
+  if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+    buildConfirmBar();
+  }
 
 });
