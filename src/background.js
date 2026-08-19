@@ -227,7 +227,8 @@ function syncBookmarks(items) {
       return browser.bookmarks.create({title: title});
     });
   }).then(snoozeTabsFolder => {
-    log('Sync Folder!', snoozeTabsFolder, Object.values(items));
+    log('Sync Folder!', snoozeTabsFolder.id);
+
     return browser.bookmarks.getChildren(snoozeTabsFolder.id).then((bookmarks) => {
       const tabs = [...Object.values(items)];
       const toCreate = tabs.filter((tab) => !bookmarks.find((bookmark) => tab.url === bookmark.url));
