@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pinned to Node 16 because node-sass 7 ships prebuilt bindings only up to
+      # ABI 93; anything newer forces a node-gyp build that fails.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npm run package
+
+      - run: npm run package:dev
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: addon-xpi
+          path: |
+            addon.xpi
+            addon-dev.xpi
+          if-no-files-found: error
+
+      # package:dev runs last, so dist/ is the development build, which is the
+      # one carrying the +5s "Real Soon Now" snooze option used for testing.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-dev
+          path: dist/
+          if-no-files-found: error

@@ -2,6 +2,7 @@
 profile.testing/
 web-ext-artifacts/
 addon.xpi
+addon-dev.xpi
 dist/
 node_modules
 *.zip
