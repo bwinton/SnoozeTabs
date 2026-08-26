@@ -2,7 +2,7 @@
 
 # SnoozeTabs
 
-[![CircleCI](https://circleci.com/gh/bwinton/SnoozeTabs.svg?style=svg)](https://circleci.com/gh/bwinton/SnoozeTabs)
+[![CI](https://github.com/bwinton/SnoozeTabs/actions/workflows/ci.yml/badge.svg)](https://github.com/bwinton/SnoozeTabs/actions/workflows/ci.yml)
 
 An add-on to let you snooze your tabs for a while.
 
