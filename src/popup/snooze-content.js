@@ -59,10 +59,6 @@ function openSnoozedTab(item) {
     url: item.url,
     openInReaderMode: item.readerMode,
   });
-  browser.runtime.sendMessage({
-    op: 'click',
-    message: item
-  });
 }
 
 function cancelSnoozedTab(item) {
@@ -184,8 +180,6 @@ function init() {
     }} />,
     document.getElementById('app')
   );
-
-  browser.runtime.sendMessage({ op: 'panelOpened' });
 }
 
 init();

@@ -13,7 +13,6 @@ import moment from 'moment';
 import { getLocalizedDateTime } from './lib/time-formats';
 
 import { NEXT_BROWSER_LAUNCH, PICK_TIME, times, timeForId } from './lib/times';
-import Metrics from './lib/metrics';
 import { getAlarms, saveAlarms, removeAlarms,
          getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
@@ -49,9 +48,7 @@ function init() {
 
   prefetchIcons();
 
-  getMetricsUUID()
-    .then(clientUUID => Metrics.init(clientUUID))
-    .then(scheduleNextBrowserLaunchTabs)
+  scheduleNextBrowserLaunchTabs()
     .then(updateWakeAndBookmarks)
     .then(startPeriodicAlarm)
     .catch(reason => log('init wake update failed', reason));
@@ -141,7 +138,6 @@ const messageOps = {
     });
   },
   confirm: message => {
-    Metrics.scheduleSnoozedTab(message);
     const toSave = {};
     const tabId = message.tabId;
     delete message.tabId;
@@ -166,11 +162,9 @@ const messageOps = {
     });
   },
   cancel: message => {
-    Metrics.cancelSnoozedTab(message);
     return removeAlarms(idForItem(message)).then(updateWakeAndBookmarks);
   },
   save: message => {
-    Metrics.scheduleSnoozedTab(message);
     const toSave = {};
     toSave[idForItem(message)] = message;
     return saveAlarms(toSave)
@@ -178,8 +172,6 @@ const messageOps = {
       .catch(reason => log('save rejected', reason));
   },
   update: message => {
-    Metrics.updateSnoozedTab(message);
-
     const newId = idForItem(message.updated);
     const oldId = idForItem(message.old);
     if (newId === oldId) { return; }
@@ -193,12 +185,6 @@ const messageOps = {
   },
   setconfirm: message => {
     setDontShow(message.dontShow);
-  },
-  click: message => {
-    Metrics.clickSnoozedTab(message);
-  },
-  panelOpened: () => {
-    Metrics.panelOpened();
   }
 };
 
@@ -323,7 +309,6 @@ function handleWake(alarm) {
         openInReaderMode: item.readerMode,
         windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
       }).then(tab => {
-        Metrics.tabWoken(item, tab);
         flashFavicon(tab);
         return browser.notifications.create(`${item.windowId}:${tab.id}`, {
           'type': 'basic',
