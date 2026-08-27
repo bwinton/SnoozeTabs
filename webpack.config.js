@@ -30,11 +30,6 @@ module.exports = {
           babelrc: false,
           presets: [ [ 'env', { modules: false } ], 'stage-0', 'react' ],
         }
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader',
-        type: 'javascript/auto'
       }
     ]
   }
