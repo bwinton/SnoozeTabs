@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Pinned to Node 16 because node-sass 7 ships prebuilt bindings only up to
-      # ABI 93; anything newer forces a node-gyp build that fails.
+      # Pinned to Node 16 because webpack 4 hashes with md4 via the OpenSSL
+      # provider, which OpenSSL 3 (Node 17+) refuses: ERR_OSSL_EVP_UNSUPPORTED.
       - uses: actions/setup-node@v4
         with:
           node-version: '16'
