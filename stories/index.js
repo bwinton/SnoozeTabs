@@ -5,9 +5,9 @@ import { host } from 'storybook-host';
 import moment from 'moment';
 import { getLangDir } from '../src/lib/utils';
 
-// TODO: Get sass working with storybook
-// import '../src/popup/snooze.scss';
-
+import '../dist/popup/colors.css';
+import '../dist/popup/rc-calendar.css';
+import '../dist/popup/rc-time-picker.css';
 import '../dist/popup/snooze.css';
 
 import MainPanel from '../src/lib/components/MainPanel';

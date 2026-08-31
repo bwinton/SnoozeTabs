@@ -6,6 +6,11 @@
 
 An add-on to let you snooze your tabs for a while.
 
+## Requirements
+
+* Node.js 16.x
+* Firefox 117 or later
+
 ## How to run
 * `npm install`
 
@@ -72,7 +77,6 @@ Many of our icons came from [the Noun Project][nouns]:
 [nouns]: https://thenounproject.com/
 [npm]: https://docs.npmjs.com/misc/scripts
 [pontoon]: https://pontoon.mozilla.org/projects/
-[sass]: http://sass-lang.com/
 [spec]: https://mozilla.invisionapp.com/share/MV9F846SY#/screens
 [stopwatch]: https://thenounproject.com/term/stopwatch/190330/
 [sunglasses]: https://thenounproject.com/nas.ztu/collection/travel/?oq=weekend&cidx=0&i=58827

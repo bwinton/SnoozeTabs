@@ -10,7 +10,8 @@ const manifest = Object.assign({
   'homepage_url': packageMeta.homepage,
   'applications': {
     'gecko': {
-      'id': packageMeta.id
+      'id': packageMeta.id,
+      'strict_min_version': '117.0'
     }
   }
 }, packageMeta.webextensionManifest);
