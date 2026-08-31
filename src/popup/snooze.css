@@ -364,7 +364,7 @@ li.entry {
       text-overflow: ellipsis;
       white-space: nowrap;
 
-      &:hover
+      &:hover,
       &:focus {
         color: var(--black);
       }
