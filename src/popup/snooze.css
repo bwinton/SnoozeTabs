@@ -34,7 +34,7 @@ body {
 #app {
   background: var(--grey-20);
   height: 393px;
-  width: 320px;
+  width: var(--panel-width);
 }
 
 .development #app {
@@ -58,7 +58,7 @@ body {
   position: absolute;
   top: 0;
   transition: left 250ms ease-in-out, opacity 250ms ease-in-out, visibility 250 ease-in-out;
-  width: calc(100% - 13px);
+  width: calc(100% - var(--panel-shadow-width));
 
   &.active {
     left: var(--panel-shadow-width);
