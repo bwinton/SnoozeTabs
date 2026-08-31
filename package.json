@@ -12,7 +12,7 @@
     "url": "https://github.com/bwinton/SnoozeTabs/issues"
   },
   "engines": {
-    "node": ">=8.9.4"
+    "node": ">=16.0.0 <17.0.0"
   },
   "devDependencies": {
     "@kadira/storybook": "2.35.3",

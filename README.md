@@ -6,6 +6,11 @@
 
 An add-on to let you snooze your tabs for a while.
 
+## Requirements
+
+* Node.js 16.x
+* Firefox 117 or later
+
 ## How to run
 * `npm install`
 
