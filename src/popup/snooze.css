@@ -6,11 +6,6 @@
   --black-a05: rgba(0, 0, 0, .05);
 }
 
-@font-face {
-  font-weight: 400;
-  font-style: normal;
-}
-
 html,
 body {
   background-color: var(--white);
