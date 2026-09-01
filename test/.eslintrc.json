@@ -1,9 +1,0 @@
-{
-  "env": {
-    "mocha": true
-  },
-  "rules": {
-    "promise/avoid-new": "off",
-    "promise/no-callback-in-promise": "off"
-  }
-}

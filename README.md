@@ -8,8 +8,8 @@ An add-on to let you snooze your tabs for a while.
 
 ## Requirements
 
-* Node.js 16.x
-* Firefox 117 or later
+* Node.js 24.20.0 (see `.nvmrc`)
+* Firefox 140 or later (the oldest ESR still receiving security updates)
 
 ## How to run
 * `npm install`

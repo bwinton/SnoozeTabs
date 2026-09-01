@@ -8,10 +8,10 @@ const manifest = Object.assign({
   'author': packageMeta.author,
   'version': packageMeta.version,
   'homepage_url': packageMeta.homepage,
-  'applications': {
+  'browser_specific_settings': {
     'gecko': {
       'id': packageMeta.id,
-      'strict_min_version': '117.0'
+      'strict_min_version': '140.0'
     }
   }
 }, packageMeta.webextensionManifest);
