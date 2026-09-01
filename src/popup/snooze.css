@@ -6,11 +6,6 @@
   --black-a05: rgba(0, 0, 0, .05);
 }
 
-@font-face {
-  font-weight: 400;
-  font-style: normal;
-}
-
 html,
 body {
   background-color: var(--white);
@@ -57,7 +52,7 @@ body {
   opacity: .3;
   position: absolute;
   top: 0;
-  transition: left 250ms ease-in-out, opacity 250ms ease-in-out, visibility 250 ease-in-out;
+  transition: left 250ms ease-in-out, opacity 250ms ease-in-out, visibility 250ms ease-in-out;
   width: calc(100% - var(--panel-shadow-width));
 
   &.active {
@@ -364,7 +359,7 @@ li.entry {
       text-overflow: ellipsis;
       white-space: nowrap;
 
-      &:hover
+      &:hover,
       &:focus {
         color: var(--black);
       }
@@ -699,7 +694,7 @@ li.entry {
 div {
   &[dir='rtl'] {
     .panel {
-      left: calc(0 - 100%);
+      left: -100%;
       transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
     }
 

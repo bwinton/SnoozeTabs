@@ -109,7 +109,7 @@
     "clean": "shx rm -rf dist && shx mkdir -p dist/popup",
     "watch": "npm-run-all --parallel watch:*",
     "copy:locales": "node ./bin/build-locales.js",
-    "copy:assets": "shx cp -r src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html src/popup/FiraSans-Regular.* dist/popup/",
+    "copy:assets": "shx cp -r src/icons dist/ && svgo dist/icons --quiet && shx cp -r src/popup/*.html dist/popup/",
     "bundle:manifest": "node ./bin/generate-manifest",
     "bundle:js": "npm run lint:js && webpack",
     "bundle:css": "npm run lint:css && shx mkdir -p dist/popup && shx cp node_modules/photon-colors/colors.css dist/popup/colors.css && shx cp node_modules/rc-calendar/assets/index.css dist/popup/rc-calendar.css && shx cp node_modules/rc-time-picker/assets/index.css dist/popup/rc-time-picker.css && shx cp src/popup/snooze.css dist/popup/snooze.css",
