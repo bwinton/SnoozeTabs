@@ -46,34 +46,34 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
+  inset-inline-start: 100%;
   justify-content: space-between;
-  left: 100%;
   margin: 0;
   opacity: .3;
   position: absolute;
   top: 0;
-  transition: left 250ms ease-in-out, opacity 250ms ease-in-out, visibility 250ms ease-in-out;
+  transition: inset-inline-start 250ms ease-in-out, opacity 250ms ease-in-out, visibility 250ms ease-in-out;
   width: calc(100% - var(--panel-shadow-width));
 
   &.active {
-    left: var(--panel-shadow-width);
+    inset-inline-start: var(--panel-shadow-width);
     opacity: 1;
     visibility: visible;
   }
 
   &.obscured {
-    left: var(--panel-shadow-width);
+    inset-inline-start: var(--panel-shadow-width);
     opacity: .6;
   }
 
   &.static {
-    left: 0;
+    inset-inline-start: 0;
     transition: opacity 250ms ease-in-out;
     width: 100%;
   }
 
   &.static.active {
-    left: 0;
+    inset-inline-start: 0;
     transition: opacity 250ms ease-in-out;
   }
 
@@ -89,27 +89,27 @@ body {
 
 .panel-enter > .panel ,
 .panel.panel-enter {
-  left: calc(var(--panel-width) + var(--panel-shadow-width));
+  inset-inline-start: calc(var(--panel-width) + var(--panel-shadow-width));
   opacity: .3;
-  transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
+  transition: inset-inline-start 250ms ease-in-out, opacity 250ms ease-in-out;
 }
 
 .panel-enter-active > .panel,
 .panel.panel-enter-active {
-  left: var(--panel-shadow-width);
+  inset-inline-start: var(--panel-shadow-width);
   opacity: 1;
 }
 
 .panel-leave > .panel,
 .panel.panel-leave {
-  left: var(--panel-shadow-width);
+  inset-inline-start: var(--panel-shadow-width);
   opacity: 1;
-  transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
+  transition: inset-inline-start 250ms ease-in-out, opacity 250ms ease-in-out;
 }
 
 .panel-leave-active > .panel,
 .panel.panel-leave-active {
-  left: calc(var(--panel-width) + var(--panel-shadow-width));
+  inset-inline-start: calc(var(--panel-width) + var(--panel-shadow-width));
   opacity: .3;
 }
 
@@ -123,7 +123,7 @@ body {
 
 .header > .icon {
   height: 20px;
-  margin-right: 10px;
+  margin-inline-end: 10px;
   width: 20px;
 }
 
@@ -173,7 +173,8 @@ ul.times {
     display: flex;
     height: 50px;
     outline: 0;
-    padding: 0 5px 0 20px;
+    padding-block: 0;
+    padding-inline: 20px 5px;
 
     .title,
     .date,
@@ -193,7 +194,7 @@ ul.times {
       align-items: center;
       flex-grow: 0;
       width: 18px;
-      margin-right: 20px;
+      margin-inline-end: 20px;
     }
 
     .title {
@@ -218,8 +219,8 @@ ul.times {
       letter-spacing: -.52px;
       line-height: 16px;
       min-width: 1em;
-      text-align: right;
-      padding-right: 20px;
+      text-align: end;
+      padding-inline-end: 20px;
 
 
       &#next {
@@ -241,6 +242,10 @@ ul.times {
         content: '\25b6';
         line-height: 16px;
         color: var(--grey-60);
+      }
+
+      &:dir(rtl)::after {
+        transform: rotate(180deg);
       }
     }
   }
@@ -274,21 +279,21 @@ li.entry {
   align-items: stretch;
   cursor: pointer;
   display: flex;
-  margin-left: 0;
+  margin-inline-start: 0;
   min-height: 50px;
   opacity: 1;
   padding: 0;
-  transition: margin-left 150ms ease-in-out, opacity 150ms ease-in-out;
+  transition: margin-inline-start 150ms ease-in-out, opacity 150ms ease-in-out;
   width: calc(100% + 50px);
 
   &:hover {
     background-color: var(--black-a05);
-    margin-left: -50px;
+    margin-inline-start: -50px;
   }
 
   &:focus {
     background-color: var(--black-a05);
-    margin-left: 0;
+    margin-inline-start: 0;
   }
 
   &:active {
@@ -322,10 +327,10 @@ li.entry {
     justify-content: center;
     letter-spacing: -.52px;
     line-height: 16px;
-    margin-right: 5px;
+    margin-inline-end: 5px;
     min-width: 1em;
-    padding-right: 20px;
-    text-align: right;
+    padding-inline-end: 20px;
+    text-align: end;
 
     &.editable {
       &:hover,
@@ -336,7 +341,7 @@ li.entry {
 
     span {
       display: block;
-      text-align: right;
+      text-align: end;
     }
   }
 
@@ -558,8 +563,8 @@ li.entry {
 }
 
 #confirm-checkbox {
-  margin-left: -2px;
-  margin-right: 8px;
+  margin-inline-end: 8px;
+  margin-inline-start: -2px;
 }
 
 .rc-calendar-body {
@@ -687,72 +692,6 @@ li.entry {
     &.rc-time-picker-panel-select-option-selected {
       background: var(--blue-50);
       color: var(--white);
-    }
-  }
-}
-
-div {
-  &[dir='rtl'] {
-    .panel {
-      left: -100%;
-      transition: left 250ms ease-in-out, opacity 250ms ease-in-out;
-    }
-
-    .panel-enter > .panel ,
-    .panel.panel-enter {
-      left: calc(var(--panel-shadow-width) - var(--panel-width));
-    }
-
-    .panel-leave-active > .panel,
-    .panel.panel-leave-active {
-      left: calc(var(--panel-shadow-width) - var(--panel-width));
-    }
-
-    ul.times {
-      li.option {
-        padding: 0 20px 0 5px;
-
-        .date {
-          padding-left: 20px;
-          padding-right: 0;
-          text-align: left;
-        }
-
-        .icon {
-          margin-left: 20px;
-          margin-right: 0;
-        }
-
-        &#pick .date {
-          &::after {
-            transform: rotate(180deg);
-          }
-        }
-      }
-    }
-
-    #confirm-checkbox {
-      margin-left: 8px;
-      margin-right: -2px;
-    }
-
-    li.entry {
-      transition: margin-right 150ms ease-in-out, opacity 250ms ease-in-out;
-
-      &:hover,
-      &:focus {
-        background-color: var(--grey-10);
-        margin-left: 0;
-        margin-right: -50px;
-      }
-
-      .date {
-        margin-left: 5px;
-        margin-right: 0;
-        padding-left: 20px;
-        padding-right: 0;
-        text-align: left;
-      }
     }
   }
 }
