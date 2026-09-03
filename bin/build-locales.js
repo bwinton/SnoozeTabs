@@ -18,6 +18,6 @@ const result = spawn.sync('pontoon-to-webext', [], {
 });
 
 if (result.error) {
-  console.error(result.error); // eslint-disable-line no-console
+  console.error(result.error);
   process.exit(1);
 }
