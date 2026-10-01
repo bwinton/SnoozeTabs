@@ -94,7 +94,7 @@ function scheduleNextBrowserLaunchTabs() {
       item[1].time = Date.now();
       updated[item[0]] = item[1];
     });
-    log('setting next browser launch tabs to now', updated);
+    log('setting next browser launch tabs to now', Object.keys(updated).length);
     return saveAlarms(updated);
   }).catch(reason => log('scheduleNextBrowserLaunchTabs failed', reason));
 }
@@ -118,7 +118,9 @@ function updateButtonForTab(tabId, changeInfo) {
 }
 
 function handleMessage({op, message}) {
-  log('backend received', op, message);
+  // Log the URL only: the items carry their favicon as a data URL.
+  const item = (message && message.updated) || message || {};
+  log('backend received', op, item.url);
   if (messageOps[op]) { messageOps[op](message); }
 }
 
@@ -303,7 +305,7 @@ function handleWake(alarm) {
     const toRemove = [];
 
     return Promise.all(due.map(([id, item]) => {
-      log('creating', item);
+      log('creating', item.url);
       return browser.tabs.create({
         active: false,
         url: item.url,

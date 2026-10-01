@@ -49,7 +49,7 @@ export default class SnoozePopup extends React.Component {
     this.props.getAlarmsAndProperties().then(data => {
       const dontShow = !!data.dontShow;
       const entries = data.alarms;
-      log('fetched entries', dontShow, entries);
+      log('fetched entries', dontShow, Object.keys(entries).length);
       this.setState({ dontShow, entries });
     }).catch(reason => {
       log('fetchEntries storage get rejected', reason);
