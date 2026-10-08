@@ -26,7 +26,7 @@ function removeConfirmBar() {
   if (el1) { el1.remove(); }
 }
 
-chrome.runtime.onMessage.addListener(function({message, confirmIconData, closeData}) {
+browser.runtime.onMessage.addListener(function({message, confirmIconData, closeData}) {
   const atTime = confirmationTime(message.time, message.timeType);
   const confirmationId = 'snoozetabs-confirmation-bar';
   const okId = 'snoozetabs-ok';
