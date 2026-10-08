@@ -1,8 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { KNOWN_PROPERTIES, KEY_BOOKMARK_FOLDER_UUID, KEY_LEGACY_METRICS_UUID,
-         KEY_DONT_SHOW,
+import { KNOWN_PROPERTIES, KEY_BOOKMARK_FOLDER_UUID, KEY_DONT_SHOW,
          getAlarms, saveAlarms, removeAlarms,
          getAlarmsAndProperties, getBookmarkFolderUUID,
          getDontShow, setDontShow } from '../../src/lib/storage';
@@ -135,7 +134,6 @@ describe('lib/storage', () => {
 
   it('supports getBookmarkFolderUUID() that auto-generates a UUID the first time', done => {
     delete mockStorage[KEY_BOOKMARK_FOLDER_UUID];
-    delete mockStorage[KEY_LEGACY_METRICS_UUID];
     getBookmarkFolderUUID().then(resultUUID => {
       expect(global.browser.storage.local.get.called).to.be.true;
       expect(global.browser.storage.local.set.called).to.be.true;
@@ -159,23 +157,8 @@ describe('lib/storage', () => {
     });
   });
 
-  it('supports getBookmarkFolderUUID() that moves a legacy UUID over unchanged', done => {
-    delete mockStorage[KEY_BOOKMARK_FOLDER_UUID];
-    const expectedUUID = mockStorage[KEY_LEGACY_METRICS_UUID] = '8675309';
-    getBookmarkFolderUUID().then(resultUUID => {
-      expect(resultUUID).to.equal(expectedUUID);
-      expect(mockStorage[KEY_BOOKMARK_FOLDER_UUID]).to.equal(expectedUUID);
-      expect(mockStorage[KEY_LEGACY_METRICS_UUID]).to.not.exist;
-      done();
-    }).catch(err => {
-      expect(err).to.not.exist;
-      done();
-    });
-  });
-
   it('supports getBookmarkFolderUUID() that yields one UUID to concurrent callers', done => {
     delete mockStorage[KEY_BOOKMARK_FOLDER_UUID];
-    delete mockStorage[KEY_LEGACY_METRICS_UUID];
     Promise.all([getBookmarkFolderUUID(), getBookmarkFolderUUID()]).then(([one, two]) => {
       expect(one).to.exist;
       expect(two).to.equal(one);
