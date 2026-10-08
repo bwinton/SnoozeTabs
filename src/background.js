@@ -141,7 +141,10 @@ const messageOps = {
       }
 
       browser.tabs.executeScript(message.tabId, {file: './lib/confirm-bar.js'}).then(() => {
-        return browser.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData});
+        // Handled here so a failed message doesn't fall through to confirm.
+        return browser.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData}).catch(reason => {
+          log('schedule message rejected', reason);
+        });
       }).catch(reason => {
         log('schedule inject rejected', reason);
         return messageOps.confirm(message);
