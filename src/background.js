@@ -34,11 +34,6 @@ const handleWake = createWakeCoordinator(doWake, log);
 
 function init() {
   log('init()');
-  browser.runtime.onInstalled.addListener((details) => {
-    if (details.reason === 'install') {
-      setupBookmarksFolder();
-    }
-  });
   browser.windows.onCreated.addListener(handleWindowCreated);
   browser.alarms.onAlarm.addListener(handleAlarm);
   browser.notifications.onClicked.addListener(handleNotificationClick);
@@ -198,21 +193,6 @@ const messageOps = {
     setDontShow(message.dontShow);
   }
 };
-
-function setupBookmarksFolder() {
-  getBookmarkFolderUUID().then(clientUUID => {
-    const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
-    return browser.bookmarks.search({title: title}).then(folders => {
-      return Promise.all(folders.map(folder => {
-        return browser.bookmarks.update(folder.id, {
-          title: `${title} - ${getLocalizedDateTime(moment(), 'date_year')} ${getLocalizedDateTime(moment(), 'confirmation_time')}`
-        });
-      }));
-    });
-  }).catch(reason => {
-    log('init bookmark folder rename rejected', reason);
-  });
-}
 
 function syncBookmarks(items) {
   getBookmarkFolderUUID().then(clientUUID => {
