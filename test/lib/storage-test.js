@@ -173,4 +173,19 @@ describe('lib/storage', () => {
     });
   });
 
+  it('supports getBookmarkFolderUUID() that yields one UUID to concurrent callers', done => {
+    delete mockStorage[KEY_BOOKMARK_FOLDER_UUID];
+    delete mockStorage[KEY_LEGACY_METRICS_UUID];
+    Promise.all([getBookmarkFolderUUID(), getBookmarkFolderUUID()]).then(([one, two]) => {
+      expect(one).to.exist;
+      expect(two).to.equal(one);
+      expect(mockStorage[KEY_BOOKMARK_FOLDER_UUID]).to.equal(one);
+      expect(global.browser.storage.local.set.calledOnce).to.be.true;
+      done();
+    }).catch(err => {
+      expect(err).to.not.exist;
+      done();
+    });
+  });
+
 });

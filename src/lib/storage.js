@@ -55,9 +55,21 @@ export function setDontShow(value) {
   return browser.storage.local.set(update);
 }
 
+// Shared so concurrent first calls store one UUID.
+let pendingBookmarkFolderUUID = null;
+
 // The UUID names this install's bookmark folder, so changing it would orphan
 // that folder. A value under the legacy key is moved over as is.
 export function getBookmarkFolderUUID() {
+  if (!pendingBookmarkFolderUUID) {
+    pendingBookmarkFolderUUID = lookUpBookmarkFolderUUID().finally(() => {
+      pendingBookmarkFolderUUID = null;
+    });
+  }
+  return pendingBookmarkFolderUUID;
+}
+
+function lookUpBookmarkFolderUUID() {
   const keys = [KEY_BOOKMARK_FOLDER_UUID, KEY_LEGACY_METRICS_UUID];
   return browser.storage.local.get(keys).then(raw => {
     // Return the existing UUID, if found.
