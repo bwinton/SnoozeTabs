@@ -15,6 +15,8 @@ import { getLocalizedDateTime } from './lib/time-formats';
 import { NEXT_BROWSER_LAUNCH, PICK_TIME, times, timeForId } from './lib/times';
 import { getAlarms, saveAlarms, removeAlarms,
          getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
+import { createWakeCoordinator, createWakeFailures, nextWakeAlarmTime,
+         wakeItem } from './lib/wake';
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
 const PERIODIC_ALARM_NAME = 'snooze-periodic-alarm';
 
@@ -22,6 +24,13 @@ let iconData;
 let closeData;
 let confirmIconData;
 let wakeTimerPaused = false;
+
+// Entries that failed to wake, and their backoff.
+const wakeFailures = createWakeFailures({ log });
+
+// Serialises wakes. Both alarms and a new window can start one, and the two
+// alarms often fire together on resume from suspend.
+const handleWake = createWakeCoordinator(doWake, log);
 
 function init() {
   log('init()');
@@ -31,7 +40,7 @@ function init() {
     }
   });
   browser.windows.onCreated.addListener(handleWindowCreated);
-  browser.alarms.onAlarm.addListener(handleWake);
+  browser.alarms.onAlarm.addListener(handleAlarm);
   browser.notifications.onClicked.addListener(handleNotificationClick);
   browser.runtime.onMessage.addListener(handleMessage);
   browser.tabs.onUpdated.addListener(updateButtonForTab);
@@ -249,14 +258,9 @@ function updateWakeAndBookmarks() {
       // Don't set a new wake timer if we're paused.
       if (wakeTimerPaused) { return; }
 
-      const times = Object.values(items).map(item => item.time).filter(time => time !== NEXT_BROWSER_LAUNCH);
-      if (!times.length) { return; }
-
-      times.sort();
-      const nextTime = times[0];
-
-      const soon = Date.now() + 5000;
-      const nextAlarm = Math.max(nextTime, soon);
+      const nextAlarm = nextWakeAlarmTime(items, Date.now(),
+                                          { wakeTimeFor: wakeFailures.wakeTimeFor });
+      if (nextAlarm === null) { return; }
 
       log('updated wake alarm to', nextAlarm, ' ', getLocalizedDateTime(moment(nextAlarm), 'long_date_time'));
       return browser.alarms.create(WAKE_ALARM_NAME, { when: nextAlarm });
@@ -272,69 +276,101 @@ function handleWindowCreated(window) {
   if (wakeTimerPaused && !window.incognito) {
     // Just opened a public window, so let's restart the wake timer
     log('public window opened, resuming wake timer');
-    wakeTimerPaused = false;
     handleWake();
   }
 }
 
-function handleWake(alarm) {
-  const now = Date.now();
-  log('woke at', now, 'with alarm', alarm ? alarm.name : 'none');
+function handleAlarm(alarm) {
+  const name = alarm && alarm.name;
+  if (name !== WAKE_ALARM_NAME && name !== PERIODIC_ALARM_NAME) {
+    log('ignoring unknown alarm', name);
+    return;
+  }
+  // The periodic alarm backs up a lost or slept-through wake alarm.
+  log('alarm fired', name);
+  return handleWake();
+}
 
-  return Promise.all([
+async function doWake() {
+  const now = Date.now();
+  log('woke at', now);
+
+  const [items, windows] = await Promise.all([
     getAlarms(),
-    browser.windows.getAll({windowTypes: ['normal']}),
-    browser.windows.getCurrent()
-  ]).then(([items, windows, current]) => {
-    const due = Object.entries(items).filter(entry => entry[1].time <= now);
+    browser.windows.getAll({windowTypes: ['normal']})
+  ]);
+  wakeFailures.forgetMissing(items);
+
+  const publicWindowIds = windows
+    .filter(window => !window.incognito)
+    .map(window => window.id)
+    .sort((a, b) => a - b);
+
+  if (publicWindowIds.length === 0) {
+    // Nowhere to open tabs; wait for a public window.
+    log('no public windows, pausing wake timer');
+    wakeTimerPaused = true;
+  } else {
+    // handleWindowCreated relies on this to end the pause.
+    wakeTimerPaused = false;
+
+    const due = Object.entries(items)
+      .filter(([id, item]) => wakeFailures.wakeTimeFor(id, item) <= now);
     log('tabs due to wake', due.length);
 
-    const publicWindowIds = windows
-      .filter(window => !window.incognito)
-      .map(window => window.id).sort();
-
-    // If there are no public windows, pause the wake timer and abort
-    if (publicWindowIds.length === 0) {
-      log('no public windows, pausing wake timer');
-      wakeTimerPaused = true;
-      return;
+    if (due.length) {
+      const currentWindow = await currentPublicWindow(publicWindowIds);
+      await Promise.all(due.map(([id, item]) => wakeItem({
+        id,
+        item,
+        failures: wakeFailures,
+        createTab: () => createTabFor(item, publicWindowIds, currentWindow),
+        removeEntry: removeAlarms,
+        announce: announceWokenTab,
+        log
+      })));
     }
+  }
 
-    const currentWindow = current.incognito ? publicWindowIds[0] : current.id;
+  // Await so the reschedule sees the removals above.
+  await updateWakeAndBookmarks();
+}
 
-    const toRemove = [];
+// Call only once a public window exists: getCurrent() can reject otherwise.
+function currentPublicWindow(publicWindowIds) {
+  return browser.windows.getCurrent().then(current => {
+    return current.incognito ? publicWindowIds[0] : current.id;
+  }).catch(reason => {
+    log('windows.getCurrent rejected, using the first public window', reason);
+    return publicWindowIds[0];
+  });
+}
 
-    return Promise.all(due.map(([id, item]) => {
-      log('creating', item.url);
-      return browser.tabs.create({
-        active: false,
-        url: item.url,
-        openInReaderMode: item.readerMode,
-        windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
-      }).then(tab => {
-        flashFavicon(tab);
-        return browser.notifications.create(`${item.windowId}:${tab.id}`, {
-          'type': 'basic',
-          'iconUrl': 'chrome://branding/content/about-logo@2x.png',
-          'title': item.title,
-          'message': item.url
-        });
-      }).then(() => {
-        // Wake was successful, so queue for removal.
-        toRemove.push(id);
-      }).catch(reason => {
-        // Wake failed, so this entry will not be removed.
-        log('handleWake create rejected', item.url, reason);
-      });
-    })).then(() => {
-      // Finally, remove alarms for successfully woken tabs.
-      removeAlarms(toRemove);
-    });
-  }).then(updateWakeAndBookmarks);
+function createTabFor(item, publicWindowIds, currentWindow) {
+  log('creating', item.url);
+  return browser.tabs.create({
+    active: false,
+    url: item.url,
+    openInReaderMode: item.readerMode,
+    windowId: publicWindowIds.includes(item.windowId) ? item.windowId : currentWindow
+  });
+}
+
+// Cosmetic: runs after the entry is removed, isn't awaited and never rejects.
+function announceWokenTab(item, tab) {
+  flashFavicon(tab);
+  browser.notifications.create(`${item.windowId}:${tab.id}`, {
+    'type': 'basic',
+    'iconUrl': 'chrome://branding/content/about-logo@2x.png',
+    'title': item.title,
+    'message': item.url
+  }).catch(reason => {
+    log('wake notification rejected', item.url, reason);
+  });
 }
 
 function flashFavicon(tab) {
-  browser.tabs.executeScript(tab.id, {
+  return browser.tabs.executeScript(tab.id, {
     'code': `
       function flip(newUrl) {
         let link = document.createElement('link');
@@ -369,6 +405,9 @@ function flashFavicon(tab) {
         }
       }, 10000)
       `
+  }).catch(reason => {
+    // Routinely fails while the tab is still loading. Only cosmetic.
+    log('flashFavicon rejected', tab.id, reason);
   });
 }
 
