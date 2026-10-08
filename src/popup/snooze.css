@@ -4,13 +4,92 @@
   --white: #fff;
   --black: #000;
   --black-a05: rgba(0, 0, 0, .05);
+
+  --bg: var(--white);
+  --app-bg: var(--grey-20);
+  --footer-bg: var(--grey-10);
+  --fg: var(--grey-90);
+  --fg-strong: var(--black);
+  --fg-secondary: var(--grey-60);
+  --fg-muted: var(--grey-50);
+  --fg-faint: var(--grey-40);
+  --border: var(--grey-30);
+  --hover-bg: var(--black-a05);
+  --active-bg: var(--grey-30);
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #2b2a33;
+    --app-bg: #1c1b22;
+    --footer-bg: #23222b;
+    --fg: #fbfbfe;
+    --fg-strong: #fbfbfe;
+    --fg-secondary: #cfcfd8;
+    --fg-muted: #b1b1b3;
+    --fg-faint: #8f8f9d;
+    --border: #52525e;
+    --hover-bg: rgba(251, 251, 254, .07);
+    --active-bg: rgba(251, 251, 254, .14);
+  }
+
+  /* rc-calendar and rc-time-picker ship light-only colors. */
+  .rc-calendar,
+  .rc-calendar-month-panel,
+  .rc-calendar-year-panel,
+  .rc-calendar-decade-panel,
+  .rc-time-picker-input,
+  .rc-time-picker-panel-inner {
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--fg);
+  }
+
+  .rc-calendar-date,
+  .rc-calendar-month-panel-month,
+  .rc-calendar-year-panel-year,
+  .rc-calendar-decade-panel-decade,
+  .rc-calendar-month-panel-header > a,
+  .rc-calendar-year-panel-header > a,
+  .rc-calendar-decade-panel-header > a,
+  .rc-time-picker-panel-input {
+    color: var(--fg);
+  }
+
+  .rc-time-picker-panel-input {
+    background: transparent;
+  }
+
+  .rc-calendar-month-panel-month:hover,
+  .rc-calendar-year-panel-year:hover,
+  .rc-calendar-decade-panel-decade:hover,
+  li.rc-time-picker-panel-select-option-selected {
+    background: var(--active-bg);
+  }
+
+  .rc-calendar-month-panel-header,
+  .rc-calendar-year-panel-header,
+  .rc-calendar-decade-panel-header,
+  .rc-time-picker-panel-input-wrap,
+  .rc-time-picker-panel-select {
+    border-color: var(--border);
+  }
+
+  .rc-calendar-month-panel-cell-disabled .rc-calendar-month-panel-month,
+  .rc-calendar-year-panel-next-decade-cell .rc-calendar-year-panel-year,
+  .rc-calendar-decade-panel-next-century-cell .rc-calendar-decade-panel-decade,
+  li.rc-time-picker-panel-select-option-disabled {
+    color: var(--fg-faint);
+  }
 }
 
 html,
 body {
-  background-color: var(--white);
+  background-color: var(--bg);
   box-sizing: border-box;
-  color: var(--grey-90);
+  color: var(--fg);
   cursor: default;
   font: message-box;
   height: 100%;
@@ -27,7 +106,7 @@ body {
 }
 
 #app {
-  background: var(--grey-20);
+  background: var(--app-bg);
   height: 393px;
   width: var(--panel-width);
 }
@@ -42,7 +121,7 @@ body {
 
 .panel {
   align-items: stretch;
-  background: var(--white);
+  background: var(--bg);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -79,7 +158,7 @@ body {
 
   > .content {
     align-items: center;
-    background-color: var(--white);
+    background-color: var(--bg);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -114,7 +193,7 @@ body {
 }
 
 .header {
-  border-bottom: 1px solid var(--grey-30);
+  border-bottom: 1px solid var(--border);
   font-size: 15px;
   height: 50px;
   justify-content: center;
@@ -150,7 +229,7 @@ li,
 .active li.option {
   &:hover,
   &:focus {
-    background: var(--black-a05);
+    background: var(--hover-bg);
 
     .title,
     .date {
@@ -199,7 +278,7 @@ ul.times {
 
     .title {
       align-items: center;
-      border-top: 1px solid var(--grey-30);
+      border-top: 1px solid var(--border);
       display: flex;
       flex: 1 0 0;
       font-size: 13px;
@@ -209,8 +288,8 @@ ul.times {
 
     .date {
       align-items: center;
-      border-top: 1px solid var(--grey-30);
-      color: var(--grey-50);
+      border-top: 1px solid var(--border);
+      color: var(--fg-muted);
       cursor: pointer;
       display: flex;
       flex: 0 0 72px;
@@ -241,7 +320,7 @@ ul.times {
       &::after {
         content: '\25b6';
         line-height: 16px;
-        color: var(--grey-60);
+        color: var(--fg-secondary);
       }
 
       &:dir(rtl)::after {
@@ -252,7 +331,7 @@ ul.times {
 }
 
 div.empty-entries {
-  color: var(--grey-40);
+  color: var(--fg-faint);
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -287,12 +366,12 @@ li.entry {
   width: calc(100% + 50px);
 
   &:hover {
-    background-color: var(--black-a05);
+    background-color: var(--hover-bg);
     margin-inline-start: -50px;
   }
 
   &:focus {
-    background-color: var(--black-a05);
+    background-color: var(--hover-bg);
     margin-inline-start: 0;
   }
 
@@ -318,8 +397,8 @@ li.entry {
 
   .date {
     align-items: flex-end;
-    border-bottom: 1px solid var(--grey-30);
-    color: var(--grey-50);
+    border-bottom: 1px solid var(--border);
+    color: var(--fg-muted);
     display: flex;
     flex-direction: column;
     flex: 0 0 72px;
@@ -346,7 +425,7 @@ li.entry {
   }
 
   .content {
-    border-bottom: 1px solid var(--grey-30);
+    border-bottom: 1px solid var(--border);
     display: flex;
     flex-direction: column;
     flex: 1 0 0;
@@ -357,7 +436,7 @@ li.entry {
     white-space: nowrap;
 
     .title {
-      color: var(--black);
+      color: var(--fg-strong);
       font-size: 13px;
       line-height: 20px;
       overflow: hidden;
@@ -366,7 +445,7 @@ li.entry {
 
       &:hover,
       &:focus {
-        color: var(--black);
+        color: var(--fg-strong);
       }
 
       &:active {
@@ -375,7 +454,7 @@ li.entry {
     }
 
     .url {
-      color: var(--grey-50);
+      color: var(--fg-muted);
       font-size: 11px;
       line-height: 13px;
       overflow: hidden;
@@ -418,8 +497,8 @@ li.entry {
 
 .footer {
   align-items: stretch;
-  background: var(--grey-10);
-  border-top: 1px solid var(--grey-30);
+  background: var(--footer-bg);
+  border-top: 1px solid var(--border);
   flex-direction: row;
   font-size: 11px;
   height: 42px;
@@ -437,11 +516,11 @@ li.entry {
 
     &:hover,
     &:focus {
-      background: var(--grey-30);
+      background: var(--active-bg);
     }
 
     &:active {
-      background: var(--grey-30);
+      background: var(--active-bg);
       outline: 0;
     }
   }
@@ -501,16 +580,16 @@ li.entry {
 }
 
 .rc-calendar-date-panel {
-  border: 1px solid var(--grey-30);
+  border: 1px solid var(--border);
   border-radius: 2px;
 }
 
 .rc-calendar-header {
-  background: var(--black-a05);
+  background: var(--hover-bg);
   border-bottom: 0;
 
   a {
-    color: var(--grey-90);
+    color: var(--fg);
 
     &:hover {
       color: var(--blue-50);
@@ -554,7 +633,7 @@ li.entry {
 
 .manage-confirm {
   align-items: center;
-  color: var(--grey-50);
+  color: var(--fg-muted);
   display: flex;
   font-size: 11px;
   justify-content: center;
@@ -574,7 +653,7 @@ li.entry {
 
 .rc-calendar-table {
   thead tr {
-    background: var(--black-a05);
+    background: var(--hover-bg);
   }
 }
 
@@ -582,7 +661,7 @@ li.entry {
 
   tr {
     &:nth-child(even) {
-      background: var(--black-a05);
+      background: var(--hover-bg);
     }
   }
 
@@ -594,7 +673,7 @@ li.entry {
     width: 26px;
 
     &:hover {
-      background: var(--grey-30);
+      background: var(--active-bg);
     }
   }
 
@@ -613,12 +692,12 @@ li.entry {
   .rc-calendar-disabled-cell .rc-calendar-date,
   .rc-calendar-next-month-btn-day .rc-calendar-date {
     background: transparent;
-    color: var(--grey-40);
+    color: var(--fg-faint);
   }
 
   .rc-calendar-next-month-btn-day .rc-calendar-date {
     &:hover {
-      background: var(--grey-30);
+      background: var(--active-bg);
     }
   }
 }
@@ -686,7 +765,7 @@ li.entry {
     font-size: 14px;
 
     &:hover {
-      background: var(--grey-30);
+      background: var(--active-bg);
     }
 
     &.rc-time-picker-panel-select-option-selected {
