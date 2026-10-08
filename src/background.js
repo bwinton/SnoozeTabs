@@ -361,7 +361,7 @@ function announceWokenTab(item, tab) {
   flashFavicon(tab);
   browser.notifications.create(`${item.windowId}:${tab.id}`, {
     'type': 'basic',
-    'iconUrl': 'chrome://branding/content/about-logo@2x.png',
+    'iconUrl': browser.runtime.getURL('icons/color_bell_icon.png'),
     'title': item.title,
     'message': item.url
   }).catch(reason => {
