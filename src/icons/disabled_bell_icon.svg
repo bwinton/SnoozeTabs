@@ -4,7 +4,10 @@
 	 x="0px" y="0px" width="24px" height="24px" viewBox="0 0 24 24"
 	 style="enable-background:new 0 0 24 24;" xml:space="preserve">
 <style type="text/css">
-	.st0{fill:context-fill; opacity: .5}
+	.st0{fill:#5b5b66; opacity: .5}
+	@media (prefers-color-scheme: dark) {
+		.st0{fill:#fbfbfe}
+	}
 </style>
 <g id="XMLID_51_">
 	<g id="XMLID_59_">
