@@ -370,7 +370,44 @@ function announceWokenTab(item, tab) {
 }
 
 function flashFavicon(tab) {
-  return browser.tabs.executeScript(tab.id, {
+  // A freshly created tab is still loading, so wait for it to finish before
+  // injecting, or the script runs in the initial about:blank or not at all.
+  // The load can also finish before the listener is attached, so check the
+  // status again once it is.
+  let done = false;
+  const finish = () => {
+    if (done) {
+      return;
+    }
+    done = true;
+    stopWaiting();
+    injectFaviconFlasher(tab.id);
+  };
+  const onUpdated = (tabId, changeInfo) => {
+    if (changeInfo.status === 'complete') {
+      finish();
+    }
+  };
+  const onRemoved = tabId => {
+    if (tabId === tab.id) {
+      stopWaiting();
+    }
+  };
+  const stopWaiting = () => {
+    browser.tabs.onUpdated.removeListener(onUpdated);
+    browser.tabs.onRemoved.removeListener(onRemoved);
+  };
+  browser.tabs.onUpdated.addListener(onUpdated, {tabId: tab.id, properties: ['status']});
+  browser.tabs.onRemoved.addListener(onRemoved);
+  browser.tabs.get(tab.id).then(current => {
+    if (current.status === 'complete') {
+      finish();
+    }
+  }).catch(stopWaiting);
+}
+
+function injectFaviconFlasher(tabId) {
+  return browser.tabs.executeScript(tabId, {
     'code': `
       function flip(newUrl) {
         let link = document.createElement('link');
@@ -406,8 +443,8 @@ function flashFavicon(tab) {
       }, 10000)
       `
   }).catch(reason => {
-    // Routinely fails while the tab is still loading. Only cosmetic.
-    log('flashFavicon rejected', tab.id, reason);
+    // Reader mode and privileged pages refuse scripts. Only cosmetic.
+    log('flashFavicon rejected', tabId, reason);
   });
 }
 
