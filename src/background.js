@@ -14,7 +14,7 @@ import { getLocalizedDateTime } from './lib/time-formats';
 
 import { NEXT_BROWSER_LAUNCH, PICK_TIME, times, timeForId } from './lib/times';
 import { getAlarms, saveAlarms, removeAlarms,
-         getMetricsUUID, getDontShow, setDontShow } from './lib/storage';
+         getBookmarkFolderUUID, getDontShow, setDontShow } from './lib/storage';
 import { createWakeCoordinator, createWakeFailures, nextWakeAlarmTime,
          wakeItem } from './lib/wake';
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
@@ -200,7 +200,7 @@ const messageOps = {
 };
 
 function setupBookmarksFolder() {
-  getMetricsUUID().then(clientUUID => {
+  getBookmarkFolderUUID().then(clientUUID => {
     const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
     return browser.bookmarks.search({title: title}).then(folders => {
       return Promise.all(folders.map(folder => {
@@ -215,7 +215,7 @@ function setupBookmarksFolder() {
 }
 
 function syncBookmarks(items) {
-  getMetricsUUID().then(clientUUID => {
+  getBookmarkFolderUUID().then(clientUUID => {
     const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
     return browser.bookmarks.search({title: title}).then(folders => {
       if (folders.length) {

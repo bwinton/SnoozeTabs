@@ -1,11 +1,16 @@
 import uuidV4 from 'uuid/v4';
 
-export const KEY_METRICS_UUID = 'metricsUUID';
+export const KEY_BOOKMARK_FOLDER_UUID = 'bookmarkFolderUUID';
+// Former name of KEY_BOOKMARK_FOLDER_UUID, from when the UUID doubled as the
+// analytics client ID. Stays a known property so that a leftover value is
+// never read as an alarm.
+export const KEY_LEGACY_METRICS_UUID = 'metricsUUID';
 export const KEY_DONT_SHOW = 'dontShow';
 
 export const KNOWN_PROPERTIES = [
   KEY_DONT_SHOW,
-  KEY_METRICS_UUID
+  KEY_BOOKMARK_FOLDER_UUID,
+  KEY_LEGACY_METRICS_UUID
 ];
 
 export function getAlarmsAndProperties() {
@@ -50,16 +55,22 @@ export function setDontShow(value) {
   return browser.storage.local.set(update);
 }
 
-export function getMetricsUUID() {
-  return browser.storage.local.get(KEY_METRICS_UUID).then(raw => {
+// The UUID names this install's bookmark folder, so changing it would orphan
+// that folder. A value under the legacy key is moved over as is.
+export function getBookmarkFolderUUID() {
+  const keys = [KEY_BOOKMARK_FOLDER_UUID, KEY_LEGACY_METRICS_UUID];
+  return browser.storage.local.get(keys).then(raw => {
     // Return the existing UUID, if found.
-    const existing = raw[KEY_METRICS_UUID];
+    const existing = raw[KEY_BOOKMARK_FOLDER_UUID];
     if (existing) { return existing; }
 
-    // Otherwise, generate a new UUID and return it after storing it.
+    // Otherwise, adopt the legacy UUID or generate a new one, and return it
+    // after storing it.
+    const legacy = raw[KEY_LEGACY_METRICS_UUID];
     const update = {};
-    update[KEY_METRICS_UUID] = uuidV4();
+    update[KEY_BOOKMARK_FOLDER_UUID] = legacy || uuidV4();
     return browser.storage.local.set(update)
-      .then(() => update[KEY_METRICS_UUID]);
+      .then(() => legacy && browser.storage.local.remove(KEY_LEGACY_METRICS_UUID))
+      .then(() => update[KEY_BOOKMARK_FOLDER_UUID]);
   });
 }
