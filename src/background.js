@@ -141,7 +141,7 @@ const messageOps = {
       }
 
       browser.tabs.executeScript(message.tabId, {file: './lib/confirm-bar.js'}).then(() => {
-        return chrome.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData});
+        return browser.tabs.sendMessage(message.tabId, {message, confirmIconData, closeData});
       }).catch(reason => {
         log('schedule inject rejected', reason);
         return messageOps.confirm(message);
@@ -458,7 +458,7 @@ let parent;
 
 if (browser.contextMenus.ContextType.TAB) {
   const title = browser.i18n.getMessage('contextMenuTitle');
-    parent = chrome.contextMenus.create({
+  parent = browser.contextMenus.create({
     contexts: [browser.contextMenus.ContextType.TAB],
     title: title,
     documentUrlPatterns: ['<all_urls>']
@@ -468,7 +468,7 @@ if (browser.contextMenus.ContextType.TAB) {
     if (time.id === PICK_TIME) {
       continue;
     }
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
       parentId: parent,
       id: time.id,
       contexts: [browser.contextMenus.ContextType.TAB],
