@@ -17,8 +17,10 @@ import { getAlarms, saveAlarms, removeAlarms,
          getBookmarkFolderUUID, getDontShow, setDontShow } from './lib/storage';
 import { createWakeCoordinator, createWakeFailures, nextWakeAlarmTime,
          wakeItem } from './lib/wake';
+import { findLegacyFolders, legacyEntries } from './lib/legacy-import';
 const WAKE_ALARM_NAME = 'snooze-wake-alarm';
 const PERIODIC_ALARM_NAME = 'snooze-periodic-alarm';
+const LEGACY_IMPORT_NOTIFICATION = 'snooze-legacy-import';
 
 let iconData;
 let closeData;
@@ -34,6 +36,11 @@ const handleWake = createWakeCoordinator(doWake, log);
 
 function init() {
   log('init()');
+  browser.runtime.onInstalled.addListener((details) => {
+    if (details.reason === 'install') {
+      offerLegacyImport();
+    }
+  });
   browser.windows.onCreated.addListener(handleWindowCreated);
   browser.alarms.onAlarm.addListener(handleAlarm);
   browser.notifications.onClicked.addListener(handleNotificationClick);
@@ -194,9 +201,47 @@ const messageOps = {
   }
 };
 
+// Entries for the tabs still listed in the bookmark folders of an earlier
+// install, such as the old snoozetabs@mozilla.com add-on.
+function findLegacyEntries() {
+  return Promise.all([
+    browser.bookmarks.getTree(),
+    getAlarms()
+  ]).then(([tree, alarms]) => {
+    const folderTitle = uuid => browser.i18n.getMessage('uniqueBookmarkFolderTitle', uuid);
+    const folders = findLegacyFolders(tree, folderTitle);
+    return legacyEntries(folders, alarms, NEXT_BROWSER_LAUNCH);
+  });
+}
+
+function offerLegacyImport() {
+  findLegacyEntries().then(entries => {
+    if (!entries.length) { return; }
+    return notify(LEGACY_IMPORT_NOTIFICATION,
+                  browser.i18n.getMessage('legacyImportTitle'),
+                  browser.i18n.getMessage('legacyImportMessage', String(entries.length)));
+  }).catch(reason => {
+    log('legacy import offer rejected', reason);
+  });
+}
+
+function importLegacyTabs() {
+  // Scan again: the bookmarks may have changed since the offer.
+  findLegacyEntries().then(entries => {
+    log('importing legacy tabs', entries.length);
+    const toSave = {};
+    entries.forEach(entry => toSave[idForItem(entry)] = entry);
+    return saveAlarms(toSave);
+  }).then(updateWakeAndBookmarks).catch(reason => {
+    log('legacy import rejected', reason);
+  });
+}
+
 function syncBookmarks(items) {
   getBookmarkFolderUUID().then(clientUUID => {
-    const title = browser.i18n.getMessage('uniqueBookmarkFolderTitle', clientUUID);
+    // Built here rather than in a translated string, so it can never take the
+    // old add-on's "<name> - <uuid>" format that findLegacyFolders looks for.
+    const title = `${browser.i18n.getMessage('bookmarkFolderName')} (${clientUUID})`;
     return browser.bookmarks.search({title: title}).then(folders => {
       if (folders.length) {
         return folders[0];
@@ -336,15 +381,19 @@ function createTabFor(item, publicWindowIds, currentWindow) {
   });
 }
 
+function notify(id, title, message) {
+  return browser.notifications.create(id, {
+    'type': 'basic',
+    'iconUrl': browser.runtime.getURL('icons/color_bell_icon.png'),
+    'title': title,
+    'message': message
+  });
+}
+
 // Cosmetic: runs after the entry is removed, isn't awaited and never rejects.
 function announceWokenTab(item, tab) {
   flashFavicon(tab);
-  browser.notifications.create(`${item.windowId}:${tab.id}`, {
-    'type': 'basic',
-    'iconUrl': browser.runtime.getURL('icons/color_bell_icon.png'),
-    'title': item.title,
-    'message': item.url
-  }).catch(reason => {
+  notify(`${item.windowId}:${tab.id}`, item.title, item.url).catch(reason => {
     log('wake notification rejected', item.url, reason);
   });
 }
@@ -392,6 +441,10 @@ function flashFavicon(tab) {
 }
 
 function handleNotificationClick(notificationId) {
+  if (notificationId === LEGACY_IMPORT_NOTIFICATION) {
+    importLegacyTabs();
+    return;
+  }
   const [windowId, tabId] = notificationId.split(':');
   browser.windows.update(+windowId, {focused: true});
   browser.tabs.update(+tabId, {active: true});
