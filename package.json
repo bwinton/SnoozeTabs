@@ -38,7 +38,7 @@
     "shx": "0.2.1",
     "sinon": "1.17.6",
     "storybook-host": "1.0.8",
-    "stylelint": "15.11.0",
+    "stylelint": "17.16.0",
     "stylelint-config-recommended": "13.0.0",
     "svgo": "2.8.4",
     "web-ext": "10.7.0",
